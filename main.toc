@@ -1,0 +1,16 @@
+\babel@toc {italian}{}
+\babel@toc {italian}{}
+\contentsline {chapter}{\numberline {1}Introduzione al Corso}{1}{chapter.1}
+\contentsline {paragraph}{Strumenti Software}{1}{section*.2}
+\contentsline {subparagraph}{Se non hai una macchina ARM:}{1}{section*.3}
+\contentsline {subparagraph}{Se hai una macchina ARM come un Raspberry Pi:}{1}{section*.4}
+\contentsline {paragraph}{Storia degli Elaboratori}{1}{figure.1.1}
+\contentsline {paragraph}{Set di Istruzioni}{3}{section*.6}
+\contentsline {chapter}{\numberline {2}Rappresentazioni Numeriche e Testuali}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Aritmetica Binaria}{5}{section.2.1}
+\contentsline {section}{\numberline {2.2}Esadecimale}{5}{section.2.2}
+\contentsline {section}{\numberline {2.3}Numeri in virgola mobile}{6}{section.2.3}
+\contentsline {paragraph}{Somma dei numeri a virgola mobile}{6}{section*.7}
+\contentsline {paragraph}{Estensioni vettoriali}{7}{section*.8}
+\contentsline {section}{\numberline {2.4}Codifica ASCII}{7}{section.2.4}
+\contentsline {chapter}{\numberline {3}Porte Logiche}{9}{chapter.3}

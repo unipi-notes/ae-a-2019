@@ -1,0 +1,38 @@
+\documentclass[a4paper,12pt]{book}
+\usepackage[margin=0.7in,nomarginpar]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{circuitikz}
+\usepackage{polynom}
+\usepackage{wrapfig}
+\usepackage[italian]{babel}
+\graphicspath{ {./images/} }
+
+\addtolength{\topmargin}{.2in}
+\addtolength{\textheight}{-.3in}
+
+\begin{document}
+
+\author{Alessandro Cheli - Prof. Marco Danelutto}
+\title{Appunti di Architettura degli Elaboratori}
+\date{A.A 2019-2020}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+\include{./TeX_files/chapter01}
+\include{./TeX_files/chapter02}
+\include{./TeX_files/chapter03}
+
+\backmatter
+% bibliography, glossary and index would go here.
+
+\end{document}
