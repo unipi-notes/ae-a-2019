@@ -12,10 +12,15 @@
 \usepackage{polynom}
 \usepackage{wrapfig}
 \usepackage[italian]{babel}
+\usepackage{float}
+\restylefloat{table}
 \graphicspath{ {./images/} }
 
 \addtolength{\topmargin}{.2in}
 \addtolength{\textheight}{-.3in}
+
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
 
 \begin{document}
 
@@ -31,6 +36,8 @@
 \include{./TeX_files/chapter01}
 \include{./TeX_files/chapter02}
 \include{./TeX_files/chapter03}
+\include{./TeX_files/chapter04}
+
 
 \backmatter
 % bibliography, glossary and index would go here.
