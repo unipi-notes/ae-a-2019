@@ -44,10 +44,14 @@ I componenti (transistor) con cui si costruiscono porte logiche e circuiti sono 
 
 \clearpage
 
-% TODO porta logica NOT con MOS
-
-
 \section{Algebra di Boole}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{sommadiprodotti-gate}
+	\caption{Conversione di $ z $ da formula booleana a circuito logico}
+\end{figure}
 
 \begin{table}[H]
 	\centering
@@ -62,8 +66,9 @@ I componenti (transistor) con cui si costruiscono porte logiche e circuiti sono 
 	\end{tabular}
 \end{table}
 
-La forma canonica di espressioni booleane in \textbf{somma di prodotti} è:
+Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti} è:
 \[ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC \]
+
 
 \begin{table}[H]
 	\centering
@@ -83,9 +88,11 @@ La forma canonica di espressioni booleane in \textbf{somma di prodotti} è:
 	\end{tabular}
 \end{table}
 
+
+
+
 $ z $ si può anche esprimere come prodotto di somme: $ z = (A+\overbar{B}+C)(\overbar{A}BC)(\overbar{A}\overbar{B}C) $
 
-% TODO conversione da forma canonica somma di prodotti a circuito 4.3
 
 \section{Teoremi dell'Algebra Booleana}
 Breve ripasso dei teoremi della Logica Booleana.
@@ -129,7 +136,9 @@ Le leggi della logica Booleana ci permettono di semplificare molto i componenti 
 
 \section{Mappe di Karnaugh}
 
-% TODO cos'è una mappa di Karnaugh
+Una mappa di Karnaugh o K-Map è un metodo di semplificare un espressione booleana. I valori sono trasferiti da una tabella di verità ad una mappa bidimensionale:
+
+Approfondisci su \href{https://en.wikipedia.org/wiki/Karnaugh_map}{Wikipedia}
 
 Prendiamo una formula a quattro variabili $ f(A,B,C,D) $, una mappa di Karnaugh può essere:
 \begin{table}[H]
