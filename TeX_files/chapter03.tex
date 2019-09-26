@@ -66,7 +66,7 @@ I componenti (transistor) con cui si costruiscono porte logiche e circuiti sono 
 	\end{tabular}
 \end{table}
 
-Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti} è:
+Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti}:
 \[ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC \]
 
 
@@ -172,3 +172,11 @@ Possiamo riconoscere un'implicante nella seconda e terza colonna che corrisponde
 
 \subsection{Circuito con più output}
 Se abbiamo una tabella di verità di un circuito con $ n $ input e $ 2^n $ righe, con più output $ z_1, \dots, z_k $, gli output si suddividono in $ k $ tabelle con un solo output ($ z_k $) e $ 2^n $ righe di input.
+
+\section{Operatori a più ingressi}
+Gli operatori a più ingressi AND, OR, etc..., se presentano più di due ingressi si rappresentano con una rete logica che sfrutta la proprietà associativa degli operatori logici. Ciò comporta un limite massimo di ingressi perché viene introdotto un ritardo di stabilizzazione determinato e piccolo.
+Ad esempio, un AND a 4 ingressi sarà rappresentato come $ z = x_1 \cdot x_2 \cdot x_3 \cdot x_4 = (x_1 \cdot x_2 ) \cdot (x_3 \cdot x_4)  $
+Perciò gli operatori associativi a più ingressi si rappresentano come un albero k-ario di porte logiche. Il numero di livelli di porte sarà $ log_k(n) $ dove $ k $ è l'arietà delle singole porte ed è $ n $ il numero di ingressi nel circuito.
+
+% TODO figura albero di AND con 8 input. 
+

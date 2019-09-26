@@ -14,13 +14,22 @@
 \usepackage[italian]{babel}
 \usepackage{float}
 \restylefloat{table}
+\usepackage{mathtools}
 \graphicspath{ {./images/} }
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \addtolength{\topmargin}{.2in}
 \addtolength{\textheight}{-.3in}
 
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
+\def\C{\mathbb{C}}
+\def\N{\mathbb{N}}
+\def\Q{\mathbb{Q}}
+\def\R{\mathbb{R}}
+\def\Z{\mathbb{Z}}
 
 \begin{document}
 
