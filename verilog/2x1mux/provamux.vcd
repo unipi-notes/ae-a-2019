@@ -1,0 +1,31 @@
+$date
+	Tue Oct  1 10:10:43 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module test_mux $end
+$var wire 1 ! my_z $end
+$var reg 1 " my_ic $end
+$var reg 1 # my_x $end
+$var reg 1 $ my_y $end
+$scope module mymux $end
+$var wire 1 " ic $end
+$var wire 1 # x $end
+$var wire 1 $ y $end
+$var wire 1 ! z $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0$
+0#
+1"
+0!
+$end
+#10
+1#

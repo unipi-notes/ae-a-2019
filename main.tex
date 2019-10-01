@@ -16,6 +16,8 @@
 \usepackage{float}
 \restylefloat{table}
 \usepackage{mathtools}
+\usepackage{fancyvrb}
+\usepackage{listings}
 \graphicspath{ {./images/} }
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -27,7 +29,7 @@
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 \newcommand{\diagram}[2]{
-	\begin{figure}
+	\begin{figure}[H]
 	\centering
 	\input{./diagrams/#1}
 	\caption{#2}
@@ -39,6 +41,42 @@
 \def\Q{\mathbb{Q}}
 \def\R{\mathbb{R}}
 \def\Z{\mathbb{Z}}
+
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	keepspaces=true,
+}
+\lstdefinestyle{verilog} {
+	language=Verilog,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	numbers=left,
+	numberstyle=\color{black},
+	numbersep=10pt,
+	tabsize=8,
+	moredelim=*[s][\colorIndex]{[}{]},
+	literate=*{:}{:}1
+}
+\lstdefinestyle{bash} {
+	language=bash,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=4,
+	moredelim=*[s][\colorIndex]{[}{]},
+	literate=*{:}{:}1
+}
+
+\newcommand{\includecode}[3][c]{\lstinputlisting[caption=#3, style=#1]{#2}}
+
 
 \begin{document}
 
@@ -55,6 +93,7 @@
 \include{./TeX_files/chapter02}
 \include{./TeX_files/chapter03}
 \include{./TeX_files/chapter04}
+\include{./TeX_files/chapter05}
 
 
 \backmatter

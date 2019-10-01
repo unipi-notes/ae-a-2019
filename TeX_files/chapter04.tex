@@ -13,7 +13,7 @@ Le tabelle di verità che vediamo si convertono in reti logiche. Una tabella di 
 \paragraph{Multiplexer (k commutatore)}
 Un multiplexer o commutatore è un circuito, ad esempio, con due 2 ingressi, con un ingresso aggiuntivo chiamato di \textit{controllo} che permette di alternare quale sarà l'input che verrà copiato in output.
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[]{2x1mux-gate}
 	\caption{Multiplexer 2 vie 1 bit}
@@ -37,7 +37,7 @@ Un multiplexer o commutatore è un circuito, ad esempio, con due 2 ingressi, con
 	\end{tabular}
 \end{table}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.68\textwidth]{2x1mux}
 	\caption{Circuito logico di un Multiplexer 2 vie 1 bit}
@@ -64,7 +64,7 @@ La funzione è definita come $ out = \overbar{ic} \cdot in_1 \cdot \overbar{in_2
 Un multiplexer a 4 input ha bisogno di due bit di controllo. Avendo 6 ingressi, con porte da 8 ingressi massimo $ \implies \ceil*{ log_8(6)} $ livelli di porte.
 
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[]{4x1mux-gate}
 	\caption{Multiplexer 4 vie 1 bit}
@@ -90,7 +90,7 @@ La formula di verità corrispondente sarà
 
 I livelli delle porte AND saranno $ log_8(n+1) $
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.75\textwidth]{4x1mux}
 	\caption{Circuito logico di un Multiplexer 4 vie 1 bit}
@@ -99,7 +99,7 @@ I livelli delle porte AND saranno $ log_8(n+1) $
 \paragraph{Commutatori (multiplexer) composti}
 Un commutatore multiplo da 1 bit con un numero di vie $ y $, con $ y = 2^x \land x \in \N $ e $ y > 2 $ si può costruire a partire da un albero con $ log_2y $ livelli di multiplexer da 2 vie a 1 bit. Dove ogni bit di controllo del multiplexer complessivo controlla un livello singolo dell'albero.
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.75\textwidth]{4x1mux-multiple}
 	\caption{Multiplexer 4 vie 1 bit composto da due Multiplexer 2x1}
@@ -183,12 +183,7 @@ Un decoder esegue l'operazione opposta.
 	\end{tabular}
 \end{table}
 
-
-
-\[ u = ab  \]
-\[ v = a\overbar{b} \]
-\[ z = \overbar{a}b \]
-\[ t = \overbar{ab} \]
+Gli output saranno $ u = ab, v = a\overbar{b}, z = \overbar{a}b, t = \overbar{ab} $
 
 % TODO immagine decoder 2 bit
 % TODO circuito decoder 2 bit
@@ -252,7 +247,7 @@ In maniera simile ad un confrontatore si può realizzare un componente che contr
 	\label{tab:2bitgreater}
 	\begin{tabular}{|l|llll|}
 		\hline
-		$ \dfrac{x_1x_0}{y_1y_0} $ & 00 & 01 & 11                        & 10                        \\ \hline
+		$ y_1y_0 \backslash x_1x_0 $ & 00 & 01 & 11                        & 10                        \\ \hline
 		00                         & 0  & 1  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
 		01                         & 0  & 0  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
 		11                         & 0  & 0  & 0                         & 0                         \\
@@ -266,19 +261,24 @@ In maniera simile ad un confrontatore si può realizzare un componente che contr
 La formula booleana ottenuta è $ z = x_0\overbar{y_1y_0} + x_1\overbar{y_1} + x_1x_0\overbar{y_0} $
 
 \paragraph{ALU}
-Una ALU, ovvero Arithmetic Logic Unit è un componente che in genere, in input accetta due parole $ x,y $ entrambe da $ n $ bit, e può fare due o più operazioni. L'operazione viene selezionata attraverso uno o più bit di controllo. In output ci sarà un uscita da $ n $ bit.
-
-Ad esempio, prendiamo una ALU a 4 bit con somma/sotrazione, che accetterà un solo bit di controllo.
+Una ALU, ovvero Arithmetic Logic Unit è un componente che in genere, in input accetta due parole $ x,y $ entrambe da $ n $ bit, e può fare due o più operazioni. L'operazione viene selezionata attraverso uno o più bit di controllo. In output ci sarà un uscita da $ n $ bit. Ad esempio, prendiamo una ALU a 4 bit con somma/sottrazione, che accetterà un solo bit di controllo.
 
 % TODO tabella di verità ALU
 % TODO esempio livelli di logica
 % TODO immagine ALU
 
-I livelli di porte AND saranno $ \ceil{\log_k8} $ che verrano sommati ai livelli di porte OR che saranno $ \log_k(128) $
-
-Le ALU si distinguono fra intere e a floating point. Per semplicità vedremo le ALU intere con somma e moltiplicazione
+I livelli di porte AND saranno $ \ceil{\log_k8} $ che verrano sommati ai livelli di porte OR che saranno $ \log_k(128) $. Le ALU si distinguono fra intere e a floating point. Per semplicità vedremo le ALU intere con somma e moltiplicazione.
 
 \paragraph{Multiply and Add}
 Un componente Multiply and Add (MUL\&ADD) è un componente ALU che realizza l'operazione matematica $ \sum_{i}x_iy_i $, ovvero prende gli ingressi $ x_i,y_i $, li moltiplica e li accumula sommando.
 
 % TODO immagine MULADD
+
+\section{Ritardi di propagazione}
+
+Sappiamo che il cambiamento fra HIGH e LOW (0 e 1) nei circuiti digitali non è istantaneo. A volte, il ritardo di propagazione dei transistor può causare dei glitch (fluttuazioni) che potrebbero causare una lettura incorretta dell'output di un circuito. Per ovviare a questo problema si introduce un componente chiamato \textbf{clock}, che scandisce un ciclo preciso per permettere ai valori di propagarsi nei circuiti e leggere l'output preciso alla fine della propagazione $ \Delta t $.
+
+% TODO disegno da quaderno delay transistor e glitch
+
+\paragraph{Glitch}
+
