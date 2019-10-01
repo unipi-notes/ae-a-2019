@@ -7,9 +7,10 @@
 \usepackage{hyperref}
 \usepackage{tabularx}
 \usepackage{array}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{circuitikz}
 \usepackage{polynom}
+\usepackage{pstricks}
 \usepackage{wrapfig}
 \usepackage[italian]{babel}
 \usepackage{float}
@@ -24,6 +25,14 @@
 \addtolength{\textheight}{-.3in}
 
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\newcommand{\diagram}[2]{
+	\begin{figure}
+	\centering
+	\input{./diagrams/#1}
+	\caption{#2}
+	\end{figure}
+}
 
 \def\C{\mathbb{C}}
 \def\N{\mathbb{N}}

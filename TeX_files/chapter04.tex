@@ -109,7 +109,8 @@ Un commutatore multiplo da 1 bit con un numero di vie $ y $, con $ y = 2^x \land
 
 Un commutatore a 2 vie da $ k $ bit si costruisce con $ k $ commutatori a 2 vie ad 1 bit. Dove ogni commutatore 2x1 accetta in input le corrispettive vie di ogni bit, gli output saranno i $ k $ bit corrispondenti ad ogni Multiplexer.
 
-% TODO multiplexer circuito da 2 vie a kbit
+\diagram{2x4mux.tex}{Multiplexer 2 vie da 4 bit}
+
 
 \paragraph{Sommatore di numeri}
 Un sommatore è un componente che somma due numeri in input e restituisce in output un risultato ed un riporto.
@@ -132,10 +133,152 @@ Un sommatore è un componente che somma due numeri in input e restituisce in out
 	\end{tabular}
 \end{table}
 
-% TODO circuito ad 1 bit e 2 bit
+\diagram{sum.tex}{Sommatori di due numeri}
 
 Analogamente ai commutatori si possono costruire sommatori di 2 numeri a più bit a partire da sommatori di 2 numeri da 1 bit.
 
 
 \paragraph{Esercizio}
-Realizzare la tabella di verità e circuito di un demultiplexer a 2 vie da 1 bit. 
+Realizzare la tabella di verità e circuito di un demultiplexer a 2 vie da 1 bit.
+
+\paragraph{Encoder}
+Un encoder è un circuito che converte $ 2^n $ linee in input in un codice di $ n $ bit. 
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di encoder da 2 bit.}
+	\label{tab:2bitencoder}
+	\begin{tabular}{|llll|ll|}
+		\hline
+		a & b & c & d & z & t \\ \hline
+		0 & 0 & 0 & 1 & 0 & 0 \\
+		0 & 0 & 1 & 0 & 0 & 1 \\
+		0 & 1 & 0 & 0 & 1 & 0 \\
+		1 & 0 & 0 & 0 & 1 & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+% TODO immagine encoder 2 bit
+% TODO circuito encoder 2 bit
+
+Gli output dell'encoder a 2 bit saranno
+\[ z = \overbar{a}b\overbar{cd}+a\overbar{bcd} = \overbar{cd}(\overbar{a}b+a\overbar{b}) \]
+\[ t = \overbar{ab}c\overbar{d}+a\overbar{bcd} \]
+
+
+\paragraph{Decoder}
+Un decoder esegue l'operazione opposta.
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un decoder da 2 bit.}
+	\label{tab:2bitdecoder}
+	\begin{tabular}{|ll|llll|}
+		\hline
+		a & b & u & v & z & t \\ \hline
+		0 & 0 & 0 & 0 & 0 & 1 \\
+		0 & 1 & 0 & 0 & 1 & 0 \\
+		1 & 0 & 0 & 1 & 0 & 0 \\
+		1 & 1 & 1 & 0 & 0 & 0 \\ \hline
+	\end{tabular}
+\end{table}
+
+
+
+\[ u = ab  \]
+\[ v = a\overbar{b} \]
+\[ z = \overbar{a}b \]
+\[ t = \overbar{ab} \]
+
+% TODO immagine decoder 2 bit
+% TODO circuito decoder 2 bit
+
+\paragraph{Giunzioni di linee su silicio}
+
+% TODO diagramma con doppio strato di conduttore (linea) separato da uno strato di isolante che viene bruciato sulle connessioni della griglia.
+
+\paragraph{Confrontatore}
+Un confrontatore (comparatore) confronta due configurazioni di bit e controlla che siano uguali. Un confrontatore da 1 bit è esattamente un gate NOT XOR.
+
+\[ z = ab + \overbar{ab} \]
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un confrontatore da 1 bit.}
+	\label{tab:2bitcomparator}
+	\begin{tabular}{|ll|l|}
+		\hline
+		a & b & t \\ \hline
+		0 & 0 & 1 \\
+		0 & 1 & 0 \\
+		1 & 0 & 0 \\
+		1 & 1 & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+% TODO immagine confrontatore 1 bit
+
+Per realizzare un confrontatore da più bit si mettono in parallelo più confrontatori da un solo bit e si uniscono con un albero di AND.
+
+% TODO immagine confrontatore 2 bit
+
+Un confrontatore a 2 bit impiegherà tempo $ 2\Delta t + \Delta t $
+
+Per confrontare valori da $ n $ bit si impiegherà però un tempo di $ \ceil{\log_kn}(\Delta t \cdot \text{ ogni livello AND})$
+
+\paragraph{Confronto maggiore}
+In maniera simile ad un confrontatore si può realizzare un componente che controlla se un numero di $ n $ bit è maggiore di un altro.
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un confronto maggiore da 2 bit.}
+	\label{tab:2bitgreater}
+	\begin{tabular}{|ll|ll|l|}
+		\hline
+		$ x_0 $ & $ x_1 $ & $ y_0 $ & $ y_1 $ & z \\ \hline
+		0       & 0       & -       & -       & 0 \\
+		0       & 1       & 0       & 0       & 1 \\
+		1       & -       & 0       & -       & 1 \\
+		1       & 1       & -       & 0       & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[H]
+	\centering
+	\caption{Mappa di Karnaugh di un confrontatore dell'operatore maggiore da 2 bit.}
+	\label{tab:2bitgreater}
+	\begin{tabular}{|l|llll|}
+		\hline
+		$ \dfrac{x_1x_0}{y_1y_0} $ & 00 & 01 & 11                        & 10                        \\ \hline
+		00                         & 0  & 1  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
+		01                         & 0  & 0  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
+		11                         & 0  & 0  & 0                         & 0                         \\
+		10                         & 0  & 0  & 1                         & 0                         \\ \hline
+	\end{tabular}
+\end{table}
+
+% TODO immagine confronto maggiore
+% TODO circuito confronto maggiore
+
+La formula booleana ottenuta è $ z = x_0\overbar{y_1y_0} + x_1\overbar{y_1} + x_1x_0\overbar{y_0} $
+
+\paragraph{ALU}
+Una ALU, ovvero Arithmetic Logic Unit è un componente che in genere, in input accetta due parole $ x,y $ entrambe da $ n $ bit, e può fare due o più operazioni. L'operazione viene selezionata attraverso uno o più bit di controllo. In output ci sarà un uscita da $ n $ bit.
+
+Ad esempio, prendiamo una ALU a 4 bit con somma/sotrazione, che accetterà un solo bit di controllo.
+
+% TODO tabella di verità ALU
+% TODO esempio livelli di logica
+% TODO immagine ALU
+
+I livelli di porte AND saranno $ \ceil{\log_k8} $ che verrano sommati ai livelli di porte OR che saranno $ \log_k(128) $
+
+Le ALU si distinguono fra intere e a floating point. Per semplicità vedremo le ALU intere con somma e moltiplicazione
+
+\paragraph{Multiply and Add}
+Un componente Multiply and Add (MUL\&ADD) è un componente ALU che realizza l'operazione matematica $ \sum_{i}x_iy_i $, ovvero prende gli ingressi $ x_i,y_i $, li moltiplica e li accumula sommando.
+
+% TODO immagine MULADD
