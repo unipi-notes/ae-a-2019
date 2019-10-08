@@ -1,284 +1,62 @@
-\chapter{Reti Logiche e Combinatorie} 
+\chapter{Verilog e RTL}
 
-\section{Alcuni componenti standard}
+Gli RTL, o Register Transfer Language, permettono di descrivere cosa succede a livello di circuito fra registri. Vengono utilizzati per descrivere l'hardware. Vedremo il linguaggio \textbf{Verilog}. Gli RTL permettono di descrivere e comporre dei moduli. Il libro di testo propone il dialetto \textbf{System Verilog} che mette a disposizione due metodi per descrivere i moduli. Un metodo è il metodo \textit{constructive}, noi vedremo il metodo \textit{behavioral} dove ad esempio un Multiplexer da 2 vie 1 bit è descritto da:
+\begin{lstlisting}[style={verilog}]
+	z = (ic == 0 ? x : y)
+\end{lstlisting}
 
-Le tabelle di verità che vediamo si convertono in reti logiche. Una tabella di verità con $ n $ ingressi ha $ 2^n $ righe e corrisponde ad un componente logico di un circuito con $ n $ input. Vediamo alcuni oggetti utili. Ricordiamo che i passaggi per definire un componente in forma di rete logica sono: 
+Verilog è un linguaggio compilato. Un file System Verilog compilato produce una traccia di esecuzione e un eseguibile che simula il comportamento dei moduli. Viene detta \textbf{simulazione}.
 
+Un programma Verilog può anche essere dato in input a un programma detto \textbf{synthetizer}, che produce una \textbf{netlist}, ovvero una lista dei componenti e dei collegamenti per realizzare il modulo fisicamente. Un altro modo per realizzare la sintesi è utilizzare un \textbf{FPGA}, o Field-programmable gate array. Un FPGA è un circuito integrato composto da una matrice di celle, e una singola cella può:
 \begin{enumerate}
-	\item Definizione della funzione con tabella di verità
-	\item Conversione della funzione normalizzata in somma di prodotti
-	\item Conversione a circuito con porte AND/OR/NOT
-\end{enumerate}
+	\item Eseguire una funzione booleana di 3-5 ingressi con 1 uscita 
+	\item Implementare un bit di memoria
+	\item Routing
+\end{enumerate} 
 
-\paragraph{Multiplexer (k commutatore)}
-Un multiplexer o commutatore è un circuito, ad esempio, con due 2 ingressi, con un ingresso aggiuntivo chiamato di \textit{controllo} che permette di alternare quale sarà l'input che verrà copiato in output.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[]{2x1mux-gate}
-	\caption{Multiplexer 2 vie 1 bit}
-\end{figure}
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di un multiplexer a due vie da un bit}
-	\label{tab:multiplexer1}
-	\begin{tabular}{|lll|l|}
-		\hline
-		ictrl & $ in_1 $ & $ in_2 $ & out \\ \hline
-		0     & 0   & 0   & 0   \\
-		0     & 0   & 1   & 0   \\
-		0     & 1   & 0   & 1   \\
-		0     & 1   & 1   & 1   \\ \hline
-		1     & 0   & 0   & 0   \\
-		1     & 0   & 1   & 1   \\
-		1     & 1   & 0   & 0   \\
-		1     & 1   & 1   & 1   \\ \hline
-	\end{tabular}
-\end{table}
+Un FPGA moderno comprende, oltre a delle celle, delle righe che contengono diversi componenti come delle ALU.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.68\textwidth]{2x1mux}
-	\caption{Circuito logico di un Multiplexer 2 vie 1 bit}
+	\includegraphics[]{fpga1}
+	\caption{Schema FPGA}
 \end{figure}
 
+\section{Scrivere e compilare System Verilog}
 
+Creiamo un multiplexer da due bit con System Verilog, compiliamo e visualizziamo con \textbf{GTKWave}
 
-La funzione è definita come $ out = \overbar{ic} \cdot in_1 \cdot \overbar{in_2} + \overbar{ic} \cdot in_1 \cdot in_2 + ic \cdot \overbar{in_1} \cdot in_2 + ic \cdot in \cdot in_2 $ e si può ridurre in $ out = \overbar{ic} \cdot in_1 + ic \cdot in_2 $. Le tabelle di verità semplificate ci permettono di dedurre direttamente la formula ridotta. Ad esempio, la tabella seguente corrisponde a quella antecedente.
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità semplificata di un multiplexer a due vie da un bit}
-	\label{tab:multiplexer2}
-	\begin{tabular}{|lll|l|}
-		\hline
-		ictrl & in1 & in2 & out \\ \hline
-		0     & 0   & -   & 0   \\
-		0     & 1   & -   & 1   \\ \hline
-		1     & -   & 0   & 0   \\
-		1     & -   & 1   & 1   \\ \hline
-	\end{tabular}
-\end{table}
+\includecode[verilog]{./verilog/2x1mux/mux.sv}{mux.sv}
+\includecode[verilog]{./verilog/2x1mux/test_mux.sv}{test\_mux.sv}
 
-\paragraph{Multiplexer a 4 Input}
-Un multiplexer a 4 input ha bisogno di due bit di controllo. Avendo 6 ingressi, con porte da 8 ingressi massimo $ \implies \ceil*{ log_8(6)} $ livelli di porte.
+Per compilare, eseguiamo da terminale 
+\begin{lstlisting}[style={bash}]
+iverilog -g2005-sv nome_sorgente.sv -o nome_eseguibile
+\end{lstlisting}
 
+Quindi, per compilare entrambi i file e caricarli in GTKWave:
+\begin{lstlisting}[style={bash}]
+iverilog -g2005-sv test_mux.sv mux.sv -o test_mux
+# Eseguiamo la simulazione
+./test_mux
+# Viene creato il file provamux.vcd, carichiamolo in GTKWave
+gtkwave provamux.vcd &
+\end{lstlisting}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[]{4x1mux-gate}
-	\caption{Multiplexer 4 vie 1 bit}
-\end{figure}
+\includecode[verilog]{./verilog/2x1mux/mux4.sv}{Multiplexer da 4 vie ad 1 bit}
 
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità semplificata di un multiplexer a quattro vie da un bit}
-	\label{tab:multiplexer3}
-	\begin{tabular}{|llllll|l|}
-		\hline
-		$ ic_1 $ & $ ic_2 $ & $ in_1 $ & $ in_2 $ & $ in_3 $ & $ in_4 $ & out \\ \hline
-		0     & 0     & 1     & -     & -     & -     & 1   \\ \hline
-		0     & 1     & -     & 1     & -     & -     & 1   \\ \hline
-		1     & 0     & -     & -     & 1     & -     & 1   \\ \hline
-		1     & 1     & -     & -     & -     & 1     & 1   \\ \hline
-	\end{tabular}
-\end{table}
+\includecode[verilog]{./verilog/2x1mux/muxbool.sv}{Multiplexer di variabili booleane}
 
+\clearpage
 
-La formula di verità corrispondente sarà
-\[ \text{out} = (\overbar{ic_1} \cdot \overbar{ic_2} \cdot in_1) + (\overbar{ic_1} \cdot ic_2 \cdot in_2) + (ic_1 \cdot \overbar{ic_2} \cdot in_3) + (ic_1\cdot ic_2 \cdot in_4)  \]
+\section{Esercizi}
 
-I livelli delle porte AND saranno $ log_8(n+1) $
+\paragraph{Automa di Mealy per riconoscere "abba"}
+Abbiamo visto nella sezione precedente un automa di Mealy a stati finiti per riconoscere una stringa "abba" in un una stringa nell'alfabeto $ \{a,b,c\} $.
+Abbiamo 3 moduli. Uno per il registro, uno per il modulo $ \omega $ e uno per il modulo $ \sigma $. Scriviamolo in Verilog.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\textwidth]{4x1mux}
-	\caption{Circuito logico di un Multiplexer 4 vie 1 bit}
-\end{figure}
+% TODO finisci automa in verilog.
 
-\paragraph{Commutatori (multiplexer) composti}
-Un commutatore multiplo da 1 bit con un numero di vie $ y $, con $ y = 2^x \land x \in \N $ e $ y > 2 $ si può costruire a partire da un albero con $ log_2y $ livelli di multiplexer da 2 vie a 1 bit. Dove ogni bit di controllo del multiplexer complessivo controlla un livello singolo dell'albero.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\textwidth]{4x1mux-multiple}
-	\caption{Multiplexer 4 vie 1 bit composto da due Multiplexer 2x1}
-\end{figure}
-
-\paragraph{Multiplexer a 2 vie da k bit}
-
-Un commutatore a 2 vie da $ k $ bit si costruisce con $ k $ commutatori a 2 vie ad 1 bit. Dove ogni commutatore 2x1 accetta in input le corrispettive vie di ogni bit, gli output saranno i $ k $ bit corrispondenti ad ogni Multiplexer.
-
-\diagram{2x4mux.tex}{Multiplexer 2 vie da 4 bit}
-
-
-\paragraph{Sommatore di numeri}
-Un sommatore è un componente che somma due numeri in input e restituisce in output un risultato ed un riporto.
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di una somma di due numeri da un bit.}
-	\label{tab:sum1bit}
-	\begin{tabular}{|lll|l|l|}
-		\hline
-		$ x_{1} $ & $ x _{2} $ & $ r_0 $ & $ z_1 $ & $r_1$ \\ \hline
-		0         & 0          & 0       & 0       & 0     \\
-		0         & 0          & 1       & 1       & 0     \\
-		0         & 1          & 0       & 1       & 0     \\
-		0         & 1          & 1       & 1       & 0     \\
-		1         & 0          & 0       & 1       & 0     \\
-		1         & 1          & 0       & 0       & 1     \\
-		1         & 0          & 1       & 0       & 1     \\
-		1         & 1          & 1       & 1       & 1     \\ \hline
-	\end{tabular}
-\end{table}
-
-\diagram{sum.tex}{Sommatori di due numeri}
-
-Analogamente ai commutatori si possono costruire sommatori di 2 numeri a più bit a partire da sommatori di 2 numeri da 1 bit.
-
-
-\paragraph{Esercizio}
-Realizzare la tabella di verità e circuito di un demultiplexer a 2 vie da 1 bit.
-
-\paragraph{Encoder}
-Un encoder è un circuito che converte $ 2^n $ linee in input in un codice di $ n $ bit. 
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di encoder da 2 bit.}
-	\label{tab:2bitencoder}
-	\begin{tabular}{|llll|ll|}
-		\hline
-		a & b & c & d & z & t \\ \hline
-		0 & 0 & 0 & 1 & 0 & 0 \\
-		0 & 0 & 1 & 0 & 0 & 1 \\
-		0 & 1 & 0 & 0 & 1 & 0 \\
-		1 & 0 & 0 & 0 & 1 & 1 \\ \hline
-	\end{tabular}
-\end{table}
-
-% TODO immagine encoder 2 bit
-% TODO circuito encoder 2 bit
-
-Gli output dell'encoder a 2 bit saranno
-\[ z = \overbar{a}b\overbar{cd}+a\overbar{bcd} = \overbar{cd}(\overbar{a}b+a\overbar{b}) \]
-\[ t = \overbar{ab}c\overbar{d}+a\overbar{bcd} \]
-
-
-\paragraph{Decoder}
-Un decoder esegue l'operazione opposta.
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di un decoder da 2 bit.}
-	\label{tab:2bitdecoder}
-	\begin{tabular}{|ll|llll|}
-		\hline
-		a & b & u & v & z & t \\ \hline
-		0 & 0 & 0 & 0 & 0 & 1 \\
-		0 & 1 & 0 & 0 & 1 & 0 \\
-		1 & 0 & 0 & 1 & 0 & 0 \\
-		1 & 1 & 1 & 0 & 0 & 0 \\ \hline
-	\end{tabular}
-\end{table}
-
-Gli output saranno $ u = ab, v = a\overbar{b}, z = \overbar{a}b, t = \overbar{ab} $
-
-% TODO immagine decoder 2 bit
-% TODO circuito decoder 2 bit
-
-\paragraph{Giunzioni di linee su silicio}
-
-% TODO diagramma con doppio strato di conduttore (linea) separato da uno strato di isolante che viene bruciato sulle connessioni della griglia.
-
-\paragraph{Confrontatore}
-Un confrontatore (comparatore) confronta due configurazioni di bit e controlla che siano uguali. Un confrontatore da 1 bit è esattamente un gate NOT XOR.
-
-\[ z = ab + \overbar{ab} \]
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di un confrontatore da 1 bit.}
-	\label{tab:2bitcomparator}
-	\begin{tabular}{|ll|l|}
-		\hline
-		a & b & t \\ \hline
-		0 & 0 & 1 \\
-		0 & 1 & 0 \\
-		1 & 0 & 0 \\
-		1 & 1 & 1 \\ \hline
-	\end{tabular}
-\end{table}
-
-% TODO immagine confrontatore 1 bit
-
-Per realizzare un confrontatore da più bit si mettono in parallelo più confrontatori da un solo bit e si uniscono con un albero di AND.
-
-% TODO immagine confrontatore 2 bit
-
-Un confrontatore a 2 bit impiegherà tempo $ 2\Delta t + \Delta t $
-
-Per confrontare valori da $ n $ bit si impiegherà però un tempo di $ \ceil{\log_kn}(\Delta t \cdot \text{ ogni livello AND})$
-
-\paragraph{Confronto maggiore}
-In maniera simile ad un confrontatore si può realizzare un componente che controlla se un numero di $ n $ bit è maggiore di un altro.
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità di un confronto maggiore da 2 bit.}
-	\label{tab:2bitgreater}
-	\begin{tabular}{|ll|ll|l|}
-		\hline
-		$ x_0 $ & $ x_1 $ & $ y_0 $ & $ y_1 $ & z \\ \hline
-		0       & 0       & -       & -       & 0 \\
-		0       & 1       & 0       & 0       & 1 \\
-		1       & -       & 0       & -       & 1 \\
-		1       & 1       & -       & 0       & 1 \\ \hline
-	\end{tabular}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-\begin{table}[H]
-	\centering
-	\caption{Mappa di Karnaugh di un confrontatore dell'operatore maggiore da 2 bit.}
-	\label{tab:2bitgreater}
-	\begin{tabular}{|l|llll|}
-		\hline
-		$ y_1y_0 \backslash x_1x_0 $ & 00 & 01 & 11                        & 10                        \\ \hline
-		00                         & 0  & 1  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
-		01                         & 0  & 0  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
-		11                         & 0  & 0  & 0                         & 0                         \\
-		10                         & 0  & 0  & 1                         & 0                         \\ \hline
-	\end{tabular}
-\end{table}
-
-% TODO immagine confronto maggiore
-% TODO circuito confronto maggiore
-
-La formula booleana ottenuta è $ z = x_0\overbar{y_1y_0} + x_1\overbar{y_1} + x_1x_0\overbar{y_0} $
-
-\paragraph{ALU}
-Una ALU, ovvero Arithmetic Logic Unit è un componente che in genere, in input accetta due parole $ x,y $ entrambe da $ n $ bit, e può fare due o più operazioni. L'operazione viene selezionata attraverso uno o più bit di controllo. In output ci sarà un uscita da $ n $ bit. Ad esempio, prendiamo una ALU a 4 bit con somma/sottrazione, che accetterà un solo bit di controllo.
-
-% TODO tabella di verità ALU
-% TODO esempio livelli di logica
-% TODO immagine ALU
-
-I livelli di porte AND saranno $ \ceil{\log_k8} $ che verrano sommati ai livelli di porte OR che saranno $ \log_k(128) $. Le ALU si distinguono fra intere e a floating point. Per semplicità vedremo le ALU intere con somma e moltiplicazione.
-
-\paragraph{Multiply and Add}
-Un componente Multiply and Add (MUL\&ADD) è un componente ALU che realizza l'operazione matematica $ \sum_{i}x_iy_i $, ovvero prende gli ingressi $ x_i,y_i $, li moltiplica e li accumula sommando.
-
-% TODO immagine MULADD
-
-\section{Ritardi di propagazione}
-
-Sappiamo che il cambiamento fra HIGH e LOW (0 e 1) nei circuiti digitali non è istantaneo. A volte, il ritardo di propagazione dei transistor può causare dei glitch (fluttuazioni) che potrebbero causare una lettura incorretta dell'output di un circuito. Per ovviare a questo problema si introduce un componente chiamato \textbf{clock}, che scandisce un ciclo preciso per permettere ai valori di propagarsi nei circuiti e leggere l'output preciso alla fine della propagazione $ \Delta t $.
-
-% TODO disegno da quaderno delay transistor e glitch
-
-\paragraph{Glitch}
-
+\includecode[verilog]{./verilog/abbamealy/register.v}{Registro a N bit}
+\includecode[verilog]{./verilog/abbamealy/sigma.v}{Modulo di $ \sigma $}
+\includecode[verilog]{./verilog/abbamealy/omega.v}{Modulo di $ \omega $}

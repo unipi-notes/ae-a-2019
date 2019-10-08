@@ -9,6 +9,9 @@
 \usepackage{array}
 \usepackage[table]{xcolor}
 \usepackage{circuitikz}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
 \usepackage{polynom}
 \usepackage{pstricks}
 \usepackage{wrapfig}
@@ -16,8 +19,11 @@
 \usepackage{float}
 \restylefloat{table}
 \usepackage{mathtools}
+
+% Code with syntax highlighting
 \usepackage{fancyvrb}
 \usepackage{listings}
+\usepackage{textcomp}
 \graphicspath{ {./images/} }
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -26,6 +32,14 @@
 \addtolength{\topmargin}{.2in}
 \addtolength{\textheight}{-.3in}
 
+\newcommand{\centerfig}[3]{
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=#1\textwidth]{#2}
+	\caption{#3}
+\end{figure}
+}
+
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 \newcommand{\diagram}[2]{
@@ -33,6 +47,7 @@
 	\centering
 	\input{./diagrams/#1}
 	\caption{#2}
+	\label{fig:#1}
 	\end{figure}
 }
 
@@ -61,7 +76,6 @@
 	numberstyle=\color{black},
 	numbersep=10pt,
 	tabsize=8,
-	moredelim=*[s][\colorIndex]{[}{]},
 	literate=*{:}{:}1
 }
 \lstdefinestyle{bash} {
@@ -71,7 +85,7 @@
 	identifierstyle=\color{black},
 	commentstyle=\color{vgreen},
 	tabsize=4,
-	moredelim=*[s][\colorIndex]{[}{]},
+%	moredelim=*[s][\colorIndex]{[}{]},
 	literate=*{:}{:}1
 }
 

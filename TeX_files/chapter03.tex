@@ -1,182 +1,419 @@
-\chapter{Porte Logiche e Algebra di Boole}
+\chapter{Reti Logiche e Combinatorie} 
 
-I circuiti digitali vengono realizzati utilizzando componenti chiamati \textbf{porte logiche}. Sono realizzate con componenti fisici come transistor e resistenze, ma nella progettazione dei circuiti digitali le porte logiche vengono schematizzate con i simboli riportati nella Figura 3.1 per semplificare la progettazione \textbf{astraendo} il livello di complessità della circuiteria analogica.
-Solamente con la porta NAND si possono realizzare tutte le altre porte (NAND è funzionalmente completo), ma le porte in generale si costruiscono singolarmente con componenti appositi. Esse implementano la \textbf{logica booleana} che conseguentemente permette di realizzare operazioni di \textbf{aritmetica binaria} per costruire unità di calcolo in componenti elettronici e processori.
+\section{Alcuni componenti standard}
 
-\begin{wrapfigure}{r}{0.6\textwidth}
-	\begin{center}
-		\includegraphics[width=0.58\textwidth]{noisemargin}
-	\end{center}
-	\caption{Margine di rumore nei circuiti digitali}	
-\end{wrapfigure}
+Le tabelle di verità che vediamo si convertono in reti logiche. Una tabella di verità con $ n $ ingressi ha $ 2^n $ righe e corrisponde ad un componente logico di un circuito con $ n $ input. Vediamo alcuni oggetti utili. Ricordiamo che i passaggi per definire un componente in forma di rete logica sono: 
 
+\begin{enumerate}
+	\item Definizione della funzione con tabella di verità
+	\item Conversione della funzione normalizzata in somma di prodotti
+	\item Conversione a circuito con porte AND/OR/NOT
+\end{enumerate}
 
-I componenti elettronici molto piccoli sono sensibili al \textbf{rumore}, per ovviare al problema i valori discreti (0 e 1) nei circuiti digitali non seguono un cambiamento istantaneo di differenza di potenziale (voltaggio), ma ammettono un margine per ridurre i problemi causati dal rumore.
+\paragraph{Multiplexer (k commutatore)}
+Un multiplexer o commutatore è un circuito, ad esempio, con due 2 ingressi, con un ingresso aggiuntivo chiamato di \textit{controllo} che permette di alternare quale sarà l'input che verrà copiato in output.
 
-
-I componenti (transistor) con cui si costruiscono porte logiche e circuiti sono realizzati con materiali semiconduttori, che possono essere di diversi tipi. Vedremo il tipo NMOS. Un transistor è composto da materiali come gallio e silicio.
-
-\begin{wrapfigure}{r}{0.7\textwidth}
-	\begin{center}
-		\includegraphics[width=0.68\textwidth]{cmos}
-	\end{center}
-	\caption{Transistor NMOS}
-\end{wrapfigure}
-
-
-\begin{figure}
+\begin{figure}[H]
 	\centering
-	\caption{Tabella delle porte logiche comuni}
-	\includegraphics[width=\textwidth,height=\textheight]{logicgates}
+	\includegraphics[]{2x1mux-gate}
+	\caption{Multiplexer 2 vie 1 bit}
 \end{figure}
 
-\begin{figure}
+\begin{table}[H]
 	\centering
-	\caption{Porta NOT con transistor PMOS e NMOS}
-	\includegraphics[width=\textwidth]{notgatetransistor}
+	\caption{Tabella di verità di un multiplexer a due vie da un bit}
+	\label{tab:multiplexer1}
+	\begin{tabular}{|lll|l|}
+		\hline
+		ictrl & $ in_1 $ & $ in_2 $ & out \\ \hline
+		0     & 0   & 0   & 0   \\
+		0     & 0   & 1   & 0   \\
+		0     & 1   & 0   & 1   \\
+		0     & 1   & 1   & 1   \\ \hline
+		1     & 0   & 0   & 0   \\
+		1     & 0   & 1   & 1   \\
+		1     & 1   & 0   & 0   \\
+		1     & 1   & 1   & 1   \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.68\textwidth]{2x1mux}
+	\caption{Circuito logico di un Multiplexer 2 vie 1 bit}
 \end{figure}
 
-\begin{figure}
+
+
+La funzione è definita come $ out = \overbar{ic} \cdot in_1 \cdot \overbar{in_2} + \overbar{ic} \cdot in_1 \cdot in_2 + ic \cdot \overbar{in_1} \cdot in_2 + ic \cdot in \cdot in_2 $ e si può ridurre in $ out = \overbar{ic} \cdot in_1 + ic \cdot in_2 $. Le tabelle di verità semplificate ci permettono di dedurre direttamente la formula ridotta. Ad esempio, la tabella seguente corrisponde a quella antecedente.
+\begin{table}[H]
 	\centering
-	\caption{Transistor NMOS e PMOS}
-	\includegraphics[width=0.6\textwidth]{NMOS-and-PMOS}
-\end{figure}
+	\caption{Tabella di verità semplificata di un multiplexer a due vie da un bit}
+	\label{tab:multiplexer2}
+	\begin{tabular}{|lll|l|}
+		\hline
+		ictrl & in1 & in2 & out \\ \hline
+		0     & 0   & -   & 0   \\
+		0     & 1   & -   & 1   \\ \hline
+		1     & -   & 0   & 0   \\
+		1     & -   & 1   & 1   \\ \hline
+	\end{tabular}
+\end{table}
 
-\clearpage
-
-\section{Algebra di Boole}
+\paragraph{Multiplexer a 4 Input}
+Un multiplexer a 4 input ha bisogno di due bit di controllo. Avendo 6 ingressi, con porte da 8 ingressi massimo $ \implies \ceil*{ log_8(6)} $ livelli di porte.
 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.48\textwidth]{sommadiprodotti-gate}
-	\caption{Conversione di $ z $ da formula booleana a circuito logico}
+	\includegraphics[]{4x1mux-gate}
+	\caption{Multiplexer 4 vie 1 bit}
 \end{figure}
 
 \begin{table}[H]
 	\centering
-	\caption{Notazione usata per l'Algebra di Boole}
-	\label{tab:notazione-booleana}
-	\begin{tabular}{|l|l|l|}
+	\caption{Tabella di verità semplificata di un multiplexer a quattro vie da un bit}
+	\label{tab:multiplexer3}
+	\begin{tabular}{|llllll|l|}
 		\hline
-		Funzione & Notazione Usata & Notazione Logica \\ 
-		NOT(A)   & $\overbar{A}$   & $\lnot A$        \\ 
-		AND(A,B) & $A \cdot B$     & $A \land B$      \\ 
-		OR(A,B)  & $A + B$         & $A \lor B$       \\ \hline
+		$ ic_1 $ & $ ic_2 $ & $ in_1 $ & $ in_2 $ & $ in_3 $ & $ in_4 $ & out \\ \hline
+		0     & 0     & 1     & -     & -     & -     & 1   \\ \hline
+		0     & 1     & -     & 1     & -     & -     & 1   \\ \hline
+		1     & 0     & -     & -     & 1     & -     & 1   \\ \hline
+		1     & 1     & -     & -     & -     & 1     & 1   \\ \hline
 	\end{tabular}
 \end{table}
 
-Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti}:
-\[ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC \]
 
+La formula di verità corrispondente sarà
+\[ \text{out} = (\overbar{ic_1} \cdot \overbar{ic_2} \cdot in_1) + (\overbar{ic_1} \cdot ic_2 \cdot in_2) + (ic_1 \cdot \overbar{ic_2} \cdot in_3) + (ic_1\cdot ic_2 \cdot in_4)  \]
+
+I livelli delle porte AND saranno $ log_8(n+1) $
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textwidth]{4x1mux}
+	\caption{Circuito logico di un Multiplexer 4 vie 1 bit}
+\end{figure}
+
+\paragraph{Commutatori (multiplexer) composti}
+Un commutatore multiplo da 1 bit con un numero di vie $ y $, con $ y = 2^x \land x \in \N $ e $ y > 2 $ si può costruire a partire da un albero con $ log_2y $ livelli di multiplexer da 2 vie a 1 bit. Dove ogni bit di controllo del multiplexer complessivo controlla un livello singolo dell'albero.
+
+\centerfig{0.75}{4x1mux-multiple}{Multiplexer 4 vie 1 bit composto da due Multiplexer 2x1}
+
+\paragraph{Multiplexer a 2 vie da k bit}
+
+Un commutatore a 2 vie da $ k $ bit si costruisce con $ k $ commutatori a 2 vie ad 1 bit. Dove ogni commutatore 2x1 accetta in input le corrispettive vie di ogni bit, gli output saranno i $ k $ bit corrispondenti ad ogni Multiplexer.
+
+\diagram{2x4mux.tex}{Multiplexer 2 vie da 4 bit}
+
+
+\paragraph{Sommatore di numeri}
+Un sommatore è un componente che somma due numeri in input e restituisce in output un risultato ed un riporto.
 
 \begin{table}[H]
 	\centering
-	\caption{Tabella di verità di $ z $}
-	\label{tab:z-truth}
-	\begin{tabular}{|l|l|l|l|}
+	\caption{Tabella di verità di una somma di due numeri da un bit.}
+	\label{tab:sum1bit}
+	\begin{tabular}{|lll|l|l|}
 		\hline
-		A & B & C & z \\ \hline
-		0                       & 0                      & 0 & 1 \\  
-		0                       & 0                      & 1 & 1 \\ 
-		0                       & 1                      & 0 & 0 \\ 
-		0                       & 1                      & 1 & 1 \\ 
-		1                       & 0                      & 0 & 0 \\ 
-		1                       & 0                      & 1 & 1 \\  
-		1                       & 1                      & 0 & 0 \\ 
-		1                       & 1                      & 1 & 1 \\ \hline
+		$ x_{1} $ & $ x _{2} $ & $ r_0 $ & $ z_1 $ & $r_1$ \\ \hline
+		0         & 0          & 0       & 0       & 0     \\
+		0         & 0          & 1       & 1       & 0     \\
+		0         & 1          & 0       & 1       & 0     \\
+		0         & 1          & 1       & 1       & 0     \\
+		1         & 0          & 0       & 1       & 0     \\
+		1         & 1          & 0       & 0       & 1     \\
+		1         & 0          & 1       & 0       & 1     \\
+		1         & 1          & 1       & 1       & 1     \\ \hline
 	\end{tabular}
 \end{table}
 
+\diagram{sum.tex}{Sommatori di due numeri}
+
+Analogamente ai commutatori si possono costruire sommatori di 2 numeri a più bit a partire da sommatori di 2 numeri da 1 bit.
 
 
+\paragraph{Esercizio}
+Realizzare la tabella di verità e circuito di un demultiplexer a 2 vie da 1 bit.
 
-$ z $ si può anche esprimere come prodotto di somme: $ z = (A+\overbar{B}+C)(\overbar{A}BC)(\overbar{A}\overbar{B}C) $
-
-
-\section{Teoremi dell'Algebra Booleana}
-Breve ripasso dei teoremi della Logica Booleana.
-\paragraph{Elemento Identità di prodotto e somma}
-\[ A \cdot 1 = A \iff A \land T \equiv A\]
-\[ A + 0 = 0 \iff A \lor F \equiv A\]
-\paragraph{Elemento assorbente}
-\[ A \cdot 0 = 0 \iff A \land F \equiv F \]
-\[ A + 1 = 1 \iff A \lor T \equiv T \]
-\paragraph{Idempotenza}
-\[ A \cdot A = A \iff A \land A \equiv A \]
-\[ A + A = A \iff A \lor A \equiv A \]
-\paragraph{Complemento}
-\[ A \cdot \overbar{A} = 0 \iff A \land \lnot A \equiv F \]
-\[ A + \overbar{A} = 1 \iff A \lor \lnot A \equiv T \]
-\paragraph{Commutatività}
-\[ A + B = B + A \]
-\[ A \cdot B = B \cdot A \]
-\paragraph{Associatività}
-\[ (A \cdot B) \cdot C = A \cdot (B \cdot C) \]
-\[ (A + B) + C = A + (B + C) \]
-\paragraph{Distributività}
-\[ (A \cdot B) + C = (A+C) \cdot (B+C) \]
-\[ (A+B) \cdot C = AC + BC \]
-\paragraph{DeMorgan}
-\[ \overbar{(A + B)} = \overbar{A} \cdot \overbar{B} \iff \lnot(A \lor B )\equiv \lnot A \land \lnot B \]
-\[ \overbar{(A \cdot B)} = \overbar{A} + \overbar{B} \iff \lnot(A \land B )\equiv \lnot A \lor \lnot B \]
-
-\paragraph{Esempio}
-Semplifichiamo la formula booleana $ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC $
-
-\begin{align}
-\begin{cases}
-\overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C \equiv \overbar{A}\overbar{B}(\overbar{C}+C) \equiv \overbar{A}\overbar{B} \\ 
-A\overbar{B}C + ABC \equiv AC(\overbar{B}+B) \equiv AC
-\end{cases} \\
-\implies z = \overbar{A}\overbar{B} + \overbar{A}BC + AC
-\end{align}
-
-Le leggi della logica Booleana ci permettono di semplificare molto i componenti realizzati con porte logiche.
-
-\section{Mappe di Karnaugh}
-
-Una mappa di Karnaugh o K-Map è un metodo di semplificare un espressione booleana. I valori sono trasferiti da una tabella di verità ad una mappa bidimensionale:
-
-Approfondisci su \href{https://en.wikipedia.org/wiki/Karnaugh_map}{Wikipedia}
-
-Prendiamo una formula a quattro variabili $ f(A,B,C,D) $, una mappa di Karnaugh può essere:
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità della mappa di Karnaugh di $f$}
-	\label{tab:karnaugh}
-	\begin{tabular}{lllll}
-		AB\textbackslash{}CD    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
-		\multicolumn{1}{l|}{00} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{01} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{11} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
-	\end{tabular}
-\end{table}
-
-Facciamo ad esempio la mappa di Karnaugh di $ z = f(A,B,C) $ vista nella sezione precedente:
+\paragraph{Encoder}
+Un encoder è un circuito che converte $ 2^n $ linee in input in un codice di $ n $ bit. 
 
 \begin{table}[H]
 	\centering
-	\caption{Tabella di verità della mappa di Karnaugh di $z$}
-	\label{tab:karnaugh}
-	\begin{tabular}{lllll}
-		A\textbackslash{}BC    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
-		\multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
+	\caption{Tabella di verità di encoder da 2 bit.}
+	\label{tab:2bitencoder}
+	\begin{tabular}{|llll|ll|}
+		\hline
+		a & b & c & d & z & t \\ \hline
+		0 & 0 & 0 & 1 & 0 & 0 \\
+		0 & 0 & 1 & 0 & 0 & 1 \\
+		0 & 1 & 0 & 0 & 1 & 0 \\
+		1 & 0 & 0 & 0 & 1 & 1 \\ \hline
 	\end{tabular}
 \end{table}
 
-Possiamo riconoscere un'implicante nella seconda e terza colonna che corrisponde esattamente a C. Osserviamo un'altra implicante nella prima riga, prima e seconda colonna che corrisponde esattamente a $ \overbar{A}\overbar{B} $. Possiamo poi sommare le implicanti per ottenere una formula equivalente a quella di partenza, ciò implica che $ z =  \overbar{A}\overbar{B} + C $
+\diagram{4x2encoder.tex}{Encoder di un numero da 2 bit.}
+
+Gli output dell'encoder a 2 bit saranno
+\[ z = \overbar{a}b\overbar{cd}+a\overbar{bcd} = \overbar{cd}(\overbar{a}b+a\overbar{b}) \]
+\[ t = \overbar{ab}c\overbar{d}+a\overbar{bcd} \]
 
 
-\subsection{Circuito con più output}
-Se abbiamo una tabella di verità di un circuito con $ n $ input e $ 2^n $ righe, con più output $ z_1, \dots, z_k $, gli output si suddividono in $ k $ tabelle con un solo output ($ z_k $) e $ 2^n $ righe di input.
+\paragraph{Decoder}
+Un decoder esegue l'operazione opposta.
 
-\section{Operatori a più ingressi}
-Gli operatori a più ingressi AND, OR, etc..., se presentano più di due ingressi si rappresentano con una rete logica che sfrutta la proprietà associativa degli operatori logici. Ciò comporta un limite massimo di ingressi perché viene introdotto un ritardo di stabilizzazione determinato e piccolo.
-Ad esempio, un AND a 4 ingressi sarà rappresentato come $ z = x_1 \cdot x_2 \cdot x_3 \cdot x_4 = (x_1 \cdot x_2 ) \cdot (x_3 \cdot x_4)  $
-Perciò gli operatori associativi a più ingressi si rappresentano come un albero k-ario di porte logiche. Il numero di livelli di porte sarà $ log_k(n) $ dove $ k $ è l'arietà delle singole porte ed è $ n $ il numero di ingressi nel circuito.
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un decoder da 2 bit.}
+	\label{tab:2bitdecoder}
+	\begin{tabular}{|ll|llll|}
+		\hline
+		a & b & u & v & z & t \\ \hline
+		0 & 0 & 0 & 0 & 0 & 1 \\
+		0 & 1 & 0 & 0 & 1 & 0 \\
+		1 & 0 & 0 & 1 & 0 & 0 \\
+		1 & 1 & 1 & 0 & 0 & 0 \\ \hline
+	\end{tabular}
+\end{table}
 
-% TODO figura albero di AND con 8 input. 
+Gli output saranno $ u = ab, v = a\overbar{b}, z = \overbar{a}b, t = \overbar{ab} $
 
+\diagram{4x2decoder.tex}{Decoder di un numero da 2 bit.}
+
+
+\paragraph{Confrontatore}
+Un confrontatore (comparatore) confronta due configurazioni di bit e controlla che siano uguali. Un confrontatore da 1 bit è esattamente un gate NOT XOR.
+
+\[ z = ab + \overbar{ab} \]
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un confrontatore da 1 bit.}
+	\label{tab:2bitcomparator}
+	\begin{tabular}{|ll|l|}
+		\hline
+		a & b & t \\ \hline
+		0 & 0 & 1 \\
+		0 & 1 & 0 \\
+		1 & 0 & 0 \\
+		1 & 1 & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+\diagram{confrontatore.tex}{Confrontatore da 1 bit}
+
+Per realizzare un confrontatore da più bit si mettono in parallelo più confrontatori da un solo bit e si uniscono gli output con un albero di AND.
+
+Un confrontatore a 2 bit impiegherà tempo $ 2\Delta t + \Delta t $
+
+Per confrontare valori da $ n $ bit si impiegherà però un tempo di $ \ceil{\log_kn}(\Delta t \cdot \text{ ogni livello AND})$
+
+\paragraph{Confronto maggiore}
+In maniera simile ad un confrontatore si può realizzare un componente che controlla se un numero di $ n $ bit è maggiore di un altro.
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità di un confronto maggiore da 2 bit.}
+	\label{tab:2bitgreater}
+	\begin{tabular}{|ll|ll|l|}
+		\hline
+		$ x_0 $ & $ x_1 $ & $ y_0 $ & $ y_1 $ & z \\ \hline
+		0       & 0       & -       & -       & 0 \\
+		0       & 1       & 0       & 0       & 1 \\
+		1       & -       & 0       & -       & 1 \\
+		1       & 1       & -       & 0       & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[H]
+	\centering
+	\caption{Mappa di Karnaugh di un confrontatore dell'operatore maggiore da 2 bit.}
+	\label{tab:2bitgreater}
+	\begin{tabular}{|l|llll|}
+		\hline
+		$ y_1y_0 \backslash x_1x_0 $ & 00 & 01 & 11                        & 10                        \\ \hline
+		00                         & 0  & 1  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
+		01                         & 0  & 0  & \cellcolor[HTML]{FFCCC9}1 & \cellcolor[HTML]{FFCCC9}1 \\
+		11                         & 0  & 0  & 0                         & 0                         \\
+		10                         & 0  & 0  & 1                         & 0                         \\ \hline
+	\end{tabular}
+\end{table}
+
+La formula booleana ottenuta è $ z = x_0\overbar{y_1y_0} + x_1\overbar{y_1} + x_1x_0\overbar{y_0} $
+
+\paragraph{ALU}
+Una ALU, ovvero Arithmetic Logic Unit è un componente che in genere, in input accetta due parole $ x,y $ entrambe da $ n $ bit, e può fare due o più operazioni. L'operazione viene selezionata attraverso uno o più bit di controllo. In output ci sarà un uscita da $ n $ bit. Ad esempio, prendiamo una ALU a 4 bit con somma/sottrazione, che accetterà un solo bit di controllo.
+
+\centerfig{0.5}{alusymbol}{Simbolo di una ALU}
+
+I livelli di porte AND saranno $ \ceil{\log_k8} $ che verrano sommati ai livelli di porte OR che saranno $ \log_k(128) $. Le ALU si distinguono fra intere e a floating point. Per semplicità vedremo le ALU intere con somma e moltiplicazione.
+
+\centerfig{1}{74181aluschematic}{Schematica del circuito integrato della ALU \href{https://en.wikipedia.org/wiki/74181}{74181}, la prima ALU completa su un singolo chip.}
+
+
+\paragraph{Multiply and Add}
+Un componente Multiply and Add (MUL\&ADD) è un componente ALU che realizza l'operazione matematica $ \sum_{i}x_iy_i $, ovvero prende gli ingressi $ x_i,y_i $, li moltiplica e li accumula sommando.
+
+% TODO immagine MULADD
+
+\paragraph{Ritardi di propagazione}
+
+Sappiamo che il cambiamento fra HIGH e LOW (0 e 1) nei circuiti digitali non è istantaneo. A volte, il ritardo di propagazione dei transistor può causare dei glitch (fluttuazioni) che potrebbero causare una lettura incorretta dell'output di un circuito. Per ovviare a questo problema si introduce un componente chiamato \textbf{clock}, che scandisce un ciclo preciso per permettere ai valori di propagarsi nei circuiti e leggere l'output preciso alla fine della propagazione $ \Delta t $.
+
+% TODO disegno da quaderno delay transistor e glitch
+
+
+\section{Reti sequenziali e Automi}
+
+Abbiamo visto nel corso di programmazione 1 gli automi a stati finiti (Finite State Machines o FSM). Per ora, abbiamo visto circuiti logici che implementano funzioni senza stato. Per implementare lo stato possiamo utilizzare gli automi a stati finiti. In un automa di Moore gli output sono determinati solo dallo stato corrente, mentre negli automi di Mealy gli output sono determinati sia dallo stato corrente che dagli input correnti.
+
+\centerfig{0.75}{moore_mealy}{Automi di Moore e Automi di Mealy}
+
+Per portare un Automa di Mealy ad una rete sequenziale abbiamo bisogno di tre blocchi di una rete combinatoria. Uno che dallo stato precedente $ s $ e dall'input $ x $ dia in output l'uscita $ z $, e un altro che ricevendo $ x,s $ in input restituisca $ s^1 $ (lo stato del prossimo nodo del grafo) e un \textbf{SR Latch} (o \textbf{flip-flop}). I flip-flop possono essere di tipo $ SR, D, T $ e $ JK $.
+ 
+% TODO disegno rete combinatoria di un automa
+
+\paragraph{SR Latch o Flip Flop}
+
+Un componente SR Latch è un componente che implementa un bit di memoria. Impostando l'input $ S=1 $ (bit di set) e $ R=0 $  (bit di reset) l'output sarà $ Q=1,\overbar{Q}=0 $ mentre impostando gli input $ S=0,R=1 $ l'output è $ Q=0,\overbar{Q}=1 $. Il fulcro della funzionalità di un SR Latch è che se entrambi gli input $ S=0,R=0 $ allora l'output è in uno stato detto \textbf{latch}, ovvero che "ricorda" lo stato precedente.
+
+\centerfig{0.75}{srlatch}{Tabella di Verità e circuito di un SR Latch}
+
+\paragraph{Clock e D-latch}
+
+Introduciamo un componente fondamentale, il \textbf{clock}, che introduce una dimensione temporale nelle reti combinatorie scandendo un \textbf{ciclo}. Un ciclo di clock ha lunghezza $ \tau $. Possiamo così estendere un SR Latch rendendolo un \textbf{D-Latch}, che riceve in input soltanto il ciclo di clock e un bit $ D $, ovvero il bit che va "ricordato". Per evitare \textbf{glitch} possiamo scrivere sul D-Latch soltanto quando il segnale di clock è nello stato HIGH.
+
+\centerfig{0.75}{dlatch}{Un componente D-latch}
+\centerfig{0.75}{dlatch_timing}{Diagramma temporale di un D-latch}
+
+\subsection{Realizzazione di una rete sequenziale di un Automa di Mealy con un clock e registri}
+Consideriamo, ad esempio, un automa che calcola la parità del numero di $ 1 $ in una sequenza di bit. Ricevendo in input una sequenza di bit $1, 0, 0, 0, 1, 0, 1 $ ad esempio restituirebbe in output $ 0, 1, 1, 1, 1, 0, 0 $ (l'output diventa high)
+
+\begin{figure}[H]
+	\centering
+	\caption{Automa di parità di una sequenza di bit}
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+	
+	\node[state,accepting] (A)                    {$q_a$};
+	\node[state]         (B) [right of=A] {$q_b$};
+	
+	\path 	(A)		edge [bend left]  	node {$\dfrac{x=1}{z=0}$} (B)
+	edge [loop above] 	node {$\dfrac{x=0}{z=1}$} (A)
+	(B) 	edge [loop above] 	node {$ \dfrac{x=1}{z=1} $} (B)
+	edge [bend left] 	node {$ \dfrac{x=1}{z=1} $} (A);
+	\end{tikzpicture}
+\end{figure}
+
+
+Per trasformare l'automa di Mealy in una rete sequenziale avremo una rete combinatoria che calcola lo stato successivo, un registro che mantiene lo stato e una rete combinatoria che calcola l'uscita. Siccome l'automa di Mealy usa l'input $ x $ per decidere le transizioni, l'input $ x $ dovrà essere passato ad entrambe le reti combinatorie dei nodi del grafo.
+
+Chiamiamo la prima rete combinatoria $ \sigma $ e la seconda $ \omega $
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità della rete combinatoria $ \sigma $}
+	\label{tab:mealysigma1}
+	\begin{tabular}{|ll|l|}
+		\hline
+		x & s & s' \\ \hline
+		0 & 0 & 0  \\
+		1 & 0 & 1  \\
+		0 & 1 & 1  \\
+		1 & 1 & 0  \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità della rete combinatoria $ \omega $}
+	\label{tab:mealyomega1}
+	\begin{tabular}{|ll|l|}
+		\hline
+		x & s & z \\ \hline
+		0 & 0 & 1 \\
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		1 & 1 & 1 \\ \hline
+	\end{tabular}
+\end{table}
+
+\diagram{mealyautomata1.tex}{Rete sequenziale dell'automa di Mealy in figura precedente}
+
+\subsection{Automa che riconosce "abba"}
+
+Realizziamo un automa di Mealy che riconosce le stringhe \textit{"abba"} da un insieme $ \{a,b,c\} $. La rete sequenziale dell'automa si realizzerà con i componenti visti in figura ~\ref{fig:mealyautomata1.tex}. Consideriamo la rappresentazione binaria dell'alfabeto con $ a = 00, b = 01, c = 11 $. Per gli stati usiamo la codifica $ S_1 = 00, S_2 = 01, S_3 = 11, S_4 = 10 $
+
+\begin{figure}[H]
+	\centering
+	\caption{Automa di Mealy che riconosce "abba"}
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+	
+	\node[state,accepting] 	(A)                    {$S_1$};
+	\node[state]         	(B) [above right of=A] 	   {$S_2$};
+	\node[state]         	(C) [below right of=B] 	   {$S_3$};
+	\node[state]         	(D) [below right of=A] 	   {$S_4$};
+	
+	\path 	(A)		edge [bend left]  	node {$a/0$} 		(B)
+	edge [loop left] 	node {$b,c/0$} 		(A)
+	(B) 	edge [loop above] 	node {$a/0$} 		(B)
+	edge [bend left] 	node {$c/0$} 		(A)
+	edge [bend left]  	node {$b/0$} 		(C)
+	(C)		edge [bend left]  	node {$c/0$} 		(A)
+	edge [bend left]  	node {$a/0$} 		(B)
+	edge [bend left]  	node {$b/0$} 		(D)
+	(D)		edge [bend left]  	node {$b,c/0$} 		(A);
+	\end{tikzpicture}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità dell'output della rete sequenziale dell'automa "abba" ($ \omega $)}
+	\label{tab:mealyomega2}
+	\begin{tabular}{l|llll|l|}
+		\cline{2-6}
+		& $s_1$ & $s_2$ & $x_1$ & $x_2$ & z \\ \cline{2-6} 
+		Stato $S_1$ & 0     & 0     & -     & -     & 0 \\
+		Stato $S_2$ & 0     & 1     & -     & -     & 0 \\
+		Stato $S_3$ & 1     & 1     & -     & -     & 0 \\
+		Stato $S_4$ & 1     & 0     & 0     & 0     & 1 \\
+		& 1     & 0     & 0     & 1     & 0 \\
+		& 1     & 0     & 1     & 1     & 0 \\ \cline{2-6} 
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Tabella di verità del cambio di stato dell'automa per riconoscere "abba" ($\sigma$)}
+	\label{tab:mealysigma2}
+	\begin{tabular}{l|llll|ll|}
+		\cline{2-7}
+		& $s_1$ & $s_2$ & $x_1$ & $x_2$ & $s_1'$ & $s_2'$ \\ \cline{2-7} 
+		Stato $S_1$ & 0     & 0     & 0     & 0     & 0      & 1      \\
+		& 0     & 0     & 0     & 1     & 0      & 0      \\
+		& 0     & 0     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+		Stato $S_2$ & 0     & 1     & 0     & 0     & 0      & 1      \\
+		& 0     & 1     & 0     & 1     & 1      & 1      \\
+		& 0     & 1     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+		Stato $S_3$ & 1     & 1     & 0     & 0     & 0      & 1      \\
+		& 1     & 1     & 0     & 1     & 1      & 0      \\
+		& 1     & 1     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+		Stato $S_4$ & 1     & 0     & 0     & 0     & 0      & 0      \\
+		& 1     & 0     & 0     & 1     & 0      & 0      \\
+		& 1     & 0     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+	\end{tabular}
+\end{table}
+
+% TODO mappa di karnaugh di s1 e s2
+
+Avremo che la formula booleana sarà per il primo e secondo bit di stato:
+\[ s_1' = \overbar{s_1}s_2\overbar{x_1}x_2 + s_1s_2\overbar{x_1}x_2 = s_2\overbar{x_1}x_2 \]. 
+\[ s_2' = \overbar{s_1s_2}+ \overbar{s_1}s_2\overbar{x_1} + s_2\overbar{x_2}\]
+
+La formula per l'uscita sarà $ z = s_1\overbar{s_2x_1x_2} $. Ci rimane da definire il registro da 2 bit per definire tutta la rete sequenziale. Abbiamo supposto che la rete sequenziale funzioni ricevendo un segnale di clock ad intervalli regolari.
+La rete di output $ \omega $ è definita utilizzando soltanto AND ed impiegherà $ \Delta t $ per eseguire l'operazione. La funzione di cambio di stato $ \sigma $ è definita invece con 1 AND e 1 OR ed impiegherà $ 2\Delta t $ per l'operazione.
+Il ciclo di clock dev'essere almeno $ \tau = \delta + \max\{t_{\sigma}, t_{\omega}\} $ dove $ \delta $ è la durata del segnale HIGH nel clock.
