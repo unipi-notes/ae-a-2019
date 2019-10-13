@@ -1,0 +1,145 @@
+$date
+	Thu Oct 10 11:37:45 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module testm1 $end
+$var wire 1 ! z $end
+$var reg 1 " clock $end
+$var reg 2 # x [1:2] $end
+$scope module m $end
+$var wire 1 " clock $end
+$var wire 2 $ x [1:2] $end
+$var wire 1 ! z $end
+$var wire 2 % outreg [1:2] $end
+$var wire 2 & inreg [1:2] $end
+$scope module om $end
+$var wire 2 ' x [1:2] $end
+$var wire 1 ! z $end
+$var wire 2 ( s [1:2] $end
+$upscope $end
+$scope module s $end
+$var wire 1 " clock $end
+$var wire 1 ) enable $end
+$var wire 2 * stato [1:2] $end
+$var wire 2 + inval [1:2] $end
+$var reg 2 , st [1:2] $end
+$upscope $end
+$scope module sm $end
+$var wire 2 - s [1:2] $end
+$var wire 2 . x [1:2] $end
+$var wire 2 / news [1:2] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx /
+b0 .
+bx -
+b0 ,
+bx +
+bx *
+1)
+bx (
+b0 '
+bx &
+bx %
+b0 $
+b0 #
+0"
+x!
+$end
+#1
+b0x &
+b0x +
+b0x /
+b0 %
+b0 (
+b0 *
+b0 -
+#2
+0!
+#3
+b1 ,
+b1 &
+b1 +
+b1 /
+1"
+#4
+b1 %
+b1 (
+b1 *
+b1 -
+0"
+b1 #
+b1 $
+b1 '
+b1 .
+#5
+b11 &
+b11 +
+b11 /
+#7
+b11 ,
+1"
+#8
+b11 %
+b11 (
+b11 *
+b11 -
+0"
+#10
+b10 &
+b10 +
+b10 /
+#11
+b10 ,
+1"
+#12
+b10 %
+b10 (
+b10 *
+b10 -
+0"
+#13
+b0 &
+b0 +
+b0 /
+b0 #
+b0 $
+b0 '
+b0 .
+#14
+1!
+#15
+b0 ,
+1"
+#16
+b0 %
+b0 (
+b0 *
+b0 -
+0"
+#17
+0!
+#18
+b1 &
+b1 +
+b1 /
+#19
+b1 ,
+1"
+#20
+b1 %
+b1 (
+b1 *
+b1 -
+0"
+#23
+1"

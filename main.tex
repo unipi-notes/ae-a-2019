@@ -24,6 +24,7 @@
 \usepackage{fancyvrb}
 \usepackage{listings}
 \usepackage{textcomp}
+\usepackage{placeins}
 \graphicspath{ {./images/} }
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -31,6 +32,8 @@
 
 \addtolength{\topmargin}{.2in}
 \addtolength{\textheight}{-.3in}
+
+
 
 \newcommand{\centerfig}[3]{
 \begin{figure}[H]
@@ -88,8 +91,17 @@
 %	moredelim=*[s][\colorIndex]{[}{]},
 	literate=*{:}{:}1
 }
+\lstdefinestyle{makefile} {
+	language=make,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=4,
+	literate=*{:}{:}1
+}
 
-\newcommand{\includecode}[3][c]{\lstinputlisting[caption=#3, style=#1]{#2}}
+\newcommand{\includecode}[3][c]{\lstinputlisting[caption=#3, style=#1, float, floatplacement=!htbp]{#2}}
 
 
 \begin{document}
