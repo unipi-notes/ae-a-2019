@@ -120,13 +120,34 @@ Avremo che la formula booleana sarà per il primo e secondo bit di stato:
 \[ s_1' = \overbar{s_1}s_2\overbar{x_1}x_2 + s_1s_2\overbar{x_1}x_2 = s_2\overbar{x_1}x_2 \]. 
 \[ s_2' = \overbar{s_1s_2}+ \overbar{s_1}s_2\overbar{x_1} + s_2\overbar{x_2}\]
 
-La formula per l'uscita sarà $ z = s_1\overbar{s_2x_1x_2} $. Ci rimane da definire il registro da 2 bit per definire tutta la rete sequenziale. Abbiamo supposto che la rete sequenziale funzioni ricevendo un segnale di clock ad intervalli regolari.
+Nella componente \verb|sigma| in Verilog avremo l'assegnamento ad un nuovo stato \verb|news|:
+
+\begin{lstlisting}[style={verilog}]
+assign
+	news[1] = s[2] & ~x[1] & x[2];
+
+assign    
+	news[2] = ~s[1] & ~x[1] & ~x[2] 
+		| s[2] & ~x[1] & ~x[2] 
+		| ~s[1] & s[2] & ~x[1];
+\end{lstlisting}
+
+La formula per l'uscita sarà $ z = s_1\overbar{s_2x_1x_2} $. La componente \verb|omega| effettuerà l'assegnamento 
+
+\begin{lstlisting}[style={verilog}]
+assign
+	z = s[1] & ~s[2] & ~x[1] & ~x[2];
+\end{lstlisting}
+
+
+
+ Ci rimane da definire il registro da 2 bit per definire tutta la rete sequenziale. Abbiamo supposto che la rete sequenziale funzioni ricevendo un segnale di clock ad intervalli regolari.
 La rete di output $ \omega $ è definita utilizzando soltanto AND ed impiegherà $ \Delta t $ per eseguire l'operazione. La funzione di cambio di stato $ \sigma $ è definita invece con 1 AND e 1 OR ed impiegherà $ 2\Delta t $ per l'operazione.
 Il ciclo di clock dev'essere almeno $ \tau = \delta + \max\{t_{\sigma}, t_{\omega}\} $ dove $ \delta $ è la durata del segnale HIGH nel clock.
 
 Abbiamo 3 moduli. Uno per il registro, uno per il modulo $ \omega $ e uno per il modulo $ \sigma $. Scriviamolo in Verilog.
 
-\paragraph{Note}
+\paragraph{Note sulla sintassi e semantica Verilog}
 
 La sintassi \verb|[a:b]| denota un array indicizzato dal numero \verb|a| al numero \verb|b|. Utilizziamo gli array per rappresentare valori a più bit. In questo caso, il registro è generalizzato per un parametro \verb|N| e può ad esempio essere inizializzato con \verb|registro #(4) nome(...) | dove 4 è il parametro \verb|N| e corrisponde al numero di bit del registro.
 
@@ -142,14 +163,30 @@ assign
 \includecode[verilog]{./verilog/abba/Mealy/sigma.v}{Modulo di $ \sigma $ o funzione di cambio di stato}
 \includecode[verilog]{./verilog/abba/Mealy/omega.v}{Modulo di $ \omega $}
 \includecode[verilog]{./verilog/abba/Mealy/m1.v}{Modulo della rete sequenziale}
+\includecode[verilog]{./verilog/abba/MealyInSync/m1.v}{Modulo della rete sequenziale (con Sincronizzazione)}
 \includecode[verilog]{./verilog/abba/Mealy/test-m1.v}{Modulo di test della rete sequenziale}
 
-\clearpage
+
+Per sincronizzare il modulo della rete sequenziale dell'automa di Mealy mettiamo un registro di fra l'input \verb|x| e le reti sequenziali \verb|sigma| e \verb|omega|.
+
+\begin{figure}[!htb]
+	\centering 
+	\caption{Diagramma dei tempi della Rete Sequenziale dell'automa di Mealy per riconoscere "abba" \textbf{senza sincronizzazione}}
+	\includegraphics[width=\textwidth]{mealyabbanosync.png}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering 
+	\caption{Diagramma dei tempi della Rete Sequenziale dell'automa di Mealy per riconoscere "abba" \textbf{con sincronizzazione}}
+	\includegraphics[width=\textwidth]{mealyabbainsync.png}
+\end{figure}
+
+\FloatBarrier
 
 \subsection{Automa di Moore per riconoscere "abba"}
 Vediamo adesso un automa di Moore per riconoscere la stringa \textit{"abba"} nell'alfabeto $ \{a,b,c\} $. La differenza sta nel fatto che i singoli nodi non hanno accesso all'input $ x $.
 
-\begin{figure}
+\begin{figure}[!htb]
 	\centering
 	\caption{Automa di Moore che riconosce "abba"}
 	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
@@ -158,7 +195,7 @@ Vediamo adesso un automa di Moore per riconoscere la stringa \textit{"abba"} nel
 	\node[state]         	(B) [right of=A] 	   {$\dfrac{S_2}{0}$};
 	\node[state]         	(C) [below of=A] 	   {$\dfrac{S_3}{0}$};
 	\node[state]         	(D) [below of=B] 	   {$\dfrac{S_4}{0}$};
-	\node[state,accepting]  (E) [above right of=D] 	   {$\dfrac{S_4}{0}$};
+	\node[state,accepting]  (E) [above right of=D] 	   {$\dfrac{S_5}{1}$};
 	
 	\path 	(A)		edge [bend left=60]  				node {$a$} 		(B)
 					edge [loop above] 					node {$b,c$} 	(A)
@@ -192,4 +229,5 @@ Vediamo adesso un automa di Moore per riconoscere la stringa \textit{"abba"} nel
 \includecode[verilog]{./verilog/abba/MealyConDelay/test-m1-delay.v}{Modulo di test della rete sequenziale (Mealy con Delay)}
 \includecode[makefile]{./verilog/abba/MealyConDelay/makefile}{Makefile (Mealy con Delay)}
 
-Per sincronizzare il modulo della rete sequenziale dell'automa di Mealy mettiamo un registro di fra l'input \verb|x| e le reti sequenziali \verb|sigma| e \verb|omega|
+\FloatBarrier
+
