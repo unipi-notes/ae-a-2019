@@ -110,10 +110,11 @@ Un commutatore a 2 vie da $ k $ bit si costruisce con $ k $ commutatori a 2 vie 
 
 \paragraph{Sommatore di numeri}
 Un sommatore è un componente che somma due numeri in input e restituisce in output un risultato ed un riporto.
+Un sommatore di due numeri che non accetta un riporto in input è detto \textbf{Half Adder} mentre un sommatore che accetta un riporto è detto Full Adder.
 
 \begin{table}[H]
 	\centering
-	\caption{Tabella di verità di una somma di due numeri da un bit.}
+	\caption{Tabella di verità di un Full Adder.}
 	\label{tab:sum1bit}
 	\begin{tabular}{|lll|l|l|}
 		\hline
@@ -274,11 +275,10 @@ Abbiamo visto nel corso di programmazione 1 gli automi a stati finiti (Finite St
 
 \centerfig{0.75}{moore_mealy}{Automi di Moore e Automi di Mealy}
 
-Per portare un Automa di Mealy ad una rete sequenziale abbiamo bisogno di tre blocchi di una rete combinatoria. Uno che dallo stato precedente $ s $ e dall'input $ x $ dia in output l'uscita $ z $, e un altro che ricevendo $ x,s $ in input restituisca $ s^1 $ (lo stato del prossimo nodo del grafo) e un \textbf{SR Latch} (o \textbf{flip-flop}). I flip-flop possono essere di tipo $ SR, D, T $ e $ JK $.
+Gli automi di Moore hanno sempre un numero di stati \textbf{maggiore o uguale} agli automi di Mealy. Per portare un Automa di Mealy ad una rete sequenziale abbiamo bisogno di tre blocchi di una rete combinatoria. Uno che dallo stato precedente $ s $ e dall'input $ x $ dia in output l'uscita $ z $, e un altro che ricevendo $ x,s $ in input restituisca $ s^1 $ (lo stato del prossimo nodo del grafo) e un \textbf{SR Latch} (o \textbf{flip-flop}). I latch possono essere di tipo $ SR, D, T $ e $ JK $. Un \textbf{flip-flop} è un latch che accetta in input un segnale di clock e i due bit $ S,R $ (Set e Reset)
  
-% TODO disegno rete combinatoria di un automa
 
-\paragraph{SR Latch o Flip Flop}
+\paragraph{SR Latch}
 
 Un componente SR Latch è un componente che implementa un bit di memoria. Impostando l'input $ S=1 $ (bit di set) e $ R=0 $  (bit di reset) l'output sarà $ Q=1,\overbar{Q}=0 $ mentre impostando gli input $ S=0,R=1 $ l'output è $ Q=0,\overbar{Q}=1 $. Il fulcro della funzionalità di un SR Latch è che se entrambi gli input $ S=0,R=0 $ allora l'output è in uno stato detto \textbf{latch}, ovvero che "ricorda" lo stato precedente.
 
