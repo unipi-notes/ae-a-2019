@@ -2,6 +2,7 @@
 \usepackage[margin=0.7in,nomarginpar]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage{hyperref}
@@ -82,6 +83,31 @@
 	tabsize=8,
 	literate=*{:}{:}1
 }
+
+\input{lstlangarm.sty}
+
+\lstdefinestyle{arm} {
+	language=[ARM]Assembler,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=8,
+	literate=*{:}{:}1
+}
+
+\lstdefinestyle{armn} {
+	language=[ARM]Assembler,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	numbers=left,
+	numberstyle=\color{black},
+	numbersep=10pt,
+	tabsize=8,
+	literate=*{:}{:}1
+}
 \lstdefinestyle{bash} {
 	language=bash,
 	basicstyle=\ttfamily,
@@ -103,6 +129,21 @@
 }
 
 \newcommand{\includecode}[3][c]{\lstinputlisting[caption=#3, style=#1, float, floatplacement=!htbp]{#2}}
+
+\theoremstyle{plain}% default
+\newtheorem{thm}{Teorema}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposizione}
+\newtheorem*{cor}{Corollario}
+\theoremstyle{definition}
+\newtheorem{defn}{Definizione}[section]
+\newtheorem{conj}{Congettura}[section]
+\newtheorem{exmp}{Esempio}[section]
+\newtheorem{exrc}[exmp]{Esercizio}
+\theoremstyle{remark}
+\newtheorem*{comm}{Commento}
+\newtheorem*{note}{Nota}
+\newtheorem{caso}{Caso}
 
 
 \begin{document}
