@@ -200,7 +200,7 @@ t_\text{ALU} + t_\text{MUX}
 
 %TODO diagramma pipeline
 
-Avendo 3 worker ed eseguendo 3 istruzioni a cascata che impiegano rispettivamente $ 2t, 3t, 1t $, se eseguiamo dei task successivamente, le istruzioni dei task successivi avverrano con un delay dovuto alla differenza del tempo di esecuzione. Dopo un numero di istruzioni le istruzioni si sincronizzeranno. Se i worker impiegano rispettivamente dei tempi $ t_1,t_2,t_3 $, il tempo di completamento di $ m $ istruzioni sarà $ T_c = \sum t_i + m \cdot \max\{t_1,t_2,t_3\} $. Ciò crea una situazione non ottimale
+Avendo 3 worker ed eseguendo 3 istruzioni a cascata che impiegano rispettivamente $ 2t, 3t, 1t $, se eseguiamo dei task successivamente, le istruzioni dei task successivi avverrano con un delay dovuto alla differenza del tempo di esecuzione. Dopo un numero di istruzioni le istruzioni si sincronizzeranno. Se i worker impiegano rispettivamente dei tempi $ t_1,t_2,t_3 $, il tempo di completamento di $ m $ istruzioni sarà $ T_c = \sum t_i + (m + 1) \cdot \max\{t_1,t_2,t_3\} $. Ciò crea una situazione non ottimale
 
 \[ \begin{aligned}
 n = \text{numero di stadi della pipeline} \\
