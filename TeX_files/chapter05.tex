@@ -292,3 +292,109 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 	%TODO immagine gtkwave
 \end{exmp}
 
+\section{Homework}
+
+\begin{exrc}
+	Si forniscano le espressioni booleane che calcolano:
+	Se una configurazione di 8 bit è una potenza di due: È necessario soltanto uno XOR dei singoli bit $ b_0 \oplus b_1 \oplus b_2 \oplus b_3 \oplus b_4 \oplus b_5 \oplus b_6 \oplus b_7 \oplus $.
+	
+	Fornire le espressioni booleane che calcolano l'indice del bit più significativo a 1 in una configurazione di 8 bit: 
+	\begin{table}[H]
+		\centering
+		\caption{Tabella di verità di una rete combinatoria che restituisce l'indice del bit più significativo a 1 di una configurazione di 8 bit. L'indice inizia da 1, il valore in output 0 viene usato se il numero in input sono tutti 0}
+		\label{tab:homework1}
+		\begin{tabular}{|llllllll|llll|}
+			\hline
+			$x_7$ & $x_6$ & $x_5$ & $x_4$ & $x_3$ & $x_2$ & $x_1$ & $x_0$ & $z_3$ & $z_2$ & $z_1$ & $z_0$ \\ \hline
+			1     & -     & -     & -     & -     & -     & -     & -     & 0     & 1     & 1     & 1     \\ \hline
+			0     & 1     & -     & -     & -     & -     & -     & -     & 0     & 1     & 1     & 0     \\ \hline
+			0     & 0     & 1     & -     & -     & -     & -     & -     & 0     & 1     & 0     & 1     \\ \hline
+			0     & 0     & 0     & 1     & -     & -     & -     & -     & 0     & 1     & 0     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 1     & -     & -     & -     & 0     & 0     & 1     & 1     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 1     & -     & -     & 0     & 0     & 1     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 1     & -     & 0     & 0     & 0     & 1     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 0     & 1     & 0     & 0     & 0     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 0     & 0     & 1     & 1     & 1     & 1     \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\begin{equation*}
+		\begin{aligned}
+		z_3 = \overbar{x_7x_6x_5x_4x_3x_2x_1x_0} \\
+		z_2 = x7 + \overbar{x_7}x_6 + \overbar{x_7x_6}x_5 + \overbar{x_7x_6x_5}x_4 + \overbar{x_7x_6x_5x_4x_3x_2x_1x_0} \\
+		z_1 = x7 + \overbar{x_7}x_6 + \overbar{x_7x_6x_5x_4}x_3 + \overbar{x_7x_6x_5x_4x_3}x_2 + \overbar{x_7x_6x_5x_4x_3x_2x_1x_0} \\
+		z_0 = x7 + \overbar{x_7x_6}x_5 + \overbar{x_7x_6x_5x_4}x_3 + \overbar{x_7x_6x_5x_4x_3x_2}x_1 + \overbar{x_7x_6x_5x_4x_3x_2x_1}x_0 \\
+		\end{aligned}
+	\end{equation*}
+\end{exrc}
+
+\begin{exrc}
+	Delle reti combinatorie definite dalle espressioni booleane dell’esercizio precedente si fornisca l’implementazione come module Verilog insieme ad un programma testbench che ne dimostri il corretto funzionamento.
+	
+	Per calcolare se un numero è potenza di due non utilizziamo il bitwise xor, ma mettiamo in bitwise AND il numero in input e il numero in input a cui sottraiamo 1. Se il numero in input è una potenza di due, quando gli viene sottratto 1 rimarrano soltanto 1 a destra della posizione dell'1 nel numero in input. Se l'AND è 0 allora il numero è potenza di due.
+
+	\includecode[verilog]{./verilog/homework/potenzadidue/potenzadidue.v}{Modulo che calcola se una configurazione di bit è potenza di 2}
+	
+	\includecode[verilog]{./verilog/homework/potenzadidue/test.v}{Modulo di test della rete combinatoria che calcola se una configurazione di bit è potenza di 2}
+	
+	\centerfig{0.8}{potenzadiduegtkwave.png}{Visualizzazione dell'esecuzione del modulo che calcola se un numero da 8 bit è potenza di 2}
+	
+	Per implementare una rete combinatoria che restituisce l'indice del bit più significativo si può utilizzare un semplice ciclo for per realizzare un modulo behavioral. La funzione built-in \verb|$clog2()| calcola il logaritmo in base 2 di un numero. La utilizziamo per definire la dimensione dell'output del modulo, dato che il numero di bit $ n $ del valore in input è rappresentabile con un numero di $ \log_2(n) $ bit.
+	
+	\includecode[verilog]{./verilog/homework/indice/index.v}{Modulo della rete combinatoria che calcola l'indice del bit ad 1 più significativo in un numero da N bit}
+	
+	\includecode[verilog]{./verilog/homework/indice/test.v}{Modulo di test del modulo che calcola l'indice del bit ad 1 più significativo in un numero da N bit}
+	
+	\centerfig{0.85}{indexgtkwave}{Visualizzazione dell'esecuzione del modulo di test del modulo che calcola l'indice del bit ad 1 più significativo in un numero da N bit}
+	
+\end{exrc}
+
+\begin{exrc}
+	Definire un automa che processa coppia di variabili da k bit e che conta, modulo 2, il numero delle volte che le due variabili in ingresso sono uguali.
+	
+	\begin{figure}[H]
+		\centering
+		\caption{Automa di Moore che conta quante volte gli input sono uguali. Gli stati possono essere teoricamente infiniti, l'output è uguale al numero di stato, realisticamente gli stati possibili saranno $ 2^n $ dove $ n $ è il numero di bit nel registro}
+		\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+		
+		\node[state,initial] 	(1)                   		{1};
+		\node[state]         	(2) [right of=1] 	   		{2};
+		\node[state]         	(3) [right of=2] 	   		{3};
+		\node[state]         	(4) [right of=3] 	   		{$\hdots$};
+		
+		\path 	
+		(1)		edge [bend left]  	node {$x = y$} 		(2)
+				edge [loop below] 	node {$x \neq y$} 	(1)
+		(2) 	edge [loop below] 	node {$x \neq y$} 	(2)
+				edge [bend left] 	node {$x = y$} 		(3)
+		(3)		edge [loop below]  	node {$x \neq y$} 	(3)
+				edge [bend left]  	node {$x = y$} 		(4);
+		\end{tikzpicture}
+	\end{figure}
+	
+	Per semplicità di implementazione in Verilog decidiamo di utilizzare un contatore come registro. (L'alternativa potrebbe essere includere una ALU nel modulo di $ \sigma $ che legge il valore del registro di stato e lo incrementa di uno nel caso lo stato debba essere incrementato).
+	La funzione $ \sigma $ calcolerà $ x \mod 2 $ e $ y \mod 2 $, eseguirà un confronto e nel caso siano uguali invierà il risultato del confronto alla linea \verb|INCREMENT| del contatore, così che al prossimo ciclo di clock il contatore delle volte che $ x $ e $ y $ sono uguali aumenti. La funzione $ \omega $ è la funzione identità.
+\end{exrc}
+
+\begin{exrc}
+	Implementare l'automa dell'esercizio precedente in Verilog.
+	
+	\includecode[verilog]{./verilog/homework/contauguali/counter.v}{Modulo contatore}
+	
+	\includecode[verilog]{./verilog/homework/contauguali/sigma.v}{Modulo di $ \sigma $ che controlla se $ x $ e $ y $ sono uguali modulo 2 e invia il bit di increment al contatore}
+	
+	\includecode[verilog]{./verilog/homework/contauguali/test.v}{Modulo di test della rete combinatoria dell'automa che conta il numero di volte che due numeri in input sono uguali modulo 2}
+	
+	\centerfig{0.8}{contaugualigtkwave.png}{Visualizzazione dell'esecuzione del modulo di test dell'automa che conta quante volte due numeri sono uguali modulo 2}
+\end{exrc}
+
+\begin{exrc}
+	Progettare, utilizzando componenti standard una rete sequenziale che possa essere utilizzata per implementare operazioni di push e pop su uno stack di massimo 8 posizioni.
+	
+	\begin{figure}[H]
+		\centering
+		\scalebox{0.5}{\input{./diagrams/homeworkstack}}
+		\caption{Diagramma di circuito con componenti standard che realizza uno stack di 8 posizioni}
+		\label{fig:homeworkstack}
+	\end{figure}
+\end{exrc}

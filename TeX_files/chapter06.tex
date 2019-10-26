@@ -42,20 +42,69 @@ while(true) {
 \begin{defn}
 	\textbf{Sintassi delle istruzioni ARMv7:}
 	
-	\begin{Verbatim}
-		<operazione>{cond}{flags} Rd,Rn, OP2
-	\end{Verbatim}
+	
+	\begin{enumerate}
+		\item \textbf{Istruzioni a singolo operando (MOV, MOVN)}
+		\begin{Verbatim}
+		<opcode>{cond}{flags} Rd, <Op2>
+		\end{Verbatim}
+		
+		\item \textbf{Istruzioni che non producono un risultato (CMP, CMN, TEQ, TST)}
+		\begin{Verbatim}
+		<opcode>{cond} Rn, <Op2>
+		\end{Verbatim}
+		
+		\item \textbf{Altre istruzioni (AND,EOR,SUB,RSB,ADD,ADC,SBC,RSC,ORR,BIC)}
+		\begin{Verbatim}
+		<opcode>{cond}{flags} Rd, Rn, <Op2>
+		\end{Verbatim}
+	\end{enumerate}
+	
 	
 	\begin{itemize}
-		\item \verb|<operazione>| è l'istruzione da eseguire
-		\item \verb|{cond}| Un codice di condizione di due lettere (opzionale).
-		\item \verb|{flags}| Flag opzionali aggiuntivi
+		\item \verb|<opcode>| è l'istruzione da eseguire
+		\item \verb|{cond}| Un codice condizionale di due lettere (opzionale).
+		\item \verb|{flags}| Flag opzionali aggiuntivi fra cui \verb|S|, che è implicito per le istruzioni CMP, CMN, TEQ, TST.
+		\item \verb|OP2| Un secondo operando flessibile (opzionale), ha la forma \verb|Rm{,<shift>}| oppure \verb|<#imm>|
 		\item \verb|Rd| Il registro di destinazione dell'operazione
-		\item \verb|Rn| Il primo registro sorgente 
-		\item \verb|OP2| Un secondo operando flessibile (opzionale)
+		\item \verb|Rn,Rm| Registri sorgente.
+		\item \verb|<#imm>| Un valore immediato (se rappresentabile).
+		\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
+		\item \verb|<shiftname>| Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
+		\item \verb|@ commento| Si possono inserire commenti a fine riga.
 	\end{itemize}
-	
 \end{defn}
+
+\def\code#1#2#3{\texttt{#1} & \small #2 & #3\\}
+\begin{table}[H]
+	\centering
+	\caption{Tabella dei codici condizionali ARMv7}
+	\begin{tabular}{l@{\hspace{5mm}}ll}
+		%
+		\multicolumn{3}{c}{\bfseries \emph{cond}: condition code} \\
+		\code{code}{meaning}{flags tested}
+		\hline
+		%
+		\code{AL \textrm{or omitted}}{always}{(ignored)}
+		\code{EQ}{equal}{Z = 1}
+		\code{NE}{not equal}{Z = 0}
+		\code{CS}{carry set (same as \texttt{HS})}{C = 1}
+		\code{CC}{carry clear (same as \texttt{LO})}{C = 0}
+		\code{MI}{minus}{N = 1}
+		\code{PL}{positive or zero}{N = 0}
+		\code{VS}{overflow}{V = 1}
+		\code{VC}{no overflow}{V = 0}
+		\code{HS}{unsigned higher or same}{C = 1}
+		\code{LO}{unsigned lower}{C = 0}
+		\code{HI}{unsigned higher}{C = 1 $\wedge$ Z = 0}
+		\code{LS}{unsigned lower or same}{C = 0 $\vee$ Z = 1}
+		\code{GE}{signed greater than or equal}{N = V}
+		\code{LT}{signed less than}{N $\neq$ V}
+		\code{GT}{signed greater than}{Z = 0 $\wedge$ N = V}
+		\code{LE}{signed less than or equal}{Z = 1 $\vee$ N $\neq$ V}\hline
+		
+	\end{tabular}
+\end{table}
 
 \begin{defn}
 	\textbf{Registri ARMv7:}
@@ -63,12 +112,12 @@ while(true) {
 	0 \leq n < 16 $. 
 	
 	\begin{itemize}
-		\item \verb| R0 |: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
-		\item \verb| R1 - R3 |: Argomenti, valori temporanei.
-		\item \verb| R4 - R12 |: Valori temporanei.
-		\item \verb| R13 |: Stack Pointer (SP).		
-		\item \verb| R14 |: Link register.
-		\item \verb| R15 |: Program counter.
+		\item \verb|R0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
+		\item \verb|R1 - R3|: Argomenti, valori temporanei.
+		\item \verb|R4 - R12|: Valori temporanei.
+		\item \verb|R13|: Stack Pointer (SP).		
+		\item \verb|R14|: Link register.
+		\item \verb|R15|: Program counter.
 	\end{itemize}
 \end{defn}
 
@@ -109,7 +158,7 @@ while(true) {
 \end{defn}
 
 \begin{defn}
-	\textbf{Istruzioni Logiche}
+	\textbf{Istruzioni Logiche Bitwise}
 	
 	Realizza l'AND bit per bit dei registri \verb|R1| (maschera) e \verb|R2| (sorgente), memorizzando in \verb|RD|
 	\begin{lstlisting}[style=arm]
@@ -139,7 +188,8 @@ while(true) {
 
 \begin{defn}
 	\textbf{Bit di flag in ARMv7:}
-	In ARMv7 sono presenti 4 bit di flag (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \verb|Z| indica se il risultato di un operazione è 0. Il flab \verb|N| indica se il risultato dell'operazione è negativo. Il flag \verb|C| indica se è presente un carry (riporto) sull'ultima cifra. Il flag \verb|V| (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
+	In ARMv7 sono presenti 4 bit di flag di condizione (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \verb|Z| indica se il risultato di un operazione è 0. Il flab \verb|N| indica se il risultato dell'operazione è negativo. Il flag \verb|C| indica se è presente un carry (riporto) sull'ultima cifra. Il flag \verb|V| (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
+	Solo alcune istruzioni impostano di default i set di condizione (come \verb|CMP|). Per forzare un istruzione ad impostare i bit di flag di condizione si può passare il flag aggiuntivo \verb|S|.
 \end{defn}
 
 \begin{defn}
@@ -171,4 +221,81 @@ while(true) {
 	CMP R1, R2
 	\end{lstlisting}
 
+	Sottrazione "al contrario" (Reverse Subtraction), esegue l'operazione \verb|R2 - R1| e memorizza il risultato in \verb|RD|.
+	\begin{lstlisting}[style=arm]
+	SBC RD, R1, R2
+	\end{lstlisting}
+
+\end{defn}
+
+\begin{defn}
+	\textbf{Istruzioni di Shift (logico-aritmetiche)}
+	
+	\begin{note}
+		I registri passati per parametro alle istruzioni di shift non sono registri di destinazione ma contengono il numero parametro dello shift (di quante posizioni deve essere effettuato). Vedi il paragrafo sulla sintassi delle istruzioni Assembler.
+	\end{note}
+	
+	Bitshift di \verb|num| posizioni a sinistra. Semanticamente identico all'istruzione \verb|ASL|. Equivalente alla moltiplicazione per la \verb|num|-esima potenza di 2.
+	\begin{lstlisting}[style=arm]
+	LSL #num 
+	LSL RN 
+	\end{lstlisting}
+	
+	Bitshift di \verb|num| posizioni a destra. Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+	\begin{lstlisting}[style=arm]
+	LSR #num 
+	LSR RN 
+	\end{lstlisting}
+	
+	
+	Bitshift aritmetico di \verb|num| posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+	\begin{lstlisting}[style=arm]
+	ASR #num 
+	ASR RN 
+	\end{lstlisting}
+	
+	
+	
+	Rotate Right: esegue uno shift bitwise a destra e re-inserisce il bit shiftato (meno significativo), nella posizione del bit più significativo (più a sinistra).
+	\begin{lstlisting}[style=arm]
+	ROR #num
+	ROR RN
+	\end{lstlisting}
+	
+\end{defn}
+
+% TODO cross-compilare e debuggare ASM ARM su linux
+% pseudo istruzioni da passare al compilatore per generare un eseguibile
+% cross compila asm con gcc cross-compiler con -ggdb3 -static
+% gcc -S per generare asm .S
+% gcc-as per compilare .S 
+% avvia qemu con debugger bridge
+% info registers su gdb
+
+\begin{exmp}
+	\textbf{Program Counter:}
+	
+	
+	\begin{lstlisting}[style=arm]
+	MOV R0, #15
+	ADD R0, R0, R0
+	\end{lstlisting}
+	
+	
+	Il program counter (\verb|PC|) prima dell'esecuzione dell'istruzione \verb|MOV| indicherà l'indirizzo di memoria dove è contenuta la parola dell'istruzione. Alla fine dell'esecuzione di \verb|MOV| sarà incrementato di 4 posizioni (4 byte = 32 bit, dimensione di una parola).
+\end{exmp}
+
+\begin{defn}
+	\textbf{Istruzioni di salto}
+	
+	L'istruzione branch "salta" all'istruzione contenuta in \verb|PC|  a cui viene sommato \verb|#num|. Sono di fondamentale utilizzo i flag condizionali.
+	\begin{lstlisting}[style=arm]
+	B #num
+	\end{lstlisting}
+	
+	Salva il contenuto di \verb|PC| in \verb|LR| e "salta" all'istruzione contenuta in \verb|PC + #num|. Sono di fondamentale utilizzo i flag condizionali.
+	\begin{lstlisting}[style=arm]
+	BL #num
+	\end{lstlisting}
+%	TODO label ed esempio
 \end{defn}
