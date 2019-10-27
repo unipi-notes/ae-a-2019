@@ -1,0 +1,109 @@
+$date
+	Sun Oct 27 15:56:23 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module test $end
+$var wire 4 ! z [3:0] $end
+$var reg 8 " x [7:0] $end
+$scope module p $end
+$var wire 8 # x [7:0] $end
+$var reg 4 $ i [3:0] $end
+$var reg 4 % z [3:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b111 %
+b1000 $
+b10000000 #
+b10000000 "
+b111 !
+$end
+#1
+b110 !
+b110 %
+b1000 $
+b1000000 "
+b1000000 #
+#2
+b101 !
+b101 %
+b1000 $
+b100000 "
+b100000 #
+#3
+b100 !
+b100 %
+b1000 $
+b10000 "
+b10000 #
+#4
+b11 !
+b11 %
+b1000 $
+b1000 "
+b1000 #
+#5
+b10 !
+b10 %
+b1000 $
+b100 "
+b100 #
+#6
+b1 !
+b1 %
+b1000 $
+b10 "
+b10 #
+#7
+b0 !
+b0 %
+b1000 $
+b1 "
+b1 #
+#8
+b1111 !
+b1111 %
+b0 "
+b0 #
+#9
+b110 !
+b110 %
+b1000 $
+b1010010 "
+b1010010 #
+#10
+b110 !
+b110 %
+b1000 $
+b1011010 "
+b1011010 #
+#11
+b110 !
+b110 %
+b1000 $
+b1000001 "
+b1000001 #
+#12
+b111 !
+b111 %
+b1000 $
+b11010000 "
+b11010000 #
+#13
+b111 !
+b111 %
+b1000 $
+b10110110 "
+b10110110 #
+#14
+b1111 !
+b1111 %
+b0 "
+b0 #

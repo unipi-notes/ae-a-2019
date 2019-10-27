@@ -27,50 +27,62 @@ La somma fra due cifre può essere costruita con reti logiche. Il risultato dell
 	\includegraphics[width=\textwidth/2]{xor}
 \end{figure}
 
-\section{Esadecimale} 
+\begin{defn}
+	\textbf{Esadecimale:} 
+	
+	I numeri esadecimali sono numeri in base 16. Siccome non bastano le cifre decimali per rappresentare i numeri maggiori di 9 si usano le prime lettere dell'alfabeto.
+	Una cifra esadecimale rappresenta un nibble (4 bit).
+\end{defn}
 
-I numeri esadecimali sono numeri in base 16. Siccome non bastano le cifre decimali per rappresentare i numeri maggiori di 9 si usano le prime lettere dell'alfabeto.
-Una cifra esadecimale rappresenta un nibble (4 bit).
+\begin{defn}
+	\textbf{Numeri in virgola mobile}
+	
+	I numeri in virgola mobile si rappresentano con lo standard EEE 754 che definisce come si rappresentano i numeri in virgola mobile a singola precisione e doppia precisione (32 e 64 bit)
+	
+	I bit del numero vengono divisi in 3 parti. Il primo bit denota il segno, la seconda parte rappresenta l'esponente e la terza parte si denota mantissa. L'esponente esprime dove la virgola verrà posizionata, come nella notazione scientifica di una calcolatrice l'esponente rappresenta $ 10^{n} $ dove $ n $ è l'esponente. La mantissa è un numero di base moltiplicato per $ 10^0 $, e viene successivamente moltiplicato per l'esponente.
+	L'esponente può essere sia positivo che negativo.
+	
+	\begin{figure}
+		\caption{Standard IEEE 754 a 32 bit}
+		\includegraphics[width=\textwidth]{eee_floating_32}
+	\end{figure}
+	
+	Nello standard a 32 bit la sezione esponente ha 8 bit di lunghezza. Un numero ad 8 bit può rappresentare numeri da 0 a 255, per ottenere gli esponenti negativi nello standard dei numeri a virgola mobile il numero a 8 bit rappresenta invece numeri da -127 a +128
+	
+	\begin{figure}
+		\caption{IEEE 754 a 64 bit}
+		\includegraphics[width=\textwidth]{eee_floating_64}
+	\end{figure}
+\end{defn}
 
-\section{Numeri in virgola mobile}
 
-I numeri in virgola mobile si rappresentano con lo standard EEE 754 che definisce come si rappresentano i numeri in virgola mobile a singola precisione e doppia precisione (32 e 64 bit)
 
-I bit del numero vengono divisi in 3 parti. Il primo bit denota il segno, la seconda parte rappresenta l'esponente e la terza parte si denota mantissa. L'esponente esprime dove la virgola verrà posizionata, come nella notazione scientifica di una calcolatrice l'esponente rappresenta $ 10^{n} $ dove $ n $ è l'esponente. La mantissa è un numero di base moltiplicato per $ 10^0 $, e viene successivamente moltiplicato per l'esponente.
-L'esponente può essere sia positivo che negativo.
+\begin{defn}
+	\textbf{Somma dei numeri a virgola mobile:}
+	
+	Per sommare i numeri a virgola mobile il primo passo è allineare le mantisse, significa osservare gli esponenti e spostarli fino a che le cifre non sono sommabili in colonna.
+	Il secondo passo consiste nel sommare e il terzo passo nel normalizzare la somma. Nei processori la somma floating point viene eseguita in dei moduli appositi che in input ricevono due o più numeri floating point ed eseguono in dei sotto-moduli i tre passaggi della somma in un tempo $ 1/3 t $ dove $ t $ è il tempo totale per eseguire una somma. I tre passaggi della somma possono essere sequenzializzati così che una volta che ogni sotto-modulo ha completato il passo, può ricevere subito l'input successivo (la somma di due numeri FP impiegherà $ t + 1/3 $ invece che $ 2t $)
+\end{defn}
 
-\begin{figure}
-	\caption{Standard IEEE 754 a 32 bit}
-	\includegraphics[width=\textwidth]{eee_floating_32}
-\end{figure}
 
-Nello standard a 32 bit la sezione esponente ha 8 bit di lunghezza. Un numero ad 8 bit può rappresentare numeri da 0 a 255, per ottenere gli esponenti negativi nello standard dei numeri a virgola mobile il numero a 8 bit rappresenta invece numeri da -127 a +128
+\begin{defn}
+	\textbf{Estensioni vettoriali:}
+	Alcuni processori permettono di eseguire operazioni contemporaneamente su un registro dividendolo in sottoregistri più piccoli. 
+\end{defn}
 
-\begin{figure}
-	\caption{IEEE 754 a 64 bit}
-	\includegraphics[width=\textwidth]{eee_floating_64}
-\end{figure}
 
-\paragraph{Somma dei numeri a virgola mobile}
+\begin{defn}
+	\textbf{Codifica ASCII}
+	La codifica ASCII è una tabella di codifica di caratteri testuali con interi da 0 a 255 (8 bit). La codifica ASCII estesa è a 16 bit e comprende diversi caratteri non latini.
+	
+	\begin{figure}
+		\caption{Tabella ASCII}
+		\includegraphics[width=\textwidth]{ascii}
+	\end{figure}
+\end{defn}
 
-Per sommare i numeri a virgola mobile il primo passo è allineare le mantisse, significa osservare gli esponenti e spostarli fino a che le cifre non sono sommabili in colonna.
-Il secondo passo consiste nel sommare e il terzo passo nel normalizzare la somma. Nei processori la somma floating point viene eseguita in dei moduli appositi che in input ricevono due o più numeri floating point ed eseguono in dei sotto-moduli i tre passaggi della somma in un tempo $ 1/3 t $ dove $ t $ è il tempo totale per eseguire una somma. I tre passaggi della somma possono essere sequenzializzati così che una volta che ogni sotto-modulo ha completato il passo, può ricevere subito l'input successivo (la somma di due numeri FP impiegherà $ t + 1/3 $ invece che $ 2t $)
 
-\paragraph{Estensioni vettoriali}
-Alcuni processori permettono di eseguire operazioni contemporaneamente su un registro dividendolo in sottoregistri più piccoli. 
-
-\section{Codifica ASCII}
-La codifica ASCII è una tabella di codifica di caratteri testuali con interi da 0 a 255 (8 bit). La codifica ASCII estesa è a 16 bit e comprende diversi caratteri non latini.
-
-\begin{figure}
-	\caption{Tabella ASCII}
-	\includegraphics[width=\textwidth]{ascii}
-\end{figure}
-
-\section{Porte Logiche e Algebra di Boole}
-
-I circuiti digitali vengono realizzati utilizzando componenti chiamati \textbf{porte logiche}. Sono realizzate con componenti fisici come transistor e resistenze, ma nella progettazione dei circuiti digitali le porte logiche vengono schematizzate con i simboli riportati nella Figura 3.1 per semplificare la progettazione \textbf{astraendo} il livello di complessità della circuiteria analogica.
-Solamente con la porta NAND si possono realizzare tutte le altre porte (NAND è funzionalmente completo), ma le porte in generale si costruiscono singolarmente con componenti appositi. Esse implementano la \textbf{logica booleana} che conseguentemente permette di realizzare operazioni di \textbf{aritmetica binaria} per costruire unità di calcolo in componenti elettronici e processori.
+\section{Algebra di Boole, Porte Logiche e Mappe di Karnaugh}
 
 \begin{wrapfigure}{r}{0.6\textwidth}
 	\begin{center}
@@ -79,64 +91,52 @@ Solamente con la porta NAND si possono realizzare tutte le altre porte (NAND è 
 	\caption{Margine di rumore nei circuiti digitali}	
 \end{wrapfigure}
 
+I circuiti digitali vengono realizzati utilizzando componenti chiamati \textbf{porte logiche}. Sono realizzate con componenti fisici come transistor e resistenze, ma nella progettazione dei circuiti digitali le porte logiche vengono schematizzate con i simboli riportati nella Figura 3.1 per semplificare la progettazione \textbf{astraendo} il livello di complessità della circuiteria analogica.
+
+
+Solamente con la porta NAND si possono realizzare tutte le altre porte (NAND è funzionalmente completo), ma le porte in generale si costruiscono singolarmente con componenti appositi. Esse implementano la \textbf{logica booleana} che conseguentemente permette di realizzare operazioni di \textbf{aritmetica binaria} per costruire unità di calcolo in componenti elettronici e processori.
+
+
 
 I componenti elettronici molto piccoli sono sensibili al \textbf{rumore}, per ovviare al problema i valori discreti (0 e 1) nei circuiti digitali non seguono un cambiamento istantaneo di differenza di potenziale (voltaggio), ma ammettono un margine per ridurre i problemi causati dal rumore.
 
 
 I componenti (transistor) con cui si costruiscono porte logiche e circuiti sono realizzati con materiali semiconduttori, che possono essere di diversi tipi. Vedremo il tipo NMOS. Un transistor è composto da materiali come gallio e silicio.
 
-\begin{wrapfigure}{r}{0.7\textwidth}
-	\begin{center}
-		\includegraphics[width=0.68\textwidth]{cmos}
-	\end{center}
-	\caption{Transistor NMOS}
-\end{wrapfigure}
 
+\centerfig{0.68}{cmos}{Transistor NMOS}
 
-\begin{figure}
-	\centering
-	\caption{Tabella delle porte logiche comuni}
-	\includegraphics[width=\textwidth,height=\textheight]{logicgates}
-\end{figure}
+\centerfig{0.9}{logicgates}{Tabella delle porte logiche comuni}
 
-\begin{figure}
-	\centering
-	\caption{Porta NOT con transistor PMOS e NMOS}
-	\includegraphics[width=\textwidth]{notgatetransistor}
-\end{figure}
+\centerfig{0.75}{notgatetransistor}{Porta NOT con transistor PMOS e NMOS}
 
-\begin{figure}
-	\centering
-	\caption{Transistor NMOS e PMOS}
-	\includegraphics[width=0.6\textwidth]{NMOS-and-PMOS}
-\end{figure}
+\centerfig{0.4}{NMOS-and-PMOS}{Transistor NMOS e PMOS}
 
 \clearpage
 
-\subsection{Algebra di Boole}
+\begin{defn}
+	\textbf{Conversione da formula booleana a circuito}
+	
+	
+	\centerfig{0.48}{sommadiprodotti-gate}{Conversione di $ z $ da formula booleana a circuito logico}
+	
+	\begin{table}[H]
+		\centering
+		\caption{Notazione usata per l'Algebra di Boole}
+		\label{tab:notazione-booleana}
+		\begin{tabular}{|l|l|l|}
+			\hline
+			Funzione & Notazione Usata & Notazione Logica \\ 
+			NOT(A)   & $\overbar{A}$   & $\lnot A$        \\ 
+			AND(A,B) & $A \cdot B$     & $A \land B$      \\ 
+			OR(A,B)  & $A + B$         & $A \lor B$       \\ \hline
+		\end{tabular}
+	\end{table}
+	
+	Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti}:
+	\[ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC \]
+\end{defn}
 
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.48\textwidth]{sommadiprodotti-gate}
-	\caption{Conversione di $ z $ da formula booleana a circuito logico}
-\end{figure}
-
-\begin{table}[H]
-	\centering
-	\caption{Notazione usata per l'Algebra di Boole}
-	\label{tab:notazione-booleana}
-	\begin{tabular}{|l|l|l|}
-		\hline
-		Funzione & Notazione Usata & Notazione Logica \\ 
-		NOT(A)   & $\overbar{A}$   & $\lnot A$        \\ 
-		AND(A,B) & $A \cdot B$     & $A \land B$      \\ 
-		OR(A,B)  & $A + B$         & $A \lor B$       \\ \hline
-	\end{tabular}
-\end{table}
-
-Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma di prodotti}:
-\[ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC \]
 
 
 \begin{table}[H]
@@ -157,95 +157,153 @@ Prendiamo ad esempio un espressione booleana in forma canonica in \textbf{somma 
 	\end{tabular}
 \end{table}
 
-
-
-
 $ z $ si può anche esprimere come prodotto di somme: $ z = (A+\overbar{B}+C)(\overbar{A}BC)(\overbar{A}\overbar{B}C) $
+
+Le leggi della logica Booleana ci permettono di semplificare molto i componenti realizzati con porte logiche.
+
+
+\begin{defn}
+	\textbf{Mappe di Karnaugh:}
+	
+	Una mappa di Karnaugh o K-Map è un metodo di semplificare un espressione booleana. I valori sono trasferiti da una tabella di verità ad una mappa bidimensionale:
+	
+	Approfondisci su \href{https://en.wikipedia.org/wiki/Karnaugh_map}{Wikipedia}
+	
+	Prendiamo una formula a quattro variabili $ f(A,B,C,D) $, una mappa di Karnaugh può essere:
+	\begin{table}[H]
+		\centering
+		\caption{Tabella di verità della mappa di Karnaugh di $f$}
+		\label{tab:karnaugh}
+		\begin{tabular}{lllll}
+			AB\textbackslash{}CD    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
+			\multicolumn{1}{l|}{00} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
+			\multicolumn{1}{l|}{01} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
+			\multicolumn{1}{l|}{11} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
+			\multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
+		\end{tabular}
+	\end{table}
+	
+	Facciamo ad esempio la mappa di Karnaugh di $ z = f(A,B,C) $ vista nella sezione precedente:
+	
+	\begin{table}[H]
+		\centering
+		\caption{Tabella di verità della mappa di Karnaugh di $z$}
+		\label{tab:karnaugh}
+		\begin{tabular}{lllll}
+			A\textbackslash{}BC    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
+			\multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
+			\multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
+		\end{tabular}
+	\end{table}
+	
+	Possiamo riconoscere un'implicante nella seconda e terza colonna che corrisponde esattamente a C. Osserviamo un'altra implicante nella prima riga, prima e seconda colonna che corrisponde esattamente a $ \overbar{A}\overbar{B} $. Possiamo poi sommare le implicanti per ottenere una formula equivalente a quella di partenza, ciò implica che $ z =  \overbar{A}\overbar{B} + C $
+\end{defn}
+
+\begin{defn}
+	\textbf{Circuito con più output:}
+	Se abbiamo una tabella di verità di un circuito con $ n $ input e $ 2^n $ righe, con più output $ z_1, \dots, z_k $, gli output si suddividono in $ k $ tabelle con un solo output ($ z_k $) e $ 2^n $ righe di input.
+\end{defn}
+
+\begin{defn}
+	\textbf{Operatori a più ingressi:}
+	Gli operatori a più ingressi AND, OR, etc..., se presentano più di due ingressi si rappresentano con una rete logica che sfrutta la proprietà associativa degli operatori logici. Ciò comporta un limite massimo di ingressi perché viene introdotto un ritardo di stabilizzazione determinato e piccolo.
+	Ad esempio, un AND a 4 ingressi sarà rappresentato come $ z = x_1 \cdot x_2 \cdot x_3 \cdot x_4 = (x_1 \cdot x_2 ) \cdot (x_3 \cdot x_4)  $
+	Perciò gli operatori associativi a più ingressi si rappresentano come un albero k-ario di porte logiche. Il numero di livelli di porte sarà $ log_k(n) $ dove $ k $ è l'arietà delle singole porte ed è $ n $ il numero di ingressi nel circuito.
+\end{defn}
 
 
 \subsection{Teoremi dell'Algebra Booleana}
 Breve ripasso dei teoremi della Logica Booleana.
-\paragraph{Elemento Identità di prodotto e somma}
-\[ A \cdot 1 = A \iff A \land T \equiv A\]
-\[ A + 0 = 0 \iff A \lor F \equiv A\]
-\paragraph{Elemento assorbente}
-\[ A \cdot 0 = 0 \iff A \land F \equiv F \]
-\[ A + 1 = 1 \iff A \lor T \equiv T \]
-\paragraph{Idempotenza}
-\[ A \cdot A = A \iff A \land A \equiv A \]
-\[ A + A = A \iff A \lor A \equiv A \]
-\paragraph{Complemento}
-\[ A \cdot \overbar{A} = 0 \iff A \land \lnot A \equiv F \]
-\[ A + \overbar{A} = 1 \iff A \lor \lnot A \equiv T \]
-\paragraph{Commutatività}
-\[ A + B = B + A \]
-\[ A \cdot B = B \cdot A \]
-\paragraph{Associatività}
-\[ (A \cdot B) \cdot C = A \cdot (B \cdot C) \]
-\[ (A + B) + C = A + (B + C) \]
-\paragraph{Distributività}
-\[ (A \cdot B) + C = (A+C) \cdot (B+C) \]
-\[ (A+B) \cdot C = AC + BC \]
-\paragraph{DeMorgan}
-\[ \overbar{(A + B)} = \overbar{A} \cdot \overbar{B} \iff \lnot(A \lor B )\equiv \lnot A \land \lnot B \]
-\[ \overbar{(A \cdot B)} = \overbar{A} + \overbar{B} \iff \lnot(A \land B )\equiv \lnot A \lor \lnot B \]
 
-\paragraph{Esempio}
-Semplifichiamo la formula booleana $ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC $
+\begin{thm}
+	\textbf{Elemento Identità di prodotto e somma}
+	
+	\begin{equation*}\begin{aligned}
+		A \cdot 1 = A \iff A \land T \equiv A \\
+		A + 0 = 0 \iff A \lor F \equiv A
+	\end{aligned}\end{equation*}
+\end{thm}
 
-\begin{align}
-\begin{cases}
-\overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C \equiv \overbar{A}\overbar{B}(\overbar{C}+C) \equiv \overbar{A}\overbar{B} \\ 
-A\overbar{B}C + ABC \equiv AC(\overbar{B}+B) \equiv AC
-\end{cases} \\
-\implies z = \overbar{A}\overbar{B} + \overbar{A}BC + AC
-\end{align}
+\begin{thm}
+	\textbf{Elemento assorbente}
+	
+	\begin{equation*}\begin{aligned}
+		A \cdot 0 = 0 \iff A \land F \equiv F \\
+		A + 1 = 1 \iff A \lor T \equiv T 
+	\end{aligned}\end{equation*}
+\end{thm}
 
-Le leggi della logica Booleana ci permettono di semplificare molto i componenti realizzati con porte logiche.
+\begin{thm}
+	\textbf{Idempotenza}
+	\begin{equation*}\begin{aligned}
+		A \cdot A = A \iff A \land A \equiv A \\
+		A + A = A \iff A \lor A \equiv A 
+	\end{aligned}\end{equation*}
+\end{thm}
 
-\subsection{Mappe di Karnaugh}
+\begin{thm}
+	\textbf{Complemento}
+	
+	\begin{equation*}\begin{aligned}
+		A \cdot \overbar{A} = 0 \iff A \land \lnot A \equiv F \\ 
+		A + \overbar{A} = 1 \iff A \lor \lnot A \equiv T
+	\end{aligned}\end{equation*}	
+\end{thm}
 
-Una mappa di Karnaugh o K-Map è un metodo di semplificare un espressione booleana. I valori sono trasferiti da una tabella di verità ad una mappa bidimensionale:
+\begin{thm}
+	\textbf{Commutatività}
+	\begin{equation*}\begin{aligned}
+		A + B = B + A  \\
+		A \cdot B = B \cdot A 
+	\end{aligned}\end{equation*}
+\end{thm}
 
-Approfondisci su \href{https://en.wikipedia.org/wiki/Karnaugh_map}{Wikipedia}
-
-Prendiamo una formula a quattro variabili $ f(A,B,C,D) $, una mappa di Karnaugh può essere:
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità della mappa di Karnaugh di $f$}
-	\label{tab:karnaugh}
-	\begin{tabular}{lllll}
-		AB\textbackslash{}CD    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
-		\multicolumn{1}{l|}{00} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{01} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{11} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \cline{2-5} 
-	\end{tabular}
-\end{table}
-
-Facciamo ad esempio la mappa di Karnaugh di $ z = f(A,B,C) $ vista nella sezione precedente:
-
-\begin{table}[H]
-	\centering
-	\caption{Tabella di verità della mappa di Karnaugh di $z$}
-	\label{tab:karnaugh}
-	\begin{tabular}{lllll}
-		A\textbackslash{}BC    & 00                     & 01                     & 11                     & 10                     \\ \cline{2-5} 
-		\multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-		\multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{0} \\ \cline{2-5} 
-	\end{tabular}
-\end{table}
-
-Possiamo riconoscere un'implicante nella seconda e terza colonna che corrisponde esattamente a C. Osserviamo un'altra implicante nella prima riga, prima e seconda colonna che corrisponde esattamente a $ \overbar{A}\overbar{B} $. Possiamo poi sommare le implicanti per ottenere una formula equivalente a quella di partenza, ciò implica che $ z =  \overbar{A}\overbar{B} + C $
+\begin{thm}
+	\textbf{Associatività}
+	
+	\begin{equation*}\begin{aligned}
+		(A \cdot B) \cdot C = A \cdot (B \cdot C) \\ 
+		(A + B) + C = A + (B + C) 
+	\end{aligned}\end{equation*}
+\end{thm}
 
 
-\subsection{Circuito con più output}
-Se abbiamo una tabella di verità di un circuito con $ n $ input e $ 2^n $ righe, con più output $ z_1, \dots, z_k $, gli output si suddividono in $ k $ tabelle con un solo output ($ z_k $) e $ 2^n $ righe di input.
+\begin{thm}
+	\textbf{Distributività}
+	
+	\begin{equation*}\begin{aligned}
+		(A \cdot B) + C = (A+C) \cdot (B+C) \\
+		(A+B) \cdot C = AC + BC
+	\end{aligned}\end{equation*}
+\end{thm}
 
-\subsection{Operatori a più ingressi}
-Gli operatori a più ingressi AND, OR, etc..., se presentano più di due ingressi si rappresentano con una rete logica che sfrutta la proprietà associativa degli operatori logici. Ciò comporta un limite massimo di ingressi perché viene introdotto un ritardo di stabilizzazione determinato e piccolo.
-Ad esempio, un AND a 4 ingressi sarà rappresentato come $ z = x_1 \cdot x_2 \cdot x_3 \cdot x_4 = (x_1 \cdot x_2 ) \cdot (x_3 \cdot x_4)  $
-Perciò gli operatori associativi a più ingressi si rappresentano come un albero k-ario di porte logiche. Il numero di livelli di porte sarà $ log_k(n) $ dove $ k $ è l'arietà delle singole porte ed è $ n $ il numero di ingressi nel circuito.
+\begin{thm}
+	\textbf{DeMorgan}
+	
+	\begin{equation*}\begin{aligned}
+		\overbar{(A + B)} = \overbar{A} \cdot \overbar{B} \iff \lnot(A \lor B )\equiv \lnot A \land \lnot B \\
+		\overbar{(A \cdot B)} = \overbar{A} + \overbar{B} \iff \lnot(A \land B )\equiv \lnot A \lor \lnot B 
+	\end{aligned}\end{equation*}
+\end{thm} 
+
+
+\begin{exmp}
+	Semplifichiamo la formula booleana $ z = \overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C + \overbar{A}BC + A\overbar{B}C + ABC $
+	
+	
+	\begin{equation*}
+	\begin{aligned}
+	\begin{cases}
+	\overbar{A}\overbar{B}\overbar{C} + \overbar{A}\overbar{B}C \equiv \overbar{A}\overbar{B}(\overbar{C}+C) \equiv \overbar{A}\overbar{B} \\ 
+	A\overbar{B}C + ABC \equiv AC(\overbar{B}+B) \equiv AC
+	\end{cases} \\
+	\implies z = \overbar{A}\overbar{B} + \overbar{A}BC + AC
+	\end{aligned}
+	\end{equation*}
+		
+\end{exmp}
+
+
 
 % TODO figura albero di AND con 8 input. 
 
