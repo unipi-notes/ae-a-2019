@@ -401,11 +401,6 @@ while(true) {
 \end{exmp}
 
 \begin{defn}
-	\textbf{Struttura di un programma asm ARM con toolchain GNU}
-	%	TODO
-\end{defn}
-
-\begin{defn}
 	\textbf{If-then-else in asm ARM}
 	La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|.
 	\begin{lstlisting}[style=armn]
@@ -416,8 +411,6 @@ while(true) {
 	.endif
 	\end{lstlisting}
 	
-	%	TODO if-then-else come funziona
-
 	Vediamo come viene compilata ad Assembly una direttiva \verb|x|, utilizzeremo le direttive e mai una condizione testata manualmente.
 	\begin{lstlisting}[style=armn]
 	@ asm equivalent to C: if(x == y) {x++; y=2x} else x--;
