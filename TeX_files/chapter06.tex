@@ -15,7 +15,7 @@ while(true) {
 \begin{defn}
 	Prelevare un istruzione significa estrarre dalla memoria una parola (configurazione di 0 e 1) contenente un istruzione \textbf{Assembly}. L'Assembly, spesso abbreviato \textbf{asm} è un linguaggio di programmazione a basso livello con una forte corrispondenza fra il linguaggio e le istruzioni in linguaggio macchina di una particolare architettura. Vedremo il linguaggio Assembler per ARM, architettura acronimo di Advanced RISC Machines, dove RISC sta per Reduced Instruction Set Computer. RISC utilizza molte meno istruzioni di CISC, più comune nelle architetture X86 e X86\_64. I principi di RISC sono:
 	\begin{enumerate}
-		\item La regolarità $ \implies $ semplicità 
+		\item La regolarità $ \implies $ semplicità
 		\item Supporto al caso più frequente
 		\item "Piccolo è bello"
 		\item Un buon risultato è frutto di un buon compromesso
@@ -105,14 +105,13 @@ while(true) {
 		\code{LT}{signed less than}{N $\neq$ V}
 		\code{GT}{signed greater than}{Z = 0 $\wedge$ N = V}
 		\code{LE}{signed less than or equal}{Z = 1 $\vee$ N $\neq$ V}\hline
-		
+
 	\end{tabular}
 \end{table}
 
 \begin{defn}
 	\textbf{Registri ARMv7:}
-	Nelle CPU ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|Rn| dove $ 
-	0 \leq n < 16 $. 
+	Nelle CPU ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|Rn| dove $ 0 \leq n < 16 $.
 	
 	\begin{itemize}
 		\item \verb|R0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
@@ -144,7 +143,7 @@ while(true) {
 	\end{lstlisting}
 	
 	Tale istruzione caricherà nel registro \verb|R0| il contenuto dell'indirizzo puntato dal contenuto di \verb|R2| a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \verb|struct| e \verb|array|, presenti nel linguaggio C.
-	
+
 	Per caricare in un registro un operando immediato o il valore di un altro registro si usa
 	\begin{lstlisting}[style=arm]
 		MOV RD, <src>
@@ -223,7 +222,7 @@ while(true) {
 	\begin{lstlisting}[style=arm]
 	SBC RD, R1, R2
 	\end{lstlisting}
-	
+
 	Compare accetta solamente due operandi, realizza la sottrazione dei registri \verb|R1 - R2| ed \textbf{imposta i bit di flag}. Viene utilizzato per realizzare esecuzione condizionale nei programmi, laddove le istruzioni successive utilizzino un codice condizionale.
 	\begin{lstlisting}[style=arm]
 	CMP R1, R2
@@ -238,7 +237,7 @@ while(true) {
 
 \begin{defn}
 	\textbf{Istruzioni di Shift (logico-aritmetiche)}
-	
+
 	\begin{note}
 		I registri passati per parametro alle istruzioni di shift non sono registri di destinazione ma contengono il numero parametro dello shift (di quante posizioni deve essere effettuato). Vedi il paragrafo sulla sintassi delle istruzioni Assembler.
 	\end{note}
@@ -251,10 +250,10 @@ while(true) {
 	
 	Bitshift di \verb|num| posizioni a destra. Equivalente alla divisione per la \verb|num|-esima potenza di 2.
 	\begin{lstlisting}[style=arm]
-	LSR #num 
+	LSR #num
 	LSR RN 
 	\end{lstlisting}
-	
+
 	
 	Bitshift aritmetico di \verb|num| posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \verb|num|-esima potenza di 2.
 	\begin{lstlisting}[style=arm]
@@ -263,7 +262,7 @@ while(true) {
 	\end{lstlisting}
 	
 	
-	
+
 	Rotate Right: esegue uno shift bitwise a destra e re-inserisce il bit shiftato (meno significativo), nella posizione del bit più significativo (più a sinistra).
 	\begin{lstlisting}[style=arm]
 	ROR #num
@@ -282,7 +281,7 @@ while(true) {
 
 \begin{exmp}
 	\textbf{Program Counter:}
-	
+
 	
 	\begin{lstlisting}[style=arm]
 	MOV R0, #15
@@ -311,7 +310,7 @@ while(true) {
 
 \begin{defn}
 	\textbf{Direttive}
-	Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|	
+	Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|
 \end{defn}
 
 \begin{defn}
@@ -373,8 +372,6 @@ while(true) {
 \end{defn}
 
 \begin{exmp}
-	\textbf{Chiamata di sistema alla funzione} \verb|write|
-	
 	\verb|write(fd, buffer, num_byte);| è una funzione C che stampa \verb|num_byte| del \verb|buffer| all'interno di \verb|fd|, ovvero un \textit{file descriptor}. La funzione della \textit{stdlib} C \verb|printf| che utilizza internamente \verb|write|. I file descriptor standard in sistemi UNIX sono
 	\begin{itemize}
 		\item 0: standard input o \verb|stdin|
@@ -390,11 +387,11 @@ while(true) {
 	I label identificano sezioni di codice.
 	
 	\begin{lstlisting}[style=arm]
-	testlabel: 
+	testlabel:
 	<instructions>
 	...
 	\end{lstlisting}
-	
+
 	Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella sezione \verb|.data| si usa l'operando \verb|=esempio|. Per i label nella sezione \verb|.text| non va utilizzato il simbolo prefisso \verb|=|.
 \end{defn}
 
@@ -410,8 +407,8 @@ while(true) {
 
 \begin{defn}
 	\textbf{If-then-else in asm ARM}
-	La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|. 
-	\begin{lstlisting}[style=arm]
+	La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|.
+	\begin{lstlisting}[style=armn]
 	.if <logical_expression>
 		<do_something>
 	.else
@@ -419,15 +416,66 @@ while(true) {
 	.endif
 	\end{lstlisting}
 	
-	% Vediamo come viene compilata ad Assembly una direttiva if	
 	%	TODO if-then-else come funziona
+
+	Vediamo come viene compilata ad Assembly una direttiva \verb|x|, utilizzeremo le direttive e mai una condizione testata manualmente.
+	\begin{lstlisting}[style=armn]
+	@ asm equivalent to C: if(x == y) {x++; y=2x} else x--;
+		cmp r1, r2 	@ x and y are in r1 and r2 test condition
+		bne else
+	then:
+		add r1, r1, #1 	@ x++
+		add r2, r1, r1	@ y=2x
+		b cont
+	else:
+		sub r1, r1, #1
+	cont:
+		\dots			@ continue program
+	\end{lstlisting}
 \end{defn}
 
 \begin{defn}
 	\textbf{Ciclo for in asm ARM}
-%	TODO ciclo for
+
+	\begin{lstlisting}[style=armn]
+	@ asm equivalent to C: for(int i=0; i<4; i++)
+		mov r0, #0			@ initialize counter
+	for:
+		cmp #4, r0		@ test condition, sets flags
+		beq endfor
+		add r0, r0, #1 	@ step increment
+	endfor:
+		... 			@ for is over, continue program
+	\end{lstlisting}
 \end{defn}
 
 \begin{defn}
 	\textbf{Switch-case in asm ARM}
+
+	\begin{lstlisting}
+		switch(x) {
+			case 1: {x = 100; break;}
+			case 2: {x = 200; break;}
+			default: x = 300;
+			}
+	\end{lstlisting}
+
+	Realizziamo l'equivalente di questo snippet C in asm ARM
+
+	\begin{lstlisting}[style=armn]
+	case1:
+		cmp r0, #1
+		bne case2
+		mov r0, #100
+		b cont
+	case2:
+		cmp r0, #2
+		bne default
+		mov r0, #200
+		b cont
+	default:
+		mov r0, #300
+	cont:
+		... 	@ continue program
+	\end{lstlisting}
 \end{defn}
