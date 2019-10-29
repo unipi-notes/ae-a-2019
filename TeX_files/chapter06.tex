@@ -42,6 +42,9 @@ while(true) {
 \begin{defn}
 	\textbf{Sintassi delle istruzioni ARMv7:}
 	
+	\begin{note}
+		Le istruzioni sono case-insensitive.
+	\end{note}	
 	
 	\begin{enumerate}
 		\item \textbf{Istruzioni a singolo operando (MOV, MOVN)}
@@ -141,6 +144,11 @@ while(true) {
 	\end{lstlisting}
 	
 	Tale istruzione caricherà nel registro \verb|R0| il contenuto dell'indirizzo puntato dal contenuto di \verb|R2| a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \verb|struct| e \verb|array|, presenti nel linguaggio C.
+	
+	Per caricare in un registro un operando immediato o il valore di un altro registro si usa
+	\begin{lstlisting}[style=arm]
+		MOV RD, <src>
+	\end{lstlisting}
 \end{defn}
 
 \begin{note}
@@ -297,5 +305,129 @@ while(true) {
 	\begin{lstlisting}[style=arm]
 	BL #num
 	\end{lstlisting}
-%	TODO label ed esempio
+\end{defn}
+
+\section{Direttive, Pseudoistruzioni e Programmi}
+
+\begin{defn}
+	\textbf{Direttive}
+	Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|	
+\end{defn}
+
+\begin{defn}
+	\textbf{Direttive di sezione del codice}
+	
+	Inizia una nuova sezione di codice o dati.
+	\begin{lstlisting}[style=arm]
+	.section <section_name> {, "<flags>"}
+	\end{lstlisting}
+	
+	Le sezioni \verb|<section_name>| nell'assembler ARM GNU possono essere:
+	\begin{itemize}
+		\item \verb|.text| una sezione di codice
+		\item \verb|.data| una sezione di dati inizializzati
+		\item \verb|.bss| una sezione di dati non inizializzati
+%		TODO \item \verb|.rodata| inizializza una sezione di dati (read only?)
+	\end{itemize}
+\end{defn}
+
+\begin{defn}
+	\textbf{Direttive di inizializzazione di dati}
+	
+	Inserisce una lista di valori di parola da 32 bit nell'assembly.
+	\begin{lstlisting}[style=arm]
+	.word 123
+	.word 1,2,3,4
+	\end{lstlisting}
+	
+	Inserisce una lista di byte nell'assembly.
+	\begin{lstlisting}[style=arm]
+	.byte <byte1> {, <byte2>, ...}
+	\end{lstlisting}
+	
+	Inserisce una stringa di caratteri ASCII nell'assembly.
+	\begin{lstlisting}[style=arm]
+	.ascii "<string>"
+	\end{lstlisting}
+	
+	Come \verb|.ascii|, inserisce una stringa di caratteri ASCII nell'assembly, ma seguita da un byte 0.
+	\begin{lstlisting}[style=arm]
+	.asciz "<string>"
+	\end{lstlisting}
+	
+	Riserva \verb|number_of_bytes| byte in memoria, sono riempiti con byte 0.
+	\begin{lstlisting}[style=arm]
+	.space <number_of_bytes>
+	\end{lstlisting}
+\end{defn}
+
+\begin{defn}
+	\textbf{Chiamate al Sistema Operativo}
+	Come da C, possiamo fare chiamate al Sistema Operativo in Assembly. Si possono chiamare funzioni di librerie, che comprendono funzioni per i processi e funzioni per l'IO.
+	
+	Realizza una chiamata di sistema, il cui codice è contenuto in \verb|R7|. Le due istruzioni sono equivalenti.
+	\begin{lstlisting}[style=arm]
+	SVC 0	@ "supervisor call"
+	SWI 0	@ "software interrupt"
+	\end{lstlisting}
+\end{defn}
+
+\begin{exmp}
+	\textbf{Chiamata di sistema alla funzione} \verb|write|
+	
+	\verb|write(fd, buffer, num_byte);| è una funzione C che stampa \verb|num_byte| del \verb|buffer| all'interno di \verb|fd|, ovvero un \textit{file descriptor}. La funzione della \textit{stdlib} C \verb|printf| che utilizza internamente \verb|write|. I file descriptor standard in sistemi UNIX sono
+	\begin{itemize}
+		\item 0: standard input o \verb|stdin|
+		\item 1: standard output o \verb|stdout|
+		\item 2: standard error o \verb|stderr|
+	\end{itemize}
+	
+	Il numero della syscall \verb|write| è 4.
+\end{exmp}
+
+\begin{defn}
+	\textbf{Label}
+	I label identificano sezioni di codice.
+	
+	\begin{lstlisting}[style=arm]
+	testlabel: 
+	<instructions>
+	...
+	\end{lstlisting}
+	
+	Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella sezione \verb|.data| si usa l'operando \verb|=esempio|. Per i label nella sezione \verb|.text| non va utilizzato il simbolo prefisso \verb|=|.
+\end{defn}
+
+\begin{exmp}
+	\textbf{Hello World in Assembler ARM}
+	\includecode[armn]{./asm/helloworld/helloworld.s}{Hello World in Assembler ARM}
+\end{exmp}
+
+\begin{defn}
+	\textbf{Struttura di un programma asm ARM con toolchain GNU}
+	%	TODO
+\end{defn}
+
+\begin{defn}
+	\textbf{If-then-else in asm ARM}
+	La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|. 
+	\begin{lstlisting}[style=arm]
+	.if <logical_expression>
+		<do_something>
+	.else
+		<do_something_else>
+	.endif
+	\end{lstlisting}
+	
+	% Vediamo come viene compilata ad Assembly una direttiva if	
+	%	TODO if-then-else come funziona
+\end{defn}
+
+\begin{defn}
+	\textbf{Ciclo for in asm ARM}
+%	TODO ciclo for
+\end{defn}
+
+\begin{defn}
+	\textbf{Switch-case in asm ARM}
 \end{defn}
