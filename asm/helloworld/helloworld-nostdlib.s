@@ -1,11 +1,12 @@
+@ COMPILE BY ADDING -nostdlib option!
 .data                       @ initialized data section
 message:                    @ label "message"
     .asciz "hello world\n"  @ allocate a string ended with a 0 byte
 len = .-message             @ create a len label containing length of "message"
 
 .text                       @ section containing the code to run
-.global main                @ give the label "_start" external linkage
-main:                     @ main program
+.global _start              @ give the label "_start" external linkage
+_start:                     @ main program
     mov r0, #1              @ tell SYS_WRITE to use #1 (stdout) as fd
     ldr r1, =message        @ load message label from memory into SYS_WRITE
                             @ buffer. an =x operand returns x's mem address

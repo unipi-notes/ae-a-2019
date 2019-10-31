@@ -13,69 +13,69 @@ while(true) {
 \end{lstlisting} 
 
 \begin{defn}
-	Prelevare un istruzione significa estrarre dalla memoria una parola (configurazione di 0 e 1) contenente un istruzione \textbf{Assembly}. L'Assembly, spesso abbreviato \textbf{asm} è un linguaggio di programmazione a basso livello con una forte corrispondenza fra il linguaggio e le istruzioni in linguaggio macchina di una particolare architettura. Vedremo il linguaggio Assembler per ARM, architettura acronimo di Advanced RISC Machines, dove RISC sta per Reduced Instruction Set Computer. RISC utilizza molte meno istruzioni di CISC, più comune nelle architetture X86 e X86\_64. I principi di RISC sono:
-	\begin{enumerate}
-		\item La regolarità $ \implies $ semplicità
-		\item Supporto al caso più frequente
-		\item "Piccolo è bello"
-		\item Un buon risultato è frutto di un buon compromesso
-	\end{enumerate}
+Prelevare un istruzione significa estrarre dalla memoria una parola (configurazione di 0 e 1) contenente un istruzione \textbf{Assembly}. L'Assembly, spesso abbreviato \textbf{asm} è un linguaggio di programmazione a basso livello con una forte corrispondenza fra il linguaggio e le istruzioni in linguaggio macchina di una particolare architettura. Vedremo il linguaggio Assembler per ARM, architettura acronimo di Advanced RISC Machines, dove RISC sta per Reduced Instruction Set Computer. RISC utilizza molte meno istruzioni di CISC, più comune nelle architetture X86 e X86\_64. I principi di RISC sono:
+\begin{enumerate}
+	\item La regolarità $ \implies $ semplicità
+	\item Supporto al caso più frequente
+	\item "Piccolo è bello"
+	\item Un buon risultato è frutto di un buon compromesso
+\end{enumerate}
 
-	Il linguaggio asm viene compilato a linguaggio macchina. asm è un linguaggio mnemonico più vicino possibile alle istruzioni macchina. Una volta compilato e caricato in memoria, le istruzioni di un programma Assembler risiedono in dei registri.
+Il linguaggio asm viene compilato a linguaggio macchina. asm è un linguaggio mnemonico più vicino possibile alle istruzioni macchina. Una volta compilato e caricato in memoria, le istruzioni di un programma Assembler risiedono in dei registri.
 \end{defn}
 
 \begin{defn}
-	Nell'architettura \textbf{Von Neumann} è presente un \textbf{Program Counter} (abbreviato con PC), un contatore (registro). Nel caso dell'architettura ARMv7 (32 bit) il PC è un registro generale in cui è abilitata la scrittura. In ARMv8 (64 bit) non è più possibile utilizzare il PC come un registro generale. Il contenuto del PC indica l'indirizzo di memoria dove risiede l'indirizzo dell'istruzione corrente eseguita dal ciclo del processore, e dev'essere aggiornato per contenere l'indirizzo della prossima istruzione alla fine del ciclo.
+Nell'architettura \textbf{Von Neumann} è presente un \textbf{Program Counter} (abbreviato con PC), un contatore (registro). Nel caso dell'architettura ARMv7 (32 bit) il PC è un registro generale in cui è abilitata la scrittura. In ARMv8 (64 bit) non è più possibile utilizzare il PC come un registro generale. Il contenuto del PC indica l'indirizzo di memoria dove risiede l'indirizzo dell'istruzione corrente eseguita dal ciclo del processore, e dev'essere aggiornato per contenere l'indirizzo della prossima istruzione alla fine del ciclo.
 \end{defn}
 
 \begin{defn}
-	\textbf{Tipi di istruzioni Assembler:}
-	Vedremo istruzioni \textbf{aritmetico-logiche}, istruzioni di \textbf{load/store}, istruzioni di \textbf{controllo di flusso} ed alcune istruzioni \textbf{speciali}.
+\textbf{Tipi di istruzioni Assembler:}
+Vedremo istruzioni \textbf{aritmetico-logiche}, istruzioni di \textbf{load/store}, istruzioni di \textbf{controllo di flusso} ed alcune istruzioni \textbf{speciali}.
 \end{defn}
 
 \section{Istruzioni Assembler ARMv7}
 
 \begin{note}
-	Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler della famiglia X86! Vi sono diversi tipi di istruzion ARM asm, vediamo i tipi di operandi (parametri) che le istruzioni primitive ricevono.
+Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler della famiglia X86! Vi sono diversi tipi di istruzion ARM asm, vediamo i tipi di operandi (parametri) che le istruzioni primitive ricevono.
 \end{note}
 
 \begin{defn}
-	\textbf{Sintassi delle istruzioni ARMv7:}
-	
-	\begin{note}
-		Le istruzioni sono case-insensitive.
-	\end{note}	
-	
-	\begin{enumerate}
-		\item \textbf{Istruzioni a singolo operando (MOV, MOVN)}
-		\begin{Verbatim}
-		<opcode>{cond}{flags} Rd, <Op2>
-		\end{Verbatim}
-		
-		\item \textbf{Istruzioni che non producono un risultato (CMP, CMN, TEQ, TST)}
-		\begin{Verbatim}
-		<opcode>{cond} Rn, <Op2>
-		\end{Verbatim}
-		
-		\item \textbf{Altre istruzioni (AND,EOR,SUB,RSB,ADD,ADC,SBC,RSC,ORR,BIC)}
-		\begin{Verbatim}
-		<opcode>{cond}{flags} Rd, Rn, <Op2>
-		\end{Verbatim}
-	\end{enumerate}
-	
-	
-	\begin{itemize}
-		\item \verb|<opcode>| è l'istruzione da eseguire
-		\item \verb|{cond}| Un codice condizionale di due lettere (opzionale).
-		\item \verb|{flags}| Flag opzionali aggiuntivi fra cui \verb|S|, che è implicito per le istruzioni CMP, CMN, TEQ, TST.
-		\item \verb|OP2| Un secondo operando flessibile (opzionale), ha la forma \verb|Rm{,<shift>}| oppure \verb|<#imm>|
-		\item \verb|Rd| Il registro di destinazione dell'operazione
-		\item \verb|Rn,Rm| Registri sorgente.
-		\item \verb|<#imm>| Un valore immediato (se rappresentabile).
-		\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
-		\item \verb|<shiftname>| Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
-		\item \verb|@ commento| Si possono inserire commenti a fine riga.
-	\end{itemize}
+\textbf{Sintassi delle istruzioni ARMv7:}
+
+\begin{note}
+	Le istruzioni sono case-insensitive.
+\end{note}	
+
+\begin{enumerate}
+	\item \textbf{Istruzioni a singolo operando (MOV, MOVN)}
+	\begin{Verbatim}
+	<opcode>{cond}{flags} Rd, <Op2>
+	\end{Verbatim}
+
+	\item \textbf{Istruzioni che non producono un risultato (CMP, CMN, TEQ, TST)}
+	\begin{Verbatim}
+	<opcode>{cond} Rn, <Op2>
+	\end{Verbatim}
+
+	\item \textbf{Altre istruzioni (AND,EOR,SUB,RSB,ADD,ADC,SBC,RSC,ORR,BIC)}
+	\begin{Verbatim}
+	<opcode>{cond}{flags} Rd, Rn, <Op2>
+	\end{Verbatim}
+\end{enumerate}
+
+
+\begin{itemize}
+	\item \verb|<opcode>| è l'istruzione da eseguire
+	\item \verb|{cond}| Un codice condizionale di due lettere (opzionale).
+	\item \verb|{flags}| Flag opzionali aggiuntivi fra cui \verb|S|, che è implicito per le istruzioni CMP, CMN, TEQ, TST.
+	\item \verb|OP2| Un secondo operando flessibile (opzionale), ha la forma \verb|Rm{,<shift>}| oppure \verb|<#imm>|
+	\item \verb|Rd| Il registro di destinazione dell'operazione
+	\item \verb|Rn,Rm| Registri sorgente.
+	\item \verb|<#imm>| Un valore immediato (se rappresentabile).
+	\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
+	\item \verb|<shiftname>| Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
+	\item \verb|@ commento| Si possono inserire commenti a fine riga.
+\end{itemize}
 \end{defn}
 
 \def\code#1#2#3{\texttt{#1} & \small #2 & #3\\}
@@ -110,365 +110,461 @@ while(true) {
 \end{table}
 
 \begin{defn}
-	\textbf{Registri ARMv7:}
-	Nelle CPU ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|Rn| dove $ 0 \leq n < 16 $.
-	
-	\begin{itemize}
-		\item \verb|R0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
-		\item \verb|R1 - R3|: Argomenti, valori temporanei.
-		\item \verb|R4 - R12|: Valori temporanei.
-		\item \verb|R13|: Stack Pointer (SP).		
-		\item \verb|R14|: Link register.
-		\item \verb|R15|: Program counter.
-	\end{itemize}
+\textbf{Registri ARMv7:}
+Nelle CPU ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|Rn| dove $ 0 \leq n < 16 $.
+
+\begin{itemize}
+	\item \verb|R0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
+	\item \verb|R1 - R3|: Argomenti, valori temporanei.
+	\item \verb|R4 - R12|: Valori temporanei.
+	\item \verb|R13|: Stack Pointer (SP).
+	\item \verb|R14|: Link register.
+	\item \verb|R15|: Program counter.
+\end{itemize}
 \end{defn}
 
 \begin{defn}
-	\textbf{Operandi Immediati:}
-	Operandi che non risiedono in dei registri ma sono costanti presenti all'interno della configurazione della parola, ad esempio \verb|#1| è costante per il numero 1. \verb|#0x1234| corrisponde in esadecimale al numero $ 4661 $
+\textbf{Operandi Immediati:}
+Operandi che non risiedono in dei registri ma sono costanti presenti all'interno della configurazione della parola, ad esempio \verb|#1| è costante per il numero 1. \verb|#0x1234| corrisponde in esadecimale al numero $ 4661 $
 \end{defn}
 
 \begin{defn}
-	\textbf{Operandi di Memoria:}
-	Gli operandi di memoria sono della forma:
-	\begin{lstlisting}
-		[Rx, offset]
-	\end{lstlisting}
-	
-	Tale operando va a leggere il contenuto della memoria all'indirizzo puntato dal registro \verb|Rx|, a cui va aggiunto l'\verb|offset| costante
-	
-	Ad esempio, un istruzione per caricare una parola dalla memoria in un registro è 
-	\begin{lstlisting}[style=arm]
-	LDR R0,[R2, #0]
-	\end{lstlisting}
-	
-	Tale istruzione caricherà nel registro \verb|R0| il contenuto dell'indirizzo puntato dal contenuto di \verb|R2| a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \verb|struct| e \verb|array|, presenti nel linguaggio C.
+\textbf{Operandi e istruzioni di Memoria:}
+Gli operandi di memoria sono della forma:
+\begin{lstlisting}[style=arm]
+@ access memory by offset without altering rx
+[rx, #imm]
+[rx, rn]
+[rx, rn, <shift>]
+@ update rx by value then access memory
+[rx, #imm]!
+[rx, rn]!
+[rx, rn, <shift>]!
+@ access memory at rx then update rx by offset
+[rx], #imm
+[rx], rn
+[rx], rn, <shift>
+\end{lstlisting}
 
-	Per caricare in un registro un operando immediato o il valore di un altro registro si usa
-	\begin{lstlisting}[style=arm]
-		MOV RD, <src>
-	\end{lstlisting}
+Tale operando va a leggere il contenuto della memoria all'indirizzo puntato dal registro \verb|Rx|, a cui va aggiunto l'\verb|offset|.
+
+Ad esempio, un istruzione per caricare una parola dalla memoria in un registro è
+\begin{lstlisting}[style=arm]
+@ with pre-index R2 is unaltered
+LDR R0,[R2, #0]
+@ with post-increment R2 is incremented by 4 after load
+LDR R0,[R2], #4
+\end{lstlisting}
+
+Tale istruzione caricherà nel registro \verb|R0| il contenuto dell'indirizzo puntato dal contenuto di \verb|R2| a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \verb|struct| e \verb|array|, presenti nel linguaggio C.
+
+Per caricare in un registro un operando immediato o il valore di un altro registro si usa
+\begin{lstlisting}[style=arm]
+MOV RD, <src>
+@ <src> is either a register or an immediate value
+\end{lstlisting}
+
+Per salvare il valore di un registro in memoria si usa
+\begin{lstlisting}[style=arm]
+STR
+\end{lstlisting}
 \end{defn}
 
 \begin{note}
-	La memoria di ARM, come microarchitettura, è indirizzata a byte (gli indirizzi corrispondono a singoli byte). Ad esempio, quando carico un valore dalla memoria in un registro con
-	\begin{lstlisting}[style=arm]
-	MOV R2, #0x400
-	LDR R0,[R2, #0]
-	\end{lstlisting}
-	
-	All'interno del registro \verb|R0| saranno caricati i 4 byte a partire dall'indirizzo 1024 (400 in esadecimale).
+La memoria di ARM, come microarchitettura, è indirizzata a byte (gli indirizzi corrispondono a singoli byte). Ad esempio, quando carico un valore dalla memoria in un registro con
+\begin{lstlisting}[style=arm]
+MOV R2, #0x400
+LDR R0,[R2, #0]
+\end{lstlisting}
+
+All'interno del registro \verb|R0| saranno caricati i 4 byte a partire dall'indirizzo 1024 (400 in esadecimale).
 \end{note}
 
 \begin{defn}
-	\textbf{Big Endian e Little Endian:} Se vogliamo caricare un numero da 4 byte (32 bit) in un registro dalla memoria, può sorgere il dubbio, in quale ordine vengono letti i byte? Nel metodo \textbf{Big Endian} carica partendo dal byte più significativo (quello più a sinistra), fino a quello meno significativo. Nel metodo \textbf{Little Endian}, il primo byte caricato è quello meno significativo (quello più a destra del registro/numero), mentre l'ultimo caricato è il byte più significativo. ARMv7 supporta entrambi i metodi di \textbf{endianness}.
+\textbf{Big Endian e Little Endian:} Se vogliamo caricare un numero da 4 byte (32 bit) in un registro dalla memoria, può sorgere il dubbio, in quale ordine vengono letti i byte? Nel metodo \textbf{Big Endian} carica partendo dal byte più significativo (quello più a sinistra), fino a quello meno significativo. Nel metodo \textbf{Little Endian}, il primo byte caricato è quello meno significativo (quello più a destra del registro/numero), mentre l'ultimo caricato è il byte più significativo. ARMv7 supporta entrambi i metodi di \textbf{endianness}.
 \end{defn}
 
 \begin{defn}
-	\textbf{Istruzioni Logiche Bitwise}
-	
-	Realizza l'AND bit per bit dei registri \verb|R1| (maschera) e \verb|R2| (sorgente), memorizzando in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	AND RD, R1, R2
-	\end{lstlisting}
-	
-	Realizza l'OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	ORR RD, R1, R2
-	\end{lstlisting}
-	
-	Realizza l'Exclusive OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	EOR RD, R1, R2
-	\end{lstlisting}
-	
-	Realizza l'Exclusive OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	EOR RD, R1, R2
-	\end{lstlisting}
-	
-	Imposta a 0 i bit di \verb|R2| laddove nella posizione corrispondente della maschera \verb|R1| vi sia un 1, memorizzando il risultato in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	BIC RD, R1, R2
-	\end{lstlisting}
+\textbf{Istruzioni Logiche Bitwise}
+
+Realizza l'AND bit per bit dei registri \verb|R1| (maschera) e \verb|R2| (sorgente), memorizzando in \verb|RD|
+\begin{lstlisting}[style=arm]
+AND RD, R1, R2
+\end{lstlisting}
+
+Realizza l'OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
+\begin{lstlisting}[style=arm]
+ORR RD, R1, R2
+\end{lstlisting}
+
+Realizza l'Exclusive OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
+\begin{lstlisting}[style=arm]
+EOR RD, R1, R2
+\end{lstlisting}
+
+Realizza l'Exclusive OR bit per bit dei registri \verb|R1| e \verb|R2|, memorizzando in \verb|RD|
+\begin{lstlisting}[style=arm]
+EOR RD, R1, R2
+\end{lstlisting}
+
+Imposta a 0 i bit di \verb|R2| laddove nella posizione corrispondente della maschera \verb|R1| vi sia un 1, memorizzando il risultato in \verb|RD|
+\begin{lstlisting}[style=arm]
+BIC RD, R1, R2
+\end{lstlisting}
 \end{defn}
 
 \begin{defn}
-	\textbf{Bit di flag in ARMv7:}
-	In ARMv7 sono presenti 4 bit di flag di condizione (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \verb|Z| indica se il risultato di un operazione è 0. Il flab \verb|N| indica se il risultato dell'operazione è negativo. Il flag \verb|C| indica se è presente un carry (riporto) sull'ultima cifra. Il flag \verb|V| (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
-	Solo alcune istruzioni impostano di default i set di condizione (come \verb|CMP|). Per forzare un istruzione ad impostare i bit di flag di condizione si può passare il flag aggiuntivo \verb|S|.
+\textbf{Bit di flag in ARMv7:}
+In ARMv7 sono presenti 4 bit di flag di condizione (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \verb|Z| indica se il risultato di un operazione è 0. Il flab \verb|N| indica se il risultato dell'operazione è negativo. Il flag \verb|C| indica se è presente un carry (riporto) sull'ultima cifra. Il flag \verb|V| (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
+Solo alcune istruzioni impostano di default i set di condizione (come \verb|CMP|). Per forzare un istruzione ad impostare i bit di flag di condizione si può passare il flag aggiuntivo \verb|S|.
 \end{defn}
 
 \begin{defn}
 \textbf{Istruzioni Aritmetiche}
 
-	Realizza la somma dei registri \verb|R1| e \verb|R2|, memorizzando il risultato in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	ADD RD, R1, R2
-	\end{lstlisting}
-	
-	Realizza la somma dei registri \verb|R1| e \verb|R2| \textbf{con riporto}, memorizzando il risultato in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	ADC RD, R1, R2
-	\end{lstlisting}
+Realizza la somma dei registri \verb|R1| e \verb|R2|, memorizzando il risultato in \verb|RD|
+\begin{lstlisting}[style=arm]
+ADD RD, R1, R2
+\end{lstlisting}
+
+Realizza la somma dei registri \verb|R1| e \verb|R2| \textbf{con riporto}, memorizzando il risultato in \verb|RD|
+\begin{lstlisting}[style=arm]
+ADC RD, R1, R2
+\end{lstlisting}
 %	TODO spiega bit di carry
-	
-	Realizza la sottrazione dei registri \verb|R1 - R2|, memorizzando il risultato in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	SUB RD, R1, R2
-	\end{lstlisting}
-	
-	Realizza la sottrazione dei registri \verb|R1 - R2| \textbf{con riporto}, memorizzando il risultato in \verb|RD|
-	\begin{lstlisting}[style=arm]
-	SBC RD, R1, R2
-	\end{lstlisting}
 
-	Compare accetta solamente due operandi, realizza la sottrazione dei registri \verb|R1 - R2| ed \textbf{imposta i bit di flag}. Viene utilizzato per realizzare esecuzione condizionale nei programmi, laddove le istruzioni successive utilizzino un codice condizionale.
-	\begin{lstlisting}[style=arm]
-	CMP R1, R2
-	\end{lstlisting}
+Realizza la sottrazione dei registri \verb|R1 - R2|, memorizzando il risultato in \verb|RD|
+\begin{lstlisting}[style=arm]
+SUB RD, R1, R2
+\end{lstlisting}
 
-	Sottrazione "al contrario" (Reverse Subtraction), esegue l'operazione \verb|R2 - R1| e memorizza il risultato in \verb|RD|.
-	\begin{lstlisting}[style=arm]
-	SBC RD, R1, R2
-	\end{lstlisting}
+Realizza la sottrazione dei registri \verb|R1 - R2| \textbf{con riporto}, memorizzando il risultato in \verb|RD|
+\begin{lstlisting}[style=arm]
+SBC RD, R1, R2
+\end{lstlisting}
+
+Compare accetta solamente due operandi, realizza la sottrazione dei registri \verb|R1 - R2| ed \textbf{imposta i bit di flag}. Viene utilizzato per realizzare esecuzione condizionale nei programmi, laddove le istruzioni successive utilizzino un codice condizionale.
+\begin{lstlisting}[style=arm]
+CMP R1, R2
+\end{lstlisting}
+
+Sottrazione "al contrario" (Reverse Subtraction), esegue l'operazione \verb|R2 - R1| e memorizza il risultato in \verb|RD|.
+\begin{lstlisting}[style=arm]
+SBC RD, R1, R2
+\end{lstlisting}
 
 \end{defn}
 
 \begin{defn}
-	\textbf{Istruzioni di Shift (logico-aritmetiche)}
+\textbf{Istruzioni di Shift (logico-aritmetiche)}
 
-	\begin{note}
-		I registri passati per parametro alle istruzioni di shift non sono registri di destinazione ma contengono il numero parametro dello shift (di quante posizioni deve essere effettuato). Vedi il paragrafo sulla sintassi delle istruzioni Assembler.
-	\end{note}
-	
-	Bitshift di \verb|num| posizioni a sinistra. Semanticamente identico all'istruzione \verb|ASL|. Equivalente alla moltiplicazione per la \verb|num|-esima potenza di 2.
-	\begin{lstlisting}[style=arm]
-	LSL #num 
-	LSL RN 
-	\end{lstlisting}
-	
-	Bitshift di \verb|num| posizioni a destra. Equivalente alla divisione per la \verb|num|-esima potenza di 2.
-	\begin{lstlisting}[style=arm]
-	LSR #num
-	LSR RN 
-	\end{lstlisting}
+\begin{note}
+	I registri passati per parametro alle istruzioni di shift non sono registri di destinazione ma contengono il numero parametro dello shift (di quante posizioni deve essere effettuato). Vedi il paragrafo sulla sintassi delle istruzioni Assembler.
+\end{note}
 
-	
-	Bitshift aritmetico di \verb|num| posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \verb|num|-esima potenza di 2.
-	\begin{lstlisting}[style=arm]
-	ASR #num 
-	ASR RN 
-	\end{lstlisting}
-	
-	
+Bitshift di \verb|num| posizioni a sinistra. Semanticamente identico all'istruzione \verb|ASL|. Equivalente alla moltiplicazione per la \verb|num|-esima potenza di 2.
+\begin{lstlisting}[style=arm]
+@ come operando
+LSL #imm
+LSL RN
+@ come istruzione
+LSL RD, RN, #imm
+\end{lstlisting}
 
-	Rotate Right: esegue uno shift bitwise a destra e re-inserisce il bit shiftato (meno significativo), nella posizione del bit più significativo (più a sinistra).
-	\begin{lstlisting}[style=arm]
-	ROR #num
-	ROR RN
-	\end{lstlisting}
-	
+Bitshift di \verb|num| posizioni a destra. Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+\begin{lstlisting}[style=arm]
+@ come operando
+LSR #imm
+LSR RN
+@ come istruzione
+LSR RD, RN, #imm
+\end{lstlisting}
+
+
+Bitshift aritmetico di \verb|num| posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+\begin{lstlisting}[style=arm]
+@ come operando
+ASR #imm
+ASR RN
+@ come istruzione
+ASR RD, RN, #imm
+\end{lstlisting}
+
+
+
+Rotate Right: esegue uno shift bitwise a destra e re-inserisce il bit shiftato (meno significativo), nella posizione del bit più significativo (più a sinistra).
+\begin{lstlisting}[style=arm]
+@ come operando
+ROR #imm
+ROR RN
+@ come istruzione
+ROR RD, RN, #imm
+\end{lstlisting}
+
 \end{defn}
 
 % TODO cross-compilare e debuggare ASM ARM su linux
 % pseudo istruzioni da passare al compilatore per generare un eseguibile
 % cross compila asm con gcc cross-compiler con -ggdb3 -static
 % gcc -S per generare asm .S
-% gcc-as per compilare .S 
+% gcc-as per compilare .S
 % avvia qemu con debugger bridge
 % info registers su gdb
 
 \begin{exmp}
-	\textbf{Program Counter:}
+\textbf{Program Counter:}
 
-	
-	\begin{lstlisting}[style=arm]
-	MOV R0, #15
-	ADD R0, R0, R0
-	\end{lstlisting}
-	
-	
-	Il program counter (\verb|PC|) prima dell'esecuzione dell'istruzione \verb|MOV| indicherà l'indirizzo di memoria dove è contenuta la parola dell'istruzione. Alla fine dell'esecuzione di \verb|MOV| sarà incrementato di 4 posizioni (4 byte = 32 bit, dimensione di una parola).
+
+\begin{lstlisting}[style=arm]
+MOV R0, #15
+ADD R0, R0, R0
+\end{lstlisting}
+
+
+Il program counter (\verb|PC|) prima dell'esecuzione dell'istruzione \verb|MOV| indicherà l'indirizzo di memoria dove è contenuta la parola dell'istruzione. Alla fine dell'esecuzione di \verb|MOV| sarà incrementato di 4 posizioni (4 byte = 32 bit, dimensione di una parola).
 \end{exmp}
 
 \begin{defn}
-	\textbf{Istruzioni di salto}
-	
-	L'istruzione branch "salta" all'istruzione contenuta in \verb|PC|  a cui viene sommato \verb|#num|. Sono di fondamentale utilizzo i flag condizionali.
-	\begin{lstlisting}[style=arm]
-	B #num
-	\end{lstlisting}
-	
-	Salva il contenuto di \verb|PC| in \verb|LR| e "salta" all'istruzione contenuta in \verb|PC + #num|. Sono di fondamentale utilizzo i flag condizionali.
-	\begin{lstlisting}[style=arm]
-	BL #num
-	\end{lstlisting}
+\textbf{Istruzioni di salto}
+
+L'istruzione branch "salta" all'istruzione contenuta in \verb|PC|  a cui viene sommato un valore immediato.
+Più semplicemente può saltare ad un istruzione contenuta in un etichetta.
+Sono di fondamentale utilizzo i flag condizionali.
+\begin{lstlisting}[style=arm]
+B #imm		@ offset #imm is relative to PC
+B label		@ branch to label
+\end{lstlisting}
+
+Salva il contenuto di \verb|PC| in \verb|LR| (registro 14) e "salta" all'istruzione contenuta in \verb|PC + #num|. Sono di fondamentale utilizzo i flag condizionali.
+\begin{lstlisting}[style=arm]
+BL #imm		@ offset #imm is relative to PC
+BL label	@ branch to label
+\end{lstlisting}
+Si utilizza per realizzare l'equivalente di procedure e funzioni in asm.
 \end{defn}
 
 \section{Direttive, Pseudoistruzioni e Programmi}
 
 \begin{defn}
-	\textbf{Direttive}
-	Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|
+\textbf{Direttive}
+Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|
 \end{defn}
 
 \begin{defn}
-	\textbf{Direttive di sezione del codice}
-	
-	Inizia una nuova sezione di codice o dati.
-	\begin{lstlisting}[style=arm]
-	.section <section_name> {, "<flags>"}
-	\end{lstlisting}
-	
-	Le sezioni \verb|<section_name>| nell'assembler ARM GNU possono essere:
-	\begin{itemize}
-		\item \verb|.text| una sezione di codice
-		\item \verb|.data| una sezione di dati inizializzati
-		\item \verb|.bss| una sezione di dati non inizializzati
-%		TODO \item \verb|.rodata| inizializza una sezione di dati (read only?)
-	\end{itemize}
+\textbf{Direttive di sezione del codice}
+
+Inizia una nuova sezione di codice o dati.
+\begin{lstlisting}[style=arm]
+.section <section_name> {, "<flags>"}
+\end{lstlisting}
+
+Le sezioni \verb|<section_name>| nell'assembler ARM GNU possono essere:
+\begin{itemize}
+	\item \verb|.text| una sezione di codice
+	\item \verb|.data| una sezione di dati inizializzati
+	\item \verb|.bss| una sezione di dati non inizializzati
+	\item \verb|.rodata| inizializza una sezione di dati (read only?)
+\end{itemize}
 \end{defn}
 
 \begin{defn}
-	\textbf{Direttive di inizializzazione di dati}
-	
-	Inserisce una lista di valori di parola da 32 bit nell'assembly.
-	\begin{lstlisting}[style=arm]
-	.word 123
-	.word 1,2,3,4
-	\end{lstlisting}
-	
-	Inserisce una lista di byte nell'assembly.
-	\begin{lstlisting}[style=arm]
-	.byte <byte1> {, <byte2>, ...}
-	\end{lstlisting}
-	
-	Inserisce una stringa di caratteri ASCII nell'assembly.
-	\begin{lstlisting}[style=arm]
-	.ascii "<string>"
-	\end{lstlisting}
-	
-	Come \verb|.ascii|, inserisce una stringa di caratteri ASCII nell'assembly, ma seguita da un byte 0.
-	\begin{lstlisting}[style=arm]
-	.asciz "<string>"
-	\end{lstlisting}
-	
-	Riserva \verb|number_of_bytes| byte in memoria, sono riempiti con byte 0.
-	\begin{lstlisting}[style=arm]
-	.space <number_of_bytes>
-	\end{lstlisting}
+\textbf{Direttive di inizializzazione di dati}
+
+Inserisce una lista di valori di parola da 32 bit nell'assembly.
+\begin{lstlisting}[style=arm]
+.word 123
+.word 1,2,3,4
+\end{lstlisting}
+
+Inserisce una lista di byte nell'assembly.
+\begin{lstlisting}[style=arm]
+.byte <byte1> {, <byte2>, ...}
+\end{lstlisting}
+
+Inserisce una stringa di caratteri ASCII nell'assembly.
+\begin{lstlisting}[style=arm]
+.ascii "<string>"
+\end{lstlisting}
+
+Come \verb|.ascii|, inserisce una stringa di caratteri ASCII nell'assembly, ma seguita da un byte 0.
+\begin{lstlisting}[style=arm]
+.asciz "<string>"
+\end{lstlisting}
+
+Riserva \verb|number_of_bytes| byte in memoria, sono riempiti con byte 0.
+\begin{lstlisting}[style=arm]
+.space <number_of_bytes>
+\end{lstlisting}
 \end{defn}
 
 \begin{defn}
-	\textbf{Chiamate al Sistema Operativo}
-	Come da C, possiamo fare chiamate al Sistema Operativo in Assembly. Si possono chiamare funzioni di librerie, che comprendono funzioni per i processi e funzioni per l'IO.
-	
-	Realizza una chiamata di sistema, il cui codice è contenuto in \verb|R7|. Le due istruzioni sono equivalenti.
-	\begin{lstlisting}[style=arm]
-	SVC 0	@ "supervisor call"
-	SWI 0	@ "software interrupt"
-	\end{lstlisting}
+\textbf{Chiamate al Sistema Operativo}
+Come da C, possiamo fare chiamate al Sistema Operativo in Assembly. Si possono chiamare funzioni di librerie, che comprendono funzioni per i processi e funzioni per l'IO.
+
+Realizza una chiamata di sistema, il cui codice è contenuto in \verb|R7|. Le due istruzioni sono equivalenti.
+\begin{lstlisting}[style=arm]
+SVC 0	@ "supervisor call"
+SWI 0	@ "software interrupt"
+\end{lstlisting}
 \end{defn}
 
 \begin{exmp}
-	\verb|write(fd, buffer, num_byte);| è una funzione C che stampa \verb|num_byte| del \verb|buffer| all'interno di \verb|fd|, ovvero un \textit{file descriptor}. La funzione della \textit{stdlib} C \verb|printf| che utilizza internamente \verb|write|. I file descriptor standard in sistemi UNIX sono
-	\begin{itemize}
-		\item 0: standard input o \verb|stdin|
-		\item 1: standard output o \verb|stdout|
-		\item 2: standard error o \verb|stderr|
-	\end{itemize}
-	
-	Il numero della syscall \verb|write| è 4.
+\verb|write(fd, buffer, num_byte);| è una funzione C che stampa \verb|num_byte| del \verb|buffer| all'interno di \verb|fd|, ovvero un \textit{file descriptor}. La funzione della \textit{stdlib} C \verb|printf| che utilizza internamente \verb|write|. I file descriptor standard in sistemi UNIX sono
+\begin{itemize}
+	\item 0: standard input o \verb|stdin|
+	\item 1: standard output o \verb|stdout|
+	\item 2: standard error o \verb|stderr|
+\end{itemize}
+
+Il numero della syscall \verb|write| è 4.
 \end{exmp}
 
 \begin{defn}
-	\textbf{Label}
-	I label identificano sezioni di codice.
-	
-	\begin{lstlisting}[style=arm]
-	testlabel:
-	<instructions>
-	...
-	\end{lstlisting}
+\textbf{Label}
+I label identificano sezioni di codice.
 
-	Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella sezione \verb|.data| si usa l'operando \verb|=esempio|. Per i label nella sezione \verb|.text| non va utilizzato il simbolo prefisso \verb|=|.
+\begin{lstlisting}[style=arm]
+testlabel:
+<instructions>
+...
+\end{lstlisting}
+
+Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella sezione \verb|.data| si usa l'operando \verb|=esempio|. Per i label nella sezione \verb|.text| non va utilizzato il simbolo prefisso \verb|=|.
 \end{defn}
 
 \begin{exmp}
-	\textbf{Hello World in Assembler ARM}
-	\includecode[armn]{./asm/helloworld/helloworld.s}{Hello World in Assembler ARM}
+\textbf{Hello World in Assembler ARM}
+\includecode[armn]{./asm/helloworld/helloworld.s}{Hello World in Assembler ARM}
 \end{exmp}
 
 \begin{defn}
-	\textbf{If-then-else in asm ARM}
-	La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|.
-	\begin{lstlisting}[style=armn]
-	.if <logical_expression>
-		<do_something>
-	.else
-		<do_something_else>
-	.endif
-	\end{lstlisting}
-	
-	Vediamo come viene compilata ad Assembly una direttiva \verb|x|, utilizzeremo le direttive e mai una condizione testata manualmente.
-	\begin{lstlisting}[style=armn]
-	@ asm equivalent to C: if(x == y) {x++; y=2x} else x--;
-		cmp r1, r2 	@ x and y are in r1 and r2 test condition
-		bne else
-	then:
-		add r1, r1, #1 	@ x++
-		add r2, r1, r1	@ y=2x
-		b cont
-	else:
-		sub r1, r1, #1
-	cont:
-		\dots			@ continue program
-	\end{lstlisting}
+\textbf{If-then-else in asm ARM}
+La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|.
+\begin{lstlisting}[style=armn]
+.if <logical_expression>
+	<do_something>
+.else
+	<do_something_else>
+.endif
+\end{lstlisting}
+
+Vediamo come viene compilata ad Assembly una direttiva \verb|if|, utilizzeremo quasi sempre le direttive e non condizioni testate manualmente.
+\begin{lstlisting}[style=armn]
+@ asm equivalent to C: if(x == y) {x++; y=2x} else x--;
+	cmp r1, r2 	@ x and y are in r1 and r2, test condition
+	bne else
+then:
+	add r1, r1, #1 	@ x++
+	add r2, r1, r1	@ y=2x
+	b cont
+else:
+	sub r1, r1, #1
+cont:
+	\dots			@ continue program
+\end{lstlisting}
 \end{defn}
 
 \begin{defn}
-	\textbf{Ciclo for in asm ARM}
+\textbf{Ciclo for in asm ARM}
 
-	\begin{lstlisting}[style=armn]
-	@ asm equivalent to C: for(int i=0; i<4; i++)
-		mov r0, #0			@ initialize counter
-	for:
-		cmp #4, r0		@ test condition, sets flags
-		beq endfor
-		add r0, r0, #1 	@ step increment
-	endfor:
-		... 			@ for is over, continue program
-	\end{lstlisting}
+\begin{lstlisting}[style=armn]
+@ asm equivalent to C: for(int i=0; i<4; i++)
+	mov r0, #0			@ initialize counter
+for:
+	cmp #4, r0		@ test condition, sets flags
+	beq endfor
+	add r0, r0, #1 	@ step increment
+endfor:
+	... 			@ for is over, continue program
+\end{lstlisting}
 \end{defn}
 
 \begin{defn}
-	\textbf{Switch-case in asm ARM}
+\textbf{Switch-case in asm ARM}
 
-	\begin{lstlisting}
-		switch(x) {
-			case 1: {x = 100; break;}
-			case 2: {x = 200; break;}
-			default: x = 300;
-			}
-	\end{lstlisting}
+\begin{lstlisting}
+switch(x) {
+	case 1: {x = 100; break;}
+	case 2: {x = 200; break;}
+	default: x = 300;
+}
+\end{lstlisting}
 
-	Realizziamo l'equivalente di questo snippet C in asm ARM
+Realizziamo l'equivalente di questo snippet C in asm ARM
 
-	\begin{lstlisting}[style=armn]
-	case1:
-		cmp r0, #1
-		bne case2
-		mov r0, #100
-		b cont
-	case2:
-		cmp r0, #2
-		bne default
-		mov r0, #200
-		b cont
-	default:
-		mov r0, #300
-	cont:
-		... 	@ continue program
-	\end{lstlisting}
+\begin{lstlisting}[style=armn]
+case1:
+	cmp r0, #1
+	bne case2
+	mov r0, #100
+	b cont
+case2:
+	cmp r0, #2
+	bne default
+	mov r0, #200
+	b cont
+default:
+	mov r0, #300
+cont:
+	... 	@ continue program
+\end{lstlisting}
 \end{defn}
+
+
+\begin{exmp}
+\textbf{Accedere ad un vettore}
+\begin{lstlisting}
+for(int i = 0; i < 5; i++) {
+	y = x[i];
+}
+\end{lstlisting}
+
+Realizziamo l'equivalente di questo snippet C in asm ARM
+
+\begin{lstlisting}[style=armn]
+mov r3, #0
+loop:
+	ldr r2, [r1, r3]	@
+						@ ... do something
+	add r3, r3, #4 		@ i++ (memory offset is in bytes)
+	cmp r3, #5			@ test i < 5
+	bne loop
+\end{lstlisting}
+
+Oppure, semplificando utilizzando un post-indice per \verb|ldr|:
+
+\begin{lstlisting}[style=armn]
+mov r3, #0
+loop:
+	ldr r2, [r1], #4	@ load and add step at the same time
+					@ ... do something
+	cmp r3, #5			@ test i < 5
+	bne loop
+\end{lstlisting}
+\end{exmp}
+
+\begin{exmp}
+\textbf{Accedere ad un vettore}
+\begin{lstlisting}
+for(int i = 0; i < 5; i++)
+	x[i]++;
+\end{lstlisting}
+
+Realizziamo l'equivalente di questo snippet C in asm ARM
+
+
+\begin{lstlisting}[style=armn]
+mov r3, #0
+loop:
+	ldr r2, [r1], #4	@ load and add step at the same time
+				@ ... do something
+	cmp r3, #5		@ test i < 5
+	bne loop
+\end{lstlisting}
+\end{exmp}
+
+
+\begin{exmp}
+\textbf{Realizzare chiamate di funzione}
+% TODO
+\end{exmp}
