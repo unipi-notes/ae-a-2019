@@ -123,6 +123,18 @@ Nelle CPU ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|
 \end{itemize}
 \end{defn}
 
+
+\begin{defn}
+	\textbf{Aliasing dei registri}
+
+	Si possono usare degli alias per riferirsi ai registri utilizzando la direttiva
+	\verb|.req|. Ad esempio, inserendo
+\begin{lstlisting}[style=arm]
+	MYNAME .req r5
+\end{lstlisting}
+	Ci permette di utilizzare l'alias \verb|MYNAME| al posto di \verb|r5| nel codice che segue.
+\end{defn}
+
 \begin{defn}
 \textbf{Operandi Immediati:}
 Operandi che non risiedono in dei registri ma sono costanti presenti all'interno della configurazione della parola, ad esempio \verb|#1| è costante per il numero 1. \verb|#0x1234| corrisponde in esadecimale al numero $ 4661 $
@@ -510,6 +522,19 @@ cont:
 \end{lstlisting}
 \end{defn}
 
+\begin{exmp}
+	\textbf{Allocare un vettore di interi}
+
+\begin{lstlisting}[style=armn]
+.data
+a:	.word 1,2,3,4	@ array
+n =	(.-a)/4
+@ the number of bytes in the arr
+@ divided by the number of bytes (at compile time)
+@ in a word (4 bit integers)
+@ gives us the LEN of array
+\end{lstlisting}
+\end{exmp}
 
 \begin{exmp}
 \textbf{Accedere ad un vettore}
@@ -522,29 +547,35 @@ for(int i = 0; i < 5; i++) {
 Realizziamo l'equivalente di questo snippet C in asm ARM
 
 \begin{lstlisting}[style=armn]
-mov r3, #0
+mov r3, #0 			@ i = 0
 loop:
-	ldr r2, [r1, r3]	@
-						@ ... do something
+	ldr r2, [r1, r3]	@ array's address is store in r1, use r3 as offset
+				@ ... do something
 	add r3, r3, #4 		@ i++ (memory offset is in bytes)
-	cmp r3, #5			@ test i < 5
+	cmp r3, #5 * #4		@ test i < 5 (mult by 4 bytes)
 	bne loop
 \end{lstlisting}
 
 Oppure, semplificando utilizzando un post-indice per \verb|ldr|:
 
 \begin{lstlisting}[style=armn]
-mov r3, #0
+.data
+array: .word 4,3,2,1    @ the array
+length : (.-array) / 4	@ length
+
+.text
+.global main
+	ldr r5, =length
+	ldr r6, =array
 loop:
-	ldr r2, [r1], #4	@ load and add step at the same time
-					@ ... do something
-	cmp r3, #5			@ test i < 5
+	ldr r2, [r6], #4	@ load and add offset to r1 at the same time
+	subs r5, r5, #1
 	bne loop
 \end{lstlisting}
 \end{exmp}
 
 \begin{exmp}
-\textbf{Accedere ad un vettore}
+\textbf{Accedere ad un vettore, 2}
 \begin{lstlisting}
 for(int i = 0; i < 5; i++)
 	x[i]++;
@@ -554,17 +585,31 @@ Realizziamo l'equivalente di questo snippet C in asm ARM
 
 
 \begin{lstlisting}[style=armn]
-mov r3, #0
+.data
+array: .word 4,3,2,1    @ the array
+length : (.-array) / 4	@ length
+
+.text
+.global main
+	ldr r5, =length
+	ldr r6, =array
 loop:
-	ldr r2, [r1], #4	@ load and add step at the same time
-				@ ... do something
-	cmp r3, #5		@ test i < 5
+	ldr r2, [r6]
+	add r2, r2, #1		@ x[i]++;
+	str r2, [r6]		@ store r2
+	add r6, r6, #4 		@ increment offset
+	subs r5, r5, #1
 	bne loop
 \end{lstlisting}
 \end{exmp}
 
-
 \begin{exmp}
 \textbf{Realizzare chiamate di funzione}
+% TODO 
+\end{exmp}
+
+\begin{exmp}
+\textbf{Chiamare funzioni C}
 % TODO
 \end{exmp}
+
