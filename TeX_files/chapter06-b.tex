@@ -1,0 +1,37 @@
+\begin{defn}
+    \textbf{Modi operativi del processore}.
+    I processori, fra cui quelli ARM, hanno diversi modi di operazione. Nei processori in generale
+    sono presenti i modi \verb|user| e \verb|kernel| (\textit{privileged}). In \verb|user| mode
+    il codice in esecuzione non ha accesso diretto all'hardware o alla memoria, in \verb|kernel| mode
+    il codice in esecuzione ha accesso senza restrizioni alle periferiche e alla memoria.
+
+    In ARM sono presenti i modi:
+    \begin{itemize}
+        \item \verb|user|: esecuzione senza accesso all'hardware e alle periferiche.
+        Ho accesso ad uno spazio di memoria ma non alla memoria completa
+        \item \verb|fast interrupt|
+        \item \verb|interrupt|
+        \item \verb|supervisor|: accesso senza restrizioni al sistema, corrisponde all'esecuzione
+        di istruzioni \verb|svc|.
+        \item \verb|abort|
+        \item \verb|system|
+        \item \verb|undefined|
+    \end{itemize}
+
+    Nel modo utente sono presenti i 16 registri comuni, quando si passa a modi operativi diversi
+    alcuni registri vengono duplicati, ad esempio quando passo al modo \verb|fast interrupt| vengono duplicati
+    i registri da \verb|r0| a \verb|r8| per non interagire con quanto sta accadendo in modalità utente.
+    In modalità \verb|supervisor| vengono duplicati i registri \verb|r13| e \verb|r14|.
+
+    Si tiene traccia del modo corrente in una \textbf{parola di stato} del processore.
+    Si abbrevia con \textit{CPSR} (Current Program Status Register).
+
+\end{defn}
+
+
+\begin{defn}
+    \textbf{Cosa avviene al boot di un processore ARM}
+    Per primo passo imposto \verb|PC| a 0 ed entro nella modalità CPU \verb|supervisor|.
+    In tale modalità inizio ad eseguire le istruzioni alla locazione il \textbf{bootloader} carica il
+    sistema operativo da disco e cambia la modalità di esecuzione a \verb|user|.
+\end{defn}

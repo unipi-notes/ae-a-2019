@@ -1,7 +1,7 @@
 .data
 fmt: .asciz "The number is: %d\n"
 array: .word 4,3,2,1    @ the array
-n = (.-array) / 4       @ the number of bytes in the arr
+.equ n, (.-array) / 4       @ the number of bytes in the arr
                     @ divided by the number of bytes
                     @ in a word (4 bit integers)
                     @ gives us the length of array
