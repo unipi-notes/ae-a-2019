@@ -44,7 +44,7 @@ Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler dell
 
 \begin{note}
 	Le istruzioni sono case-insensitive.
-\end{note}	
+\end{note}
 
 \begin{enumerate}
 	\item \textbf{Istruzioni a singolo operando (MOV, MOVN)}
@@ -72,7 +72,8 @@ Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler dell
 	\item \verb|Rd| Il registro di destinazione dell'operazione
 	\item \verb|Rn,Rm| Registri sorgente.
 	\item \verb|<#imm>| Un valore immediato (se rappresentabile).
-	\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
+	\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \\
+	 \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
 	\item \verb|<shiftname>| Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
 	\item \verb|@ commento| Si possono inserire commenti a fine riga.
 \end{itemize}
@@ -436,7 +437,7 @@ swi 0	@ "software interrupt"
 	\item 2: standard error o \verb|stderr|
 \end{itemize}
 
-Il numero della syscall \verb|write| è 4.
+Il numero della syscall \verb|write| è 4. Il numero della syscall exit è 1.
 \end{exmp}
 
 \begin{defn}
@@ -613,22 +614,78 @@ loop:
 
 \begin{exmp}
 \textbf{Realizzare funzioni e chiamate di funzione}
-% TODO bl to call label
-% TODO moveq PC,LR to return
+Per realizzare una funzione in asm ARM si definisce una sezione di codice
+con un label. Per "chiamare" la funzione si utilizza l'istruzione \verb|bl nomefunzione|
+(\textit{branch and link}) che eseguirà un \textit{branch} all'istruzione
+contenuta nel label e salverà l'indirizzo dell'istruzione corrente all'interno del registro
+\verb|lr| o \verb|r14| (\textit{link register}). Per ritornare dall'esecuzione
+della funzione al codice chiamante si usa l'istruzione \verb|bx lr| per ritornare
+all'istruzione salvata nel \textit{link register}. Si può anche effettuare il return con una
+condizione utilizzando ad esempio \verb|moveq pc,lr| per impostare il registro
+\textit{program counter} a \verb|lr| se l'istruzione precedente ha impostato il flag
+\textit{Zero} a 1.
 
 Si possono usare i registri da \verb|r0| a \verb|r4| (escluso) per i parametri di una funzione.
-\verb|r0| è anche il valore di return.
+\verb|r0| è anche il valore di return. Il valore di ritorno della funzione va memorizzato in \verb|r0|
+prima del ritorno da essa.
 Dal quarto parametro in poi, i parametri vanno salvati sullo stack con \verb|push|.
 Le funzioni della standard library C consumano direttamente i parametri necessari sullo stack.
 \end{exmp}
 
 \begin{defn}
 	\textbf{Utilizzare lo Stack}
+	Lo stack è una sezione di memoria del programma/processo, utilizzata con costrutti ed istruzioni
+	particolari per essere equivalente alla struttura dati \textit{stack} comune in programmazione. Viene
+	allocato quando viene creato il processo. Utilizziamo lo stack per memorizzare
+	valori temporanei come le variabili locali di una funzione, o valori per i quali non vi è abbastanza
+	spazio nei registri utilizzabili per i valori temporanei (ad esempio, gli argomenti dal quinto in poi in una chiamata a \verb|printf|).
+	Per interagire con lo stack utilizziamo le istruzioni \verb|push| e \verb|pop|, alias ad altre istruzioni di memoria per
+	semplificarne l'accesso. Lo stack \textit{cresce} quando inseriamo una parola (32 bit) all'interno di esso, alla locazione
+	contenuta nel registro \verb|r13| o \verb|sp| (\textit{stack pointer}).
 \end{defn}
+
+
+\begin{exmp}
+\textbf{Esempio di utilizzo dello stack}
+\begin{lstlisting}[style=armn]
+main:
+	mov 	r0, #2  @ set up r0
+	push	{r0}    @ save r0 onto the stack
+	mov 	r0, #3  @ overwrite r0
+	pop 	{r0}    @ restore r0 to it's initial state
+	mov	    r7, #1  @ finish the program
+	svc		0
+\end{lstlisting}
+\end{exmp}
 
 \begin{exmp}
 \textbf{Chiamare funzioni C}
-% Todo
+Per chiamare funzioni della standard library C o di una libreria C si può utilizzare la direttiva
+\verb|.extern| per includere la funzione nel programma asm. Si possono chiamare
+le funzioni rese visibili con \verb|bl|, come una normale funzione asm.
+\end{exmp}
+
+\begin{exmp}
+\textbf{Hello world con funzioni della stdlib C}
+\begin{lstlisting}[style=armn]
+@ Make the glibc symbols visible.
+.extern exit, puts
+.data
+	msg: .asciz "hello world"
+.text
+.global main
+main:
+	@r0 is the first argument.
+	ldr r0, =msg
+	bl puts
+	mov r0, #0
+	bl exit
+\end{lstlisting}
+\end{exmp}
+
+\begin{exmp}
+\textbf{Programma per stampare un array con printf}
+\includecode[armn]{asm/printarray/printarray.s}{printarray.s}
 \end{exmp}
 
 \begin{exmp}
@@ -637,5 +694,5 @@ Le funzioni della standard library C consumano direttamente i parametri necessar
 	\verb|r0| sarà contenuto il numero di argomenti equivalente ad \verb|argc|
 	e in \verb|r1| sarà contenuto l'indirizzo di memoria dove l'equivalente di \verb|argv| è contenuto.
 \end{exmp}
-
+`'
 \input{./TeX_files/chapter06-b}
