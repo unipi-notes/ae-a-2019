@@ -6,6 +6,7 @@
 \usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage{hyperref}
+\usepackage{caption}
 \usepackage{tabularx}
 \usepackage{xlop}
 \usepackage{array}
@@ -38,21 +39,22 @@
 
 
 \newcommand{\centerfig}[3]{
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=#1\textwidth]{#2}
 	\caption{#3}
+	\label{fig:#2}
 \end{figure}
 }
 
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 \newcommand{\diagram}[2]{
-	\begin{figure}[H]
+	\begin{figure}[htbp]
 	\centering
 	\input{./diagrams/#1}
 	\caption{#2}
-	\label{fig:#1}
+	\label{diag:#1}
 	\end{figure}
 }
 
@@ -162,6 +164,7 @@
 \include{./TeX_files/chapter04}
 \include{./TeX_files/chapter05}
 \include{./TeX_files/chapter06}
+\include{./TeX_files/chapter07}
 
 
 \backmatter

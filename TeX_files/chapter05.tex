@@ -110,7 +110,7 @@ t_\text{ALU} + t_\text{MUX}
 
 \diagram{calculatormemory.tex}{Calcolatrice con memoria.}
 
-%TODO codice verilog
+%//TODO codice verilog
 
 \section{Parallelismo}
 
@@ -192,13 +192,13 @@ t_\text{ALU} + t_\text{MUX}
 	
 \end{defn}
 
-%TODO diagramma memorie parallellismo dei moduli di memoria multiplexer 18 ottobre 11:55, togliere multiplexer per parallelizzare.
+%//TODO diagramma memorie parallellismo dei moduli di memoria multiplexer 18 ottobre 11:55, togliere multiplexer per parallelizzare.
 
-%TODO diagramma differenza pipeline - farm - map
+%//TODO diagramma differenza pipeline - farm - map
 
 \paragraph{Pipeline (stream parallel)}
 
-%TODO diagramma pipeline
+%//TODO diagramma pipeline
 
 Avendo 3 worker ed eseguendo 3 istruzioni a cascata che impiegano rispettivamente $ 2t, 3t, 1t $, se eseguiamo dei task successivamente, le istruzioni dei task successivi avverrano con un delay dovuto alla differenza del tempo di esecuzione. Dopo un numero di istruzioni le istruzioni si sincronizzeranno. Se i worker impiegano rispettivamente dei tempi $ t_1,t_2,t_3 $, il tempo di completamento di $ m $ istruzioni sarà $ T_c = \sum t_i + m \cdot \max\{t_1,t_2,t_3\} $. Ciò crea una situazione non ottimale
 
@@ -215,7 +215,7 @@ T_c (n) = \sum_i L_i + n-1 T_s
 
 \paragraph{Map e Farm}
 
-% TODO diagramma map 
+% //TODO diagramma map 
 Farm è di tipo \textit{stream parallel} mentre map è di tipo \textit{data parallel}. Nel caso del \textbf{Map} (e anche del Farm), se le  istruzioni impiegano un tempo $ t $ che viene precisamente suddiviso in $ t/2 $ allora il problema non sussiste. Se invece vengono suddivise in tempi diversi si creano spazi temporali in cui non è possibile sfruttare tutta la potenza di calcolo. Nella map posso suddividere un dato in arrivo e fare del calcolo in parallelo su di esso (\textit{data parallelism}). Nella farm e nella pipeline i dati in arrivo possono essere passati a diversi worker (verrano schedulati) che eseguono computazioni in parallelo (\textit{stream parallelism}). I dati non possono essere suddivisi nello \textit{stream parallelism} come nel \textit{data parallelism}.
 
 \paragraph{Tempi della Farm}
@@ -244,9 +244,9 @@ exec(I)
 }
 \end{lstlisting}
 
-% TODO diagramma program counter modulo di memoria sopra, pipeline sotto e superscalare
+% //TODO diagramma program counter modulo di memoria sopra, pipeline sotto e superscalare
 
-% TODO diagramma esempio libro
+% //TODO diagramma esempio libro
 
 \paragraph{Composizione nel parallelismo}
 
@@ -265,14 +265,14 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 = \max\left\{T_f, T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}, T_h \right\}
 \end{aligned} \]
 
-% TODO maggiore tabella e normale
+% //TODO maggiore tabella e normale
 
 \begin{defn}
 	\textbf{Bottleneck o Colli di Bottiglia}
 	
 	Supponiamo di avere due computazioni composte $ f \circ g $. Se $ f $ impiega $ 5t $ e $ g $ impiega $ 2t $, eseguire in successione $ \to f \to g \to $ può causare dei bottleneck (rallentamenti). Se $ f $ è data parallel si può suddividere la sua computazione in parti uguali (ad esempio due) e poi passare il risultato a $ g $. In alternativa si può dividere $ f $ in 5 parti uguali e ad ogni parte calcolare la composizione sequenziale (in una farm) in modo che $ T_s = \max\left\{T_\text{sched}, \dfrac{T_w}{nw}, T_\text{coll}\right\} \approx \dfrac{Tw}{nw} \approx \dfrac{7t}{5} \approx 1$
 
-	% TODO diagramma bottleneck
+	% //TODO diagramma bottleneck
 \end{defn}
 
 \begin{exmp}
@@ -289,7 +289,7 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 	\includecode[verilog]{./verilog/2xpipeline/twostages/per4.v}{Modulo moltiplicazione per 4 (pipelined)} 
 	\includecode[verilog]{./verilog/2xpipeline/twostages/test.v}{Programma di test (pipelined)}
 	
-	%TODO immagine gtkwave
+	%//TODO immagine gtkwave
 \end{exmp}
 
 \section{Homework}

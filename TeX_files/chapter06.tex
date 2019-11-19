@@ -1,5 +1,5 @@
 \part{}
-\chapter{Assembler ARM}
+\chapter{Assembler ARM e microarchitettura}
 
 \section{Introduzione all'Assembler ARM}
 
@@ -79,43 +79,45 @@ Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler dell
 \end{itemize}
 \end{defn}
 
-\def\code#1#2#3{\texttt{#1} & \small #2 & #3\\}
+\def\code#1#2#3#4{\texttt{#1} & \small #2 & #3 & #4\\}
 \begin{table}[H]
 	\centering
 	\caption{Tabella dei codici condizionali ARMv7}
-	\begin{tabular}{l@{\hspace{5mm}}ll}
-		%
-		\multicolumn{3}{c}{\bfseries \emph{cond}: condition code} \\
-		\code{code}{meaning}{flags tested}
-		\hline
-		%
-		\code{AL \textrm{or omitted}}{always}{(ignored)}
-		\code{EQ}{equal}{Z = 1}
-		\code{NE}{not equal}{Z = 0}
-		\code{CS}{carry set (same as \texttt{HS})}{C = 1}
-		\code{CC}{carry clear (same as \texttt{LO})}{C = 0}
-		\code{MI}{minus}{N = 1}
-		\code{PL}{positive or zero}{N = 0}
-		\code{VS}{overflow}{V = 1}
-		\code{VC}{no overflow}{V = 0}
-		\code{HS}{unsigned higher or same}{C = 1}
-		\code{LO}{unsigned lower}{C = 0}
-		\code{HI}{unsigned higher}{C = 1 $\wedge$ Z = 0}
-		\code{LS}{unsigned lower or same}{C = 0 $\vee$ Z = 1}
-		\code{GE}{signed greater than or equal}{N = V}
-		\code{LT}{signed less than}{N $\neq$ V}
-		\code{GT}{signed greater than}{Z = 0 $\wedge$ N = V}
-		\code{LE}{signed less than or equal}{Z = 1 $\vee$ N $\neq$ V}\hline
-
+	\label{tab:codes}
+	\begin{tabular}{l@{\hspace{5mm}}lll}
+	%
+	\multicolumn{4}{c}{\bfseries \emph{cond}: condition code} \\
+	\code{code}{meaning}{flags tested}{4 bit cond field}
+	\hline
+	%
+	\code{AL \textrm{or omitted}}{always}{(ignored)}{1110}
+	\code{EQ}{equal}{Z = 1}{0000}
+	\code{NE}{not equal}{Z = 0}{0001}
+	\code{CS}{carry set (same as \texttt{HS})}{C = 1}{0010}
+	\code{CC}{carry clear (same as \texttt{LO})}{C = 0}{0011}
+	\code{MI}{minus}{N = 1}{0100}
+	\code{PL}{positive or zero}{N = 0}{0101}
+	\code{VS}{overflow}{V = 1}{0110}
+	\code{VC}{no overflow}{V = 0}{0111}
+	\code{HS}{unsigned higher or same}{C = 1}{0010}
+	\code{LO}{unsigned lower}{C = 0}{0011}
+	\code{HI}{unsigned higher}{C = 1 $\wedge$ Z = 0}{1000}
+	\code{LS}{unsigned lower or same}{C = 0 $\vee$ Z = 1}{1001}
+	\code{GE}{signed greater than or equal}{N = V}{1010}
+	\code{LT}{signed less than}{N $\neq$ V}{1011}
+	\code{GT}{signed greater than}{Z = 0 $\wedge$ N = V}{1100}
+	\code{LE}{signed less than or equal}{Z = 1 $\vee$ N $\neq$ V}{1101}
+	\code{NV}{never}{}{1111}
+	\hline
 	\end{tabular}
 \end{table}
 
 \begin{defn}
 \textbf{Registri ARMv7:}
-Nelle cpu ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|Rn| dove $ 0 \leq n < 16 $.
+Nelle cpu ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|rn| dove $ 0 \leq n < 16 $.
 
 \begin{itemize}
-	\item \verb|r0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno della libreria standard C)
+	\item \verb|r0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno di funzioni)
 	\item \verb|r1 - r3|: Argomenti, valori temporanei.
 	\item \verb|r4 - r12|: Valori temporanei.
 	\item \verb|r13|: Stack Pointer (SP).

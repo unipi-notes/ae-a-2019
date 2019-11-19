@@ -68,3 +68,76 @@
     \includecode[armn]{./asm/homework/power.s}{Funzione che calcola l'elevamento a potenza di un intero con base ed esponente positivi}
 \end{exrc}
 
+\section{Instruction Set ARMv7}
+
+\centerfig{1}{arminstructionset}{Instruction Set ARMv7}
+
+\begin{defn}
+    \textbf{Rappresentazione di un'istruzione in una parola da 32 bit} \\
+    Le istruzioni assembler vengono rappresentate in una parola da 32 bit.
+
+    La prima sezione di 4 bit della parola viene usata per i codici di condizionali (\textit{condition codes}).
+    Vedi la tabella \ref{tab:codes}
+
+    La seconda sezione di 2 bit contiene il tipo di istruzione:
+    \begin{itemize}
+        \item 00: istruzione operativa
+        \item 01: istruzione di memoria (\textit{load, store, etc.})
+        \item 10: istruzione di salto (\textit{branch, branch and link})
+        \item 11: Data transfer, non vedremo queste istruzioni.
+    \end{itemize}
+
+    La prossima sezione, denominata \textit{FUNCT} è di 6 bit e determina l'istruzione da eseguire e gli operandi nel caso ci troviamo in un'operazione di \textit{Data Processing}.
+    Il primo bit di \textit{FUNCT}, detto \textit{I} determina il tipo dell'ultimo operando (operand 2).
+    Se il bit \textit{I} è a 0 allora l'operando 2 è un registro, è un immediato altrimenti.
+    I 4 bit centrali sono detti \textit{Operation Code} o \textbf{OPCODE} e determinano l'operazione da eseguire.
+    Ad esempio, le istruzioni di tipo \textit{Data Processing} (Vedi figura \ref{fig:arminstructionset}) avranno i seguenti \textit{OPCODE}
+
+    \def\opcode#1#2#3{\texttt{#1} & \small #2 & #3\\}
+    \begin{table}[H]
+	\centering
+	\caption{Tabella degli OPCODE delle principali operazioni di data processing}
+	\label{tab:opcodes}
+	\begin{tabular}{l@{\hspace{5mm}}ll}
+	%
+	\multicolumn{3}{c}{\bfseries \emph{opcode}: Data Processing Operation Codes } \\
+	\opcode{Assembler Mnemonic}{OPCODE}{Action}
+	\hline
+	%
+    \opcode{AND}{0000}{op1 AND op2}
+    \opcode{EOR}{0001}{op1 EOR op2}
+    \opcode{SUB}{0010}{op1 - op2}
+    \opcode{RSB}{0011}{op2 - op1}
+    \opcode{ADD}{0100}{op1 + op2}
+    \opcode{ADC}{0101}{op1 + op2 + carry}
+    \opcode{SBC}{0110}{op1 - op2 + carry - 1}
+    \opcode{RSC}{0111}{op2 - op1 + carry - 1}
+    \opcode{TST}{1000}{like AND but result is not written}
+    \opcode{TEQ}{1001}{like EOR but result is not written}
+    \opcode{CMP}{1010}{like SUB but result is not written}
+    \opcode{CMN}{1011}{like ADD but result is not written}
+    \opcode{ORR}{1100}{op1 OR op2}
+    \opcode{MOV}{1101}{move op2 in the register op1}
+    \opcode{BIC}{1110}{op1 AND NOT op2 (bit clear)}
+    \opcode{MVN}{1111}{move NOT op2 in the register op1}
+    \hline
+    \end{tabular}
+    \end{table}
+    L'ultimo bit rimanente nella sezione \textit{FUNCT} è detto \textit{SET}. Se impostato ad 1 allora verranno impostati i bit di flag alla fine dell'esecuzione dell'istruzione.
+    Ne seguono due sezioni da 4 bit che indicano il registro di destinazione \verb|rd| e
+    il registro sorgente 1 \verb|rx|.
+    I rimanenti 12 bit vengono utilizzati per il secondo operando.
+    Se il bit \textit{I} è ad 1, il secondo operando conterrà 4 bit di rotazione e 8 di valore immediato.
+    Altrimenti, se \textit{I} è a 0, i 12 bit del secondo operando vengono interpretati nel seguente modo.
+    Abbiamo due casi, dove il registro è shiftato di una costante, ed un secondo caso dove il registro è shiftato di
+    un altro registro. Nel primo caso abbiamo 5 bit per il valore dello shift, 2 bit che indicano il tipo di shift (\textit{LSL,LSR,ASR,ROR}), 1 bit che indica se
+    il valore dello shift è contenuto in una costante (0) o in un registro (1). I rimanenti 4 bit indicano il registro su cui applicare lo shift.
+    Nel secondo caso (il valore di shift è contenuto in un registro) abbiamo 4 bit per indicare il registro da cui leggere il valore di shift, un bit sempre a 0,
+    il tipo di shift come nel primo caso e 1 bit per il tipo di shift (in questo caso impostato ad 1), i rimanenti 4 bit, come prima, indicano il registro su cui applicare lo shift.
+    % //TODO riprendi lezione 14 nov seconda parte.
+
+\end{defn}
+
+
+% //TODO recupera lezione 15
+% funzioni thumb
