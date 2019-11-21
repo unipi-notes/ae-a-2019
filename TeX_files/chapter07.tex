@@ -56,20 +56,20 @@ Sarà necessario un registro separato per mantenere il program counter, che rice
 
 \begin{defn}
 \textbf{Implementare un'istruzione LDR (Load register)} \\
-Vediamo come implementare un'istruzione \verb|LDR| con offset immediato (pre-indice), prendiamo ad esempio
+Vediamo come implementare un'istruzione \texttt{LDR} con offset immediato (pre-indice), prendiamo ad esempio
 \begin{lstlisting}[style=arm]
 ldr r0, [r1, #4]
 \end{lstlisting}
-Avremo il registro \verb|pc| che punterà all'istruzione \verb|ldr|. La memoria istruzioni conterrà l'istruzione all'indirizzo puntato da \verb|pc|.
-Caricheremo \verb|r1| dal primo indirizzo di lettura della \textit{memoria registri} (nel suo output 1), a cui sommeremo  nella \textit{ALU} l'offset costante \verb|#4|.
+Avremo il registro \texttt{pc} che punterà all'istruzione \texttt{ldr}. La memoria istruzioni conterrà l'istruzione all'indirizzo puntato da \texttt{pc}.
+Caricheremo \texttt{r1} dal primo indirizzo di lettura della \textit{memoria registri} (nel suo output 1), a cui sommeremo  nella \textit{ALU} l'offset costante \texttt{\#4}.
 Caricheremo dall'indirizzo sommato un valore dalla \textit{memoria dati}, che andrà in input alla memoria registri e verrà scritto all'indirizzo di scrittura,
-in questo caso \verb|r0|.
+in questo caso \texttt{r0}.
 % //TODO SCHEMA
 Se volessimo realizzare un offset variabile (un registro), come ad esempio
 \begin{lstlisting}[style=arm]
 ldr r0, [r1, r2]
 \end{lstlisting}
-Dovremmo utilizzare anche il secondo input/output di lettura della memoria registri, (il registro \verb|r2|) come operando di somma della ALU.
+Dovremmo utilizzare anche il secondo input/output di lettura della memoria registri, (il registro \texttt{r2}) come operando di somma della ALU.
 Ciò ci fa notare che è necessario un multiplexer fra \textit{out2} della memoria registri e l'operando immediato per realizzare correttamente l'offset.
 \end{defn}
 
@@ -94,3 +94,11 @@ Alla fine di un'istruzione \textit{non di salto} il program counter viene increm
 Ciò ci dice che è necessario avere un altro multiplexer in ingresso al program counter.
 % //TODO
 \end{defn}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{completesinglecycleprocessor.png}
+    \caption{Processore a ciclo singolo completo}
+    \label{<label>}
+\end{figure}

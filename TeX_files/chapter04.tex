@@ -77,7 +77,7 @@ Realizziamo un automa di Mealy che riconosce le stringhe \textit{"abba"} da un i
 	\label{tab:mealyomega2}
 	\begin{tabular}{l|llll|l|}
 		\cline{2-6}
-		& $s_1$ & $s_2$ & $x_1$ & $x_2$ & z \\ \cline{2-6} 
+		& $s_1$ & $s_2$ & $x_1$ & $x_2$ & z \\ \cline{2-6}
 		Stato $S_1$ & 0     & 0     & -     & -     & 0 \\
 		Stato $S_2$ & 0     & 1     & -     & -     & 0 \\
 		Stato $S_3$ & 1     & 1     & -     & -     & 0 \\
@@ -102,10 +102,10 @@ Realizziamo un automa di Mealy che riconosce le stringhe \textit{"abba"} da un i
 		& 0     & 1     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
 		Stato $S_3$ & 1     & 1     & 0     & 0     & 0      & 1      \\
 		& 1     & 1     & 0     & 1     & 1      & 0      \\
-		& 1     & 1     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+		& 1     & 1     & 1     & 1     & 0      & 0      \\ \cline{2-7}
 		Stato $S_4$ & 1     & 0     & 0     & 0     & 0      & 0      \\
 		& 1     & 0     & 0     & 1     & 0      & 0      \\
-		& 1     & 0     & 1     & 1     & 0      & 0      \\ \cline{2-7} 
+		& 1     & 0     & 1     & 1     & 0      & 0      \\ \cline{2-7}
 	\end{tabular}
 \end{table}
 
@@ -113,19 +113,19 @@ Avremo che la formula booleana sarà per il primo e secondo bit di stato:
 \[ s_1' = \overbar{s_1}s_2\overbar{x_1}x_2 + s_1s_2\overbar{x_1}x_2 = s_2\overbar{x_1}x_2 \]. 
 \[ s_2' = \overbar{s_1s_2}+ \overbar{s_1}s_2\overbar{x_1} + s_2\overbar{x_2}\]
 
-Nella componente \verb|sigma| in Verilog avremo l'assegnamento ad un nuovo stato \verb|news|:
+Nella componente \texttt{sigma} in Verilog avremo l'assegnamento ad un nuovo stato \texttt{news}:
 
 \begin{lstlisting}[style={verilog}]
 assign
 	news[1] = s[2] & ~x[1] & x[2];
 
-assign    
+assign
 	news[2] = ~s[1] & ~x[1] & ~x[2] 
 		| s[2] & ~x[1] & ~x[2] 
 		| ~s[1] & s[2] & ~x[1];
 \end{lstlisting}
 
-La formula per l'uscita sarà $ z = s_1\overbar{s_2x_1x_2} $. La componente \verb|omega| effettuerà l'assegnamento 
+La formula per l'uscita sarà $ z = s_1\overbar{s_2x_1x_2} $. La componente \texttt{omega} effettuerà l'assegnamento
 
 \begin{lstlisting}[style={verilog}]
 assign
@@ -142,11 +142,13 @@ Abbiamo 3 moduli. Uno per il registro, uno per il modulo $ \omega $ e uno per il
 
 \paragraph{Note sulla sintassi e semantica Verilog}
 
-La sintassi \verb|[a:b]| denota un array indicizzato dal numero \verb|a| al numero \verb|b|. Utilizziamo gli array per rappresentare valori a più bit. In questo caso, il registro è generalizzato per un parametro \verb|N| e può ad esempio essere inizializzato con \verb|registro #(4) nome(...) | dove 4 è il parametro \verb|N| e corrisponde al numero di bit del registro.
+La sintassi \texttt{[a:b]} denota un array indicizzato dal numero
+\texttt{a} al numero \texttt{b}. Utilizziamo gli array per rappresentare valori a più bit. In questo caso, il registro è generalizzato per un parametro \texttt{N} e può ad esempio essere inizializzato con \texttt{registro \#(4) nome(...) }
+dove 4 è il parametro \texttt{N} e corrisponde al numero di bit del registro.
 
-La negazione con \verb|!| nega un singolo valore, mentre la notazione \verb|~| viene detta negazione \textit{bit wise} e nega tutti i valori di una sequenza di bit.
+La negazione con \texttt{!} nega un singolo valore, mentre la notazione \texttt{~} viene detta negazione \textit{bit wise} e nega tutti i valori di una sequenza di bit.
 
-Normalmente, in un blocco \verb|assign| assegno un valore ad una variabile booleana istantaneamente. Posso invece aggiungere un delay inserendo \verb|#x| di fronte all'identificatore della variabile, dove \verb|x| è un numero. Ad esempio:
+Normalmente, in un blocco \texttt{assign} assegno un valore ad una variabile booleana istantaneamente. Posso invece aggiungere un delay inserendo \texttt{\#x} di fronte all'identificatore della variabile, dove \texttt{x} è un numero. Ad esempio:
 \begin{lstlisting}[style={verilog}]
 assign 
 	#1 z = (ic == 0 ? x : y)
@@ -161,7 +163,7 @@ assign
 \includecode[makefile]{./verilog/abba/Mealy/makefile}{Makefile}
 
 
-Per sincronizzare il modulo della rete sequenziale dell'automa di Mealy mettiamo un registro di fra l'input \verb|x| e le reti sequenziali \verb|sigma| e \verb|omega|.
+Per sincronizzare il modulo della rete sequenziale dell'automa di Mealy mettiamo un registro di fra l'input \texttt{x} e le reti sequenziali \texttt{sigma} e \texttt{omega}.
 
 \begin{figure}[!htb]
 	\centering 

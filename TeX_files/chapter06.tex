@@ -10,7 +10,7 @@ while(true) {
 	interpreta
 	esegui
 }
-\end{lstlisting} 
+\end{lstlisting}
 
 \begin{defn}
 Prelevare un istruzione significa estrarre dalla memoria una parola (configurazione di 0 e 1) contenente un istruzione \textbf{Assembly}. L'Assembly, spesso abbreviato \textbf{asm} è un linguaggio di programmazione a basso livello con una forte corrispondenza fra il linguaggio e le istruzioni in linguaggio macchina di una particolare architettura. Vedremo il linguaggio Assembler per ARM, architettura acronimo di Advanced Risc Machines, dove Risc sta per Reduced Instruction Set Computer. Risc utilizza molte meno istruzioni di CISC, più comune nelle architetture X86 e X86\_64. I principi di Risc sono:
@@ -65,17 +65,17 @@ Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler dell
 
 
 \begin{itemize}
-	\item \verb|<opcode>| è l'istruzione da eseguire
-	\item \verb|{cond}| Un codice condizionale di due lettere (opzionale).
-	\item \verb|{flags}| Flag opzionali aggiuntivi fra cui \verb|S|, che è implicito per le istruzioni CMP, CMN, TEQ, TST.
-	\item \verb|OP2| Un secondo operando flessibile (opzionale), ha la forma \verb|Rm{,<shift>}| oppure \verb|<#imm>|
-	\item \verb|Rd| Il registro di destinazione dell'operazione
-	\item \verb|Rn,Rm| Registri sorgente.
-	\item \verb|<#imm>| Un valore immediato (se rappresentabile).
-	\item \verb|<shift>| Un operazione di shift della forma \verb|<shiftname> <register>| oppure della forma \\
-	 \verb|<shiftname> <#imm>|, oppure soltanto \verb|RRX|
-	\item \verb|<shiftname>| Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
-	\item \verb|@ commento| Si possono inserire commenti a fine riga.
+	\item \texttt{<opcode>} è l'istruzione da eseguire
+	\item \texttt{{cond}} Un codice condizionale di due lettere (opzionale).
+	\item \texttt{{flags}} Flag opzionali aggiuntivi fra cui \texttt{S}, che è implicito per le istruzioni CMP, CMN, TEQ, TST.
+	\item \texttt{OP2} Un secondo operando flessibile (opzionale), ha la forma \texttt{Rm{,<shift>}} oppure \texttt{<\#imm>}
+	\item \texttt{Rd} Il registro di destinazione dell'operazione
+	\item \texttt{Rn,Rm} Registri sorgente.
+	\item \texttt{<\#imm>} Un valore immediato (se rappresentabile).
+	\item \texttt{<shift>} Un operazione di shift della forma \texttt{<shiftname> <register>} oppure della forma \\
+	 \texttt{<shiftname> <\#imm>}, oppure soltanto \texttt{RRX}
+	\item \texttt{<shiftname>} Opcode di un istruzione di shift (ASL, LSL, LSR, ASR, ROR)
+	\item \texttt{@ commento} Si possono inserire commenti a fine riga.
 \end{itemize}
 \end{defn}
 
@@ -114,15 +114,15 @@ Il linguaggio Assembler ARM è radicalmente diverso dai linguaggi Assembler dell
 
 \begin{defn}
 \textbf{Registri ARMv7:}
-Nelle cpu ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|rn| dove $ 0 \leq n < 16 $.
+Nelle cpu ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \texttt{rn} dove $ 0 \leq n < 16 $.
 
 \begin{itemize}
-	\item \verb|r0|: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno di funzioni)
-	\item \verb|r1 - r3|: Argomenti, valori temporanei.
-	\item \verb|r4 - r12|: Valori temporanei.
-	\item \verb|r13|: Stack Pointer (SP).
-	\item \verb|r14|: Link register.
-	\item \verb|r15|: Program counter.
+	\item \texttt{r0}: Parametri temporanei o valori di ritorno. (Standard per i valori di ritorno di funzioni)
+	\item \texttt{r1 - r3}: Argomenti, valori temporanei.
+	\item \texttt{r4 - r12}: Valori temporanei.
+	\item \texttt{r13}: Stack Pointer (SP).
+	\item \texttt{r14}: Link register.
+	\item \texttt{r15}: Program counter.
 \end{itemize}
 \end{defn}
 
@@ -131,16 +131,19 @@ Nelle cpu ARMv7 sono presenti soltanto 16 registri da 32 bit, della forma \verb|
 	\textbf{Aliasing dei registri}
 
 	Si possono usare degli alias per riferirsi ai registri utilizzando la direttiva
-	\verb|.req|. Ad esempio, inserendo
+	\texttt{.req}. Ad esempio, inserendo
 \begin{lstlisting}[style=arm]
 	MYName .req r5
 \end{lstlisting}
-	Ci permette di utilizzare l'alias \verb|MYNAME| al posto di \verb|r5| nel codice che segue.
+	Ci permette di utilizzare l'alias \texttt{MYNAME} al posto di \texttt{r5} nel codice che segue.
 \end{defn}
 
 \begin{defn}
 \textbf{Operandi Immediati:}
-Operandi che non risiedono in dei registri ma sono costanti presenti all'interno della configurazione della parola, ad esempio \verb|#1| è costante per il numero 1. \verb|#0x1234| corrisponde in esadecimale al numero $ 4661 $
+Operandi che non risiedono in dei registri ma sono costanti
+presenti all'interno della configurazione della parola, ad 
+esempio \texttt{\#1} è costante per il numero 1. 
+\texttt{\#0x1234} corrisponde in esadecimale al numero $ 4661 $
 \end{defn}
 
 \begin{defn}
@@ -161,7 +164,7 @@ Gli operandi di memoria sono della forma:
 [rx], rn, <shift>
 \end{lstlisting}
 
-Tale operando va a leggere il contenuto della memoria all'indirizzo puntato dal registro \verb|Rx|, a cui va aggiunto l'\verb|offset|.
+Tale operando va a leggere il contenuto della memoria all'indirizzo puntato dal registro \texttt{Rx}, a cui va aggiunto l'\texttt{offset}.
 
 L'istruzione per caricare una parola dalla memoria in un registro è
 \begin{lstlisting}[style=arm]
@@ -179,7 +182,7 @@ ldr r0, [r0]
 ldrb r2, [r0], #1
 \end{lstlisting}
 
-Tale istruzione caricherà nel registro \verb|r0| il contenuto dell'indirizzo puntato dal contenuto di \verb|r2| a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \verb|struct| e \verb|array|, presenti nel linguaggio C.
+Tale istruzione caricherà nel registro \texttt{r0} il contenuto dell'indirizzo puntato dal contenuto di \texttt{r2} a cui va aggiunto 0. L'offset è utile per accedere a strutture dati (memorizzate sequenzialmente) come \texttt{struct} e \texttt{array}, presenti nel linguaggio C.
 
 Per caricare in un registro un operando immediato o il valore di un altro registro si usa
 \begin{lstlisting}[style=arm]
@@ -200,7 +203,7 @@ mov r2, #0x400
 ldr r0,[r2, #0]
 \end{lstlisting}
 
-All'interno del registro \verb|r0| saranno caricati i 4 byte a partire dall'indirizzo 1024 (400 in esadecimale).
+All'interno del registro \texttt{r0} saranno caricati i 4 byte a partire dall'indirizzo 1024 (400 in esadecimale).
 \end{note}
 
 \begin{defn}
@@ -210,27 +213,27 @@ All'interno del registro \verb|r0| saranno caricati i 4 byte a partire dall'indi
 \begin{defn}
 \textbf{Istruzioni Logiche Bitwise}
 
-Realizza l'and bit per bit dei registri \verb|r1| (maschera) e \verb|r2| (sorgente), memorizzando in \verb|rd|
+Realizza l'and bit per bit dei registri \texttt{r1} (maschera) e \texttt{r2} (sorgente), memorizzando in \texttt{rd}
 \begin{lstlisting}[style=arm]
 and rd, r1, r2
 \end{lstlisting}
 
-Realizza l'OR bit per bit dei registri \verb|r1| e \verb|r2|, memorizzando in \verb|rd|
+Realizza l'OR bit per bit dei registri \texttt{r1} e \texttt{r2}, memorizzando in \texttt{rd}
 \begin{lstlisting}[style=arm]
 orr rd, r1, r2
 \end{lstlisting}
 
-Realizza l'Exclusive OR bit per bit dei registri \verb|r1| e \verb|r2|, memorizzando in \verb|rd|
+Realizza l'Exclusive OR bit per bit dei registri \texttt{r1} e \texttt{r2}, memorizzando in \texttt{rd}
 \begin{lstlisting}[style=arm]
 eor rd, r1, r2
 \end{lstlisting}
 
-Realizza l'Exclusive OR bit per bit dei registri \verb|r1| e \verb|r2|, memorizzando in \verb|rd|
+Realizza l'Exclusive OR bit per bit dei registri \texttt{r1} e \texttt{r2}, memorizzando in \texttt{rd}
 \begin{lstlisting}[style=arm]
 eor rd, r1, r2
 \end{lstlisting}
 
-Imposta a 0 i bit di \verb|r2| laddove nella posizione corrispondente della maschera \verb|r1| vi sia un 1, memorizzando il risultato in \verb|rd|
+Imposta a 0 i bit di \texttt{r2} laddove nella posizione corrispondente della maschera \texttt{r1} vi sia un 1, memorizzando il risultato in \texttt{rd}
 \begin{lstlisting}[style=arm]
 bic rd, r1, r2
 \end{lstlisting}
@@ -238,40 +241,40 @@ bic rd, r1, r2
 
 \begin{defn}
 \textbf{Bit di flag in ARMv7:}
-In ARMv7 sono presenti 4 bit di flag di condizione (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \verb|Z| indica se il risultato di un operazione è 0. Il flab \verb|N| indica se il risultato dell'operazione è negativo. Il flag \verb|C| indica se è presente un carry (riporto) sull'ultima cifra. Il flag \verb|V| (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
-Solo alcune istruzioni impostano di default i set di condizione (come \verb|CMP|). Per forzare un istruzione ad impostare i bit di flag di condizione si può passare il flag aggiuntivo \verb|S|.
+In ARMv7 sono presenti 4 bit di flag di condizione (che possono essere alterati dopo l'esecuzione di un istruzione). Il flag \texttt{Z} indica se il risultato di un operazione è 0. Il flab \texttt{N} indica se il risultato dell'operazione è negativo. Il flag \texttt{C} indica se è presente un carry (riporto) sull'ultima cifra. Il flag \texttt{V} (overflow) indica se l'operazione ha dato overflow. I flag sono memorizzati in un registro detto "parola di stato", che non è accessibile come gli altri registri general purpose. Vi è presente anche un bit che indica l'endianness delle operazioni di memoria.
+Solo alcune istruzioni impostano di default i set di condizione (come \texttt{CMP}). Per forzare un istruzione ad impostare i bit di flag di condizione si può passare il flag aggiuntivo \texttt{S}.
 \end{defn}
 
 \begin{defn}
 \textbf{Istruzioni Aritmetiche}
 
-Realizza la somma dei registri \verb|r1| e \verb|r2|, memorizzando il risultato in \verb|rd|
+Realizza la somma dei registri \texttt{r1} e \texttt{r2}, memorizzando il risultato in \texttt{rd}
 \begin{lstlisting}[style=arm]
 add rd, r1, r2
 \end{lstlisting}
 
-Realizza la somma dei registri \verb|r1| e \verb|r2| \textbf{con riporto}, memorizzando il risultato in \verb|rd|
+Realizza la somma dei registri \texttt{r1} e \texttt{r2} \textbf{con riporto}, memorizzando il risultato in \texttt{rd}
 \begin{lstlisting}[style=arm]
 adc rd, r1, r2
 \end{lstlisting}
 %	Todo spiega bit di carry
 
-Realizza la sottrazione dei registri \verb|r1 - r2|, memorizzando il risultato in \verb|rd|
+Realizza la sottrazione dei registri \texttt{r1 - r2}, memorizzando il risultato in \texttt{rd}
 \begin{lstlisting}[style=arm]
 sub rd, r1, r2
 \end{lstlisting}
 
-Realizza la sottrazione dei registri \verb|r1 - r2| \textbf{con riporto}, memorizzando il risultato in \verb|rd|
+Realizza la sottrazione dei registri \texttt{r1 - r2} \textbf{con riporto}, memorizzando il risultato in \texttt{rd}
 \begin{lstlisting}[style=arm]
 sbc rd, r1, r2
 \end{lstlisting}
 
-Compare accetta solamente due operandi, realizza la sottrazione dei registri \verb|r1 - r2| ed \textbf{imposta i bit di flag}. Viene utilizzato per realizzare esecuzione condizionale nei programmi, laddove le istruzioni successive utilizzino un codice condizionale.
+Compare accetta solamente due operandi, realizza la sottrazione dei registri \texttt{r1 - r2} ed \textbf{imposta i bit di flag}. Viene utilizzato per realizzare esecuzione condizionale nei programmi, laddove le istruzioni successive utilizzino un codice condizionale.
 \begin{lstlisting}[style=arm]
 cmp r1, r2
 \end{lstlisting}
 
-Sottrazione "al contrario" (Reverse Subtraction), esegue l'operazione \verb|r2 - r1| e memorizza il risultato in \verb|rd|.
+Sottrazione "al contrario" (Reverse Subtraction), esegue l'operazione \texttt{r2 - r1} e memorizza il risultato in \texttt{rd}.
 \begin{lstlisting}[style=arm]
 sbc rd, r1, r2
 \end{lstlisting}
@@ -285,7 +288,7 @@ sbc rd, r1, r2
 	I registri passati per parametro alle istruzioni di shift non sono registri di destinazione ma contengono il numero parametro dello shift (di quante posizioni deve essere effettuato). Vedi il paragrafo sulla sintassi delle istruzioni Assembler.
 \end{note}
 
-Bitshift di \verb|num| posizioni a sinistra. Semanticamente identico all'istruzione \verb|ASL|. Equivalente alla moltiplicazione per la \verb|num|-esima potenza di 2.
+Bitshift di \texttt{num} posizioni a sinistra. Semanticamente identico all'istruzione \texttt{ASL}. Equivalente alla moltiplicazione per la \texttt{num}-esima potenza di 2.
 \begin{lstlisting}[style=arm]
 @ come operando
 lsl #imm
@@ -294,7 +297,7 @@ lsl rn
 lsl rd, rn, #imm
 \end{lstlisting}
 
-Bitshift di \verb|num| posizioni a destra. Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+Bitshift di \texttt{num} posizioni a destra. Equivalente alla divisione per la \texttt{num}-esima potenza di 2.
 \begin{lstlisting}[style=arm]
 @ come operando
 lsr #imm
@@ -304,7 +307,7 @@ lsr rd, rn, #imm
 \end{lstlisting}
 
 
-Bitshift aritmetico di \verb|num| posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \verb|num|-esima potenza di 2.
+Bitshift aritmetico di \texttt{num} posizioni a destra (preserva il bit di segno). Equivalente alla divisione per la \texttt{num}-esima potenza di 2.
 \begin{lstlisting}[style=arm]
 @ come operando
 asr #imm
@@ -344,13 +347,13 @@ add r0, r0, r0
 \end{lstlisting}
 
 
-Il program counter (\verb|pc|) prima dell'esecuzione dell'istruzione \verb|MOV| indicherà l'indirizzo di memoria dove è contenuta la parola dell'istruzione. Alla fine dell'esecuzione di \verb|MOV| sarà incrementato di 4 posizioni (4 byte = 32 bit, dimensione di una parola).
+Il program counter (\texttt{pc}) prima dell'esecuzione dell'istruzione \texttt{MOV} indicherà l'indirizzo di memoria dove è contenuta la parola dell'istruzione. Alla fine dell'esecuzione di \texttt{MOV} sarà incrementato di 4 posizioni (4 byte = 32 bit, dimensione di una parola).
 \end{exmp}
 
 \begin{defn}
 \textbf{Istruzioni di salto}
 
-L'istruzione branch "salta" all'istruzione contenuta in \verb|pc|  a cui viene sommato un valore immediato.
+L'istruzione branch "salta" all'istruzione contenuta in \texttt{pc}  a cui viene sommato un valore immediato.
 Più semplicemente può saltare ad un istruzione contenuta in un etichetta.
 Sono di fondamentale utilizzo i flag condizionali.
 \begin{lstlisting}[style=arm]
@@ -358,7 +361,7 @@ B #imm		@ offset #imm is relative to pc
 B label		@ branch to label
 \end{lstlisting}
 
-Salva il contenuto di \verb|pc| in \verb|LR| (registro 14) e "salta" all'istruzione contenuta in \verb|pc + #num|. Sono di fondamentale utilizzo i flag condizionali.
+Salva il contenuto di \texttt{pc} in \texttt{LR} (registro 14) e "salta" all'istruzione contenuta in \texttt{pc + \#num}. Sono di fondamentale utilizzo i flag condizionali.
 \begin{lstlisting}[style=arm]
 BL #imm		@ offset #imm is relative to pc
 BL label	@ branch to label
@@ -370,7 +373,7 @@ Si utilizza per realizzare l'equivalente di procedure e funzioni in asm.
 
 \begin{defn}
 \textbf{Direttive}
-Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \verb|.|
+Le direttive non sono istruzioni asm, ma sono istruzioni per il compilatore (toolchain GNU) che compileranno a sezioni del programma. La sintassi delle direttive inizia con un simbolo "punto" \texttt{.}
 \end{defn}
 
 \begin{defn}
@@ -381,12 +384,12 @@ Inizia una nuova sezione di codice o dati.
 .section <section_name> {, "<flags>"}
 \end{lstlisting}
 
-Le sezioni \verb|<section_name>| nell'assembler ARM gnu possono essere:
+Le sezioni \texttt{<section\_name>} nell'assembler ARM gnu possono essere:
 \begin{itemize}
-	\item \verb|.text| una sezione di codice
-	\item \verb|.data| una sezione di dati inizializzati
-	\item \verb|.bss| una sezione di dati non inizializzati
-	\item \verb|.rodata| inizializza una sezione di dati (read only?)
+	\item \texttt{.text} una sezione di codice
+	\item \texttt{.data} una sezione di dati inizializzati
+	\item \texttt{.bss} una sezione di dati non inizializzati
+	\item \texttt{.rodata} inizializza una sezione di dati (read only?)
 \end{itemize}
 \end{defn}
 
@@ -409,12 +412,12 @@ Inserisce una stringa di caratteri AScii nell'assembly.
 .ascii "<string>"
 \end{lstlisting}
 
-Come \verb|.ascii|, inserisce una stringa di caratteri AScii nell'assembly, ma seguita da un byte 0.
+Come \texttt{.ascii}, inserisce una stringa di caratteri AScii nell'assembly, ma seguita da un byte 0.
 \begin{lstlisting}[style=arm]
 .asciz "<string>"
 \end{lstlisting}
 
-Riserva \verb|number_of_bytes| byte in memoria, sono riempiti con byte 0.
+Riserva \texttt{number\_of\_bytes} byte in memoria, sono riempiti con byte 0.
 \begin{lstlisting}[style=arm]
 .space <number_of_bytes>
 \end{lstlisting}
@@ -424,7 +427,7 @@ Riserva \verb|number_of_bytes| byte in memoria, sono riempiti con byte 0.
 \textbf{Chiamate al Sistema Operativo}
 Come da C, possiamo fare chiamate al Sistema Operativo in Assembly. Si possono chiamare funzioni di librerie, che comprendono funzioni per i processi e funzioni per l'IO.
 
-Realizza una chiamata di sistema, il cui codice è contenuto in \verb|r7|. Le due istruzioni sono equivalenti.
+Realizza una chiamata di sistema, il cui codice è contenuto in \texttt{r7}. Le due istruzioni sono equivalenti.
 \begin{lstlisting}[style=arm]
 svc 0	@ "supervisor call"
 swi 0	@ "software interrupt"
@@ -432,14 +435,19 @@ swi 0	@ "software interrupt"
 \end{defn}
 
 \begin{exmp}
-\verb|write(fd, buffer, num_byte);| è una funzione C che stampa \verb|num_byte| del \verb|buffer| all'interno di \verb|fd|, ovvero un \textit{file descriptor}. La funzione della \textit{stdlib} C \verb|printf| che utilizza internamente \verb|write|. I file descriptor standard in sistemi Unix sono
+\texttt{write(fd, buffer, num\_byte);} è una funzione C che
+stampa \texttt{num\_byte} del \texttt{buffer} all'interno di
+\texttt{fd}, ovvero un \textit{file descriptor}.
+La funzione della \textit{stdlib} C \texttt{printf}
+che utilizza internamente \texttt{write}.
+I file descriptor standard in sistemi Unix sono
 \begin{itemize}
-	\item 0: standard input o \verb|stdin|
-	\item 1: standard output o \verb|stdout|
-	\item 2: standard error o \verb|stderr|
+	\item 0: standard input o \texttt{stdin}
+	\item 1: standard output o \texttt{stdout}
+	\item 2: standard error o \texttt{stderr}
 \end{itemize}
 
-Il numero della syscall \verb|write| è 4. Il numero della syscall exit è 1.
+Il numero della syscall \texttt{write} è 4. Il numero della syscall exit è 1.
 \end{exmp}
 
 \begin{defn}
@@ -452,7 +460,7 @@ testlabel:
 ...
 \end{lstlisting}
 
-Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella sezione \verb|.data| si usa l'operando \verb|=esempio|. Per i label nella sezione \verb|.text| non va utilizzato il simbolo prefisso \verb|=|.
+Per accedere all'indirizzo di memoria di un label \texttt{esempio} contenuto nella sezione \texttt{.data} si usa l'operando \texttt{=esempio}. Per i label nella sezione \texttt{.text} non va utilizzato il simbolo prefisso \texttt{=}.
 \end{defn}
 
 \begin{exmp}
@@ -462,7 +470,7 @@ Per accedere all'indirizzo di memoria di un label \verb|esempio| contenuto nella
 
 \begin{defn}
 \textbf{If-then-else in asm ARM}
-La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \verb|.else|. Una direttiva condizionale \verb|.if| si termina con la direttiva \verb|.endif|.
+La direttiva \texttt{.if} rende il blocco di codice seguente condizionale. Analogamente esiste la direttiva \texttt{.else}. Una direttiva condizionale \texttt{.if} si termina con la direttiva \texttt{.endif}.
 \begin{lstlisting}[style=armn]
 .if <logical_expression>
 	<do_something>
@@ -471,7 +479,7 @@ La direttiva \verb|.if| rende il blocco di codice seguente condizionale. Analoga
 .endif
 \end{lstlisting}
 
-Vediamo come viene compilata ad Assembly una direttiva \verb|if|, utilizzeremo quasi sempre le direttive e non condizioni testate manualmente.
+Vediamo come viene compilata ad Assembly una direttiva \texttt{if}, utilizzeremo quasi sempre le direttive e non condizioni testate manualmente.
 \begin{lstlisting}[style=armn]
 @ asm equivalent to C: if(x == y) {x++; y=2x} else x--;
 	cmp r1, r2 	@ x and y are in r1 and r2, test condition
@@ -567,7 +575,7 @@ loop:
 	bne loop
 \end{lstlisting}
 
-Oppure, semplificando utilizzando un post-indice per \verb|ldr|:
+Oppure, semplificando utilizzando un post-indice per \texttt{ldr}:
 
 \begin{lstlisting}[style=armn]
 .data
@@ -617,20 +625,20 @@ loop:
 \begin{exmp}
 \textbf{Realizzare funzioni e chiamate di funzione}
 Per realizzare una funzione in asm ARM si definisce una sezione di codice
-con un label. Per "chiamare" la funzione si utilizza l'istruzione \verb|bl nomefunzione|
+con un label. Per "chiamare" la funzione si utilizza l'istruzione \texttt{bl nomefunzione}
 (\textit{branch and link}) che eseguirà un \textit{branch} all'istruzione
 contenuta nel label e salverà l'indirizzo dell'istruzione corrente all'interno del registro
-\verb|lr| o \verb|r14| (\textit{link register}). Per ritornare dall'esecuzione
-della funzione al codice chiamante si usa l'istruzione \verb|bx lr| per ritornare
+\texttt{lr} o \texttt{r14} (\textit{link register}). Per ritornare dall'esecuzione
+della funzione al codice chiamante si usa l'istruzione \texttt{bx lr} per ritornare
 all'istruzione salvata nel \textit{link register}. Si può anche effettuare il return con una
-condizione utilizzando ad esempio \verb|moveq pc,lr| per impostare il registro
-\textit{program counter} a \verb|lr| se l'istruzione precedente ha impostato il flag
+condizione utilizzando ad esempio \texttt{moveq pc,lr} per impostare il registro
+\textit{program counter} a \texttt{lr} se l'istruzione precedente ha impostato il flag
 \textit{Zero} a 1.
 
-Si possono usare i registri da \verb|r0| a \verb|r4| (escluso) per i parametri di una funzione.
-\verb|r0| è anche il valore di return. Il valore di ritorno della funzione va memorizzato in \verb|r0|
+Si possono usare i registri da \texttt{r0} a \texttt{r4} (escluso) per i parametri di una funzione.
+\texttt{r0} è anche il valore di return. Il valore di ritorno della funzione va memorizzato in \texttt{r0}
 prima del ritorno da essa.
-Dal quarto parametro in poi, i parametri vanno salvati sullo stack con \verb|push|.
+Dal quarto parametro in poi, i parametri vanno salvati sullo stack con \texttt{push}.
 Le funzioni della standard library C consumano direttamente i parametri necessari sullo stack.
 \end{exmp}
 
@@ -640,10 +648,10 @@ Le funzioni della standard library C consumano direttamente i parametri necessar
 	particolari per essere equivalente alla struttura dati \textit{stack} comune in programmazione. Viene
 	allocato quando viene creato il processo. Utilizziamo lo stack per memorizzare
 	valori temporanei come le variabili locali di una funzione, o valori per i quali non vi è abbastanza
-	spazio nei registri utilizzabili per i valori temporanei (ad esempio, gli argomenti dal quinto in poi in una chiamata a \verb|printf|).
-	Per interagire con lo stack utilizziamo le istruzioni \verb|push| e \verb|pop|, alias ad altre istruzioni di memoria per
+	spazio nei registri utilizzabili per i valori temporanei (ad esempio, gli argomenti dal quinto in poi in una chiamata a \texttt{printf}).
+	Per interagire con lo stack utilizziamo le istruzioni \texttt{push} e \texttt{pop}, alias ad altre istruzioni di memoria per
 	semplificarne l'accesso. Lo stack \textit{cresce} quando inseriamo una parola (32 bit) all'interno di esso, alla locazione
-	contenuta nel registro \verb|r13| o \verb|sp| (\textit{stack pointer}).
+	contenuta nel registro \texttt{r13} o \texttt{sp} (\textit{stack pointer}).
 \end{defn}
 
 
@@ -663,8 +671,8 @@ main:
 \begin{exmp}
 \textbf{Chiamare funzioni C}
 Per chiamare funzioni della standard library C o di una libreria C si può utilizzare la direttiva
-\verb|.extern| per includere la funzione nel programma asm. Si possono chiamare
-le funzioni rese visibili con \verb|bl|, come una normale funzione asm.
+\texttt{.extern} per includere la funzione nel programma asm. Si possono chiamare
+le funzioni rese visibili con \texttt{bl}, come una normale funzione asm.
 \end{exmp}
 
 \begin{exmp}
@@ -693,8 +701,8 @@ main:
 \begin{exmp}
 	\textbf{Equivalente della funzione main e argomenti a linea di comando}
 	All'avvio della sezione main del codice ARM asm GNU, in
-	\verb|r0| sarà contenuto il numero di argomenti equivalente ad \verb|argc|
-	e in \verb|r1| sarà contenuto l'indirizzo di memoria dove l'equivalente di \verb|argv| è contenuto.
+	\texttt{r0} sarà contenuto il numero di argomenti equivalente ad \texttt{argc}
+	e in \texttt{r1} sarà contenuto l'indirizzo di memoria dove l'equivalente di \texttt{argv} è contenuto.
 \end{exmp}
 `'
 \input{./TeX_files/chapter06-b}

@@ -6,7 +6,6 @@ endl:       .asciz "\n"
 .global main
 .extern printf
 main:
-    push    {ip, lr}
     mov     r0, #8
     ldr     r1, =v
     push    {lr}
@@ -15,7 +14,6 @@ main:
     ldr     r0, =endl
     bl      printf
     pop     {r0-r12, lr}
-    pop     {ip, pc}
     mov     r7, #1      @ exit
     svc     0
 filter:

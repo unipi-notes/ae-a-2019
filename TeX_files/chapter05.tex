@@ -16,14 +16,14 @@ Per selezionare la Word Line utilizziamo sempre un demultiplexer (decoder) che r
 \begin{defn}
 	\textbf{RAM, ROM, PROM e EEPROM:}
 	L'acronimo RAM (Random Access Memory) indica in generale delle memorie sulle quali possiamo leggere e scrivere. Le memorie ROM sono memorie a sola lettura (Read Only Memory). Le memorie ROM non hanno condensatori nelle giunzioni della matrice, ma a momento di produzione vengono "incisi" dei collegamenti o isolamenti nelle giunzioni fra Word Line e Bit Line.
-	Le memorie \textbf{PROM} utilizzano dei fusibili nelle giunzioni fra WL e BL per permettere agli acquirenti di scrivere nella memoria una volta sola. Di fabbrica tutti i bit di una PROM sono impostati a 1. Bruciando i fusibili nelle giunzioni si interrompono i collegamenti realizzando una vera e propria scrittura permanente. 
-	
+	Le memorie \textbf{PROM} utilizzano dei fusibili nelle giunzioni fra WL e BL per permettere agli acquirenti di scrivere nella memoria una volta sola. Di fabbrica tutti i bit di una PROM sono impostati a 1. Bruciando i fusibili nelle giunzioni si interrompono i collegamenti realizzando una vera e propria scrittura permanente.
+
 	\centerfig{0.65}{prom}{Esempio di memoria PROM}
-	
+
 	Un altro tipo di memorie sono le \textbf{EEPROM} (Electrically Erasable ROM). Utilizzano dei transistor particolari che possono essere "reimpostati" permettendo di cancellare e riscrivere la memoria con una corrente maggiore.
 	
 	Nella seconda parte del corso vedremo dettagliatamente Assembly ARM. Le istruzioni Assembly eseguono delle operazioni sui registri interni alla CPU.
-	Un esempio di istruzione banale è la somma di numeri fra registri. \verb|ADD R1 R2 R3|. Nell'Assembly ARM la lettura avviene da destra a sinistra, ed il risultato viene memorizzato nel registro più a sinistra, in questo caso \verb|R1|.	
+	Un esempio di istruzione banale è la somma di numeri fra registri. \texttt{ADD R1 R2 R3}. Nell'Assembly ARM la lettura avviene da destra a sinistra, ed il risultato viene memorizzato nel registro più a sinistra, in questo caso \texttt{R1}.
 \end{defn}
 
 
@@ -65,7 +65,7 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 \begin{defn}
 	\textbf{if-then-else:}
 	Supponiamo di voler realizzare un importante costrutto per la programmazione (\textit{if-then-else}) utilizzando solo componenti standard. Abbiamo due reti combinatorie $ f,g $, una parola memorizzata in un registro $ A $ e un registro $ B $ in cui sarà memorizzato il risultato. Vogliamo costruire una rete per evaluare l'espressione:
-	
+
 	\begin{Verbatim}
 	if(expr) then
 		g(A) -> B
@@ -86,14 +86,14 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 	Possiamo realizzarlo con la seguente rete:
 	
 	\diagram{while.tex}{Rete che implementa while}
-	
+
 	In maniera simile è possibile realizzare anche un costrutto switch-case.
 	Icarus Verilog, per trasformare programmi Verilog di moduli behavioural in netlist di componenti di reti logiche utilizza meccanismi simili.
 \end{defn}
 
 \begin{exrc}
 	\textbf{Confronto maggiore}
-	
+
 	Vediamo ora diversi metodi per realizzare una rete combinatoria che controlla se un numero è maggiore di un altro, utile per realizzare operazioni condizionali.
 	
 	\includecode[verilog]{./verilog/confrontomaggiore/maggioreb.v}{Esercizio di confronto maggiore in Verilog (approccio algoritmico)}
@@ -115,11 +115,11 @@ t_\text{ALU} + t_\text{MUX}
 \section{Parallelismo}
 
 \begin{defn}
-	
+
 	Supponiamo di avere una serie di libri $ L_1, L_2, L_3, L_4 $ da tradurre. Vogliamo ridurre il tempo totale di traduzione di tutti i libri. Se a tradurre un libro impiego un tempo da $ t_0 $ a $ t_1 $, suddividendo la traduzione a metà fra due persone, impiegheremo $ t_{1/2} $ a tradurre il libro. L'obiettivo del parallelismo è ridurre la \textbf{latenza}. Se ho un insieme di libri, la latenza $ L $ di un libro è il tempo necessario per tradurlo (il tempo a cui ho terminato la traduzione, meno il tempo in cui ho iniziato la traduzione). Se ho $ m $ task da completare, il \textbf{tempo di completamento}  $ T_c = m \cdot L$ è il tempo totale necessario a completare tutti i task m. Con il parallelismo vogliamo diminuire il tempo di completamento. Con \textbf{tempo di servizio} intendiamo l'intervallo medio di tempo fra la "consegna" di due risultati successivi. Definiamo anche \textbf{throughput} come il numero di calcoli eseguiti per unità di tempo.
 	
 	Data una lista di istruzioni $ i_0, i_1, i_2, i_3, \dots $ il nostro processore esegue (in pseudocodice):
-	
+
 	\begin{lstlisting}
 	while(true) {
 	leggi un istruzione (ASM)
@@ -155,9 +155,9 @@ t_\text{ALU} + t_\text{MUX}
 	\textbf{Parallelismo temporale o Pipelining:} Il processore deve sempre eseguire dei task (istruzioni) sequenzialmente per eseguire un programma, e si può diminuire la latenza dei singoli task per ridurre il tempo di esecuzione del programma.
 	
 	\centerfig{0.75}{pipelining}{Diagramma temporale del pipelining di una CPU.}
-	
+
 	Avremo che $ T_c = $ tempo iniziale di "riempimento" della pipeline + tempo $ ( \propto ( m \cdot $ tempo delle singole istruzioni )) 
-	
+
 	In alternativa, il nostro processore può assegnare un "ciclo" ad ogni istruzione
 	
 	\begin{lstlisting}[frame=single]
@@ -181,7 +181,7 @@ t_\text{ALU} + t_\text{MUX}
 	
 	\centerfig{0.75}{pipelining2}{Pipelining con più worker (parallelismo temporale).}
 	
-	Usando il \textbf{parallelismo temporale}, ad ogni periodo $ L $ otterremo 3 risultati. Ciò riduce il tempo di servizio a $ \frac{1}{3}L $. Le istruzioni dei task sono comunque eseguite sequenzialmente su worker separati.	
+	Usando il \textbf{parallelismo temporale}, ad ogni periodo $ L $ otterremo 3 risultati. Ciò riduce il tempo di servizio a $ \frac{1}{3}L $. Le istruzioni dei task sono comunque eseguite sequenzialmente su worker separati.
 \end{defn}
 
 
@@ -339,7 +339,8 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 	
 	\centerfig{0.8}{potenzadiduegtkwave.png}{Visualizzazione dell'esecuzione del modulo che calcola se un numero da 8 bit è potenza di 2}
 	
-	Per implementare una rete combinatoria che restituisce l'indice del bit più significativo si può utilizzare un semplice ciclo for per realizzare un modulo behavioral. La funzione built-in \verb|$clog2()| calcola il logaritmo in base 2 di un numero. La utilizziamo per definire la dimensione dell'output del modulo, dato che il numero di bit $ n $ del valore in input è rappresentabile con un numero di $ \log_2(n) $ bit.
+	Per implementare una rete combinatoria che restituisce l'indice del bit più significativo si può utilizzare un semplice ciclo for per realizzare un modulo behavioral. La funzione built-in \texttt{\$clog2()}
+	calcola il logaritmo in base 2 di un numero. La utilizziamo per definire la dimensione dell'output del modulo, dato che il numero di bit $ n $ del valore in input è rappresentabile con un numero di $ \log_2(n) $ bit.
 	
 	\includecode[verilog]{./verilog/homework/indice/index.v}{Modulo della rete combinatoria che calcola l'indice del bit ad 1 più significativo in un numero da N bit}
 	
@@ -373,7 +374,7 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 	\end{figure}
 	
 	Per semplicità di implementazione in Verilog decidiamo di utilizzare un contatore come registro. (L'alternativa potrebbe essere includere una ALU nel modulo di $ \sigma $ che legge il valore del registro di stato e lo incrementa di uno nel caso lo stato debba essere incrementato).
-	La funzione $ \sigma $ calcolerà $ x \mod 2 $ e $ y \mod 2 $, eseguirà un confronto e nel caso siano uguali invierà il risultato del confronto alla linea \verb|INCREMENT| del contatore, così che al prossimo ciclo di clock il contatore delle volte che $ x $ e $ y $ sono uguali aumenti. La funzione $ \omega $ è la funzione identità.
+	La funzione $ \sigma $ calcolerà $ x \mod 2 $ e $ y \mod 2 $, eseguirà un confronto e nel caso siano uguali invierà il risultato del confronto alla linea \texttt{INCREMENT} del contatore, così che al prossimo ciclo di clock il contatore delle volte che $ x $ e $ y $ sono uguali aumenti. La funzione $ \omega $ è la funzione identità.
 \end{exrc}
 
 \begin{exrc}
