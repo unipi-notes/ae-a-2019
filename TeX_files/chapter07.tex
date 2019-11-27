@@ -22,7 +22,7 @@ I processori possono essere di diversi tipi:
     % //TODO schema
     \item \textbf{Multi cycle}: può eseguire un istruzione in più cicli di clock, in genere, un ciclo per il fetch-decode, un ciclo per l'exec e un ciclo per il writeback (risposta)
     % //TODO schema
-    \item \textbf{Pipeline}:
+    \item \textbf{Pipeline}
 \end{itemize}
 
 \begin{note}
@@ -95,10 +95,98 @@ Ciò ci dice che è necessario avere un altro multiplexer in ingresso al program
 % //TODO
 \end{defn}
 
+\section{Realizzazione di un Datapath in Verilog}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1\textwidth]{completesinglecycleprocessor.png}
-    \caption{Processore a ciclo singolo completo}
-    \label{<label>}
+\centerfig{1}{completesinglecycleprocessor.png}{Processore a ciclo singolo completo}
+
+\centerfig{1}{datapath_quartus}{Datapath visualizzato in Quartus}
+
+\includecode[verilog]{./verilog/datapath/dp.v}{Modulo Datapath}
+
+\includecode[verilog]{./verilog/datapath/mux2.v}{Multiplexer da 2 linee da 32 bit}
+
+\includecode[verilog]{./verilog/datapath/registro.v}{Registro da 32 bit}
+
+\includecode[verilog]{./verilog/datapath/rom.v}{Memoria delle istruzioni READ ONLY.}
+
+\includecode[verilog]{./verilog/datapath/alu4.v}{ALU che incrementa di 4 per PC}
+
+\includecode[verilog]{./verilog/datapath/regfile.v}{File dei registri}
+
+\includecode[verilog]{./verilog/datapath/alupiumeno.v}{ALU principale}
+
+\includecode[verilog]{./verilog/datapath/m.v}{Memoria Principale}
+
+\includecode[verilog]{./verilog/datapath/extend.v}{Extend degli immediati}
+
+\includecode[verilog]{./verilog/datapath/test_dp.v}{Test bench del Datapath}
+
+\section{Processore a ciclo multiplo}
+
+\centerfig{1}{multicycleprocessor.png}{Processore a ciclo multiplo completo}
+
+\begin{note}
+    \textbf{Svantaggi del processore a ciclo singolo} \\
+    Un processore a ciclo singolo ha 3 svantaggi degni di nota:
+    \begin{enumerate}
+        \item Richiede memorie separate per le istruzioni ed i dati, laddove i processori
+        moderni hanno una singola memoria esterna al processore dove sono contenuti entrambi.
+        \item Richiede un ciclo di clock lungo abbastanza per supportare l'operazione più lenta: \texttt{LDR}, anche se le
+        altre istruzioni potrebbero essere molto più veloci.
+        \item Richiede tre addizionatori, uno nella \texttt{ALU} principale e due per la logica del \textit{program counter}.
+    \end{enumerate}
+\end{note}
+
+\begin{defn}
+    \textbf{Processore a multiciclo} \\
+    Un processore a ciclo multiplo risolve questi problemi separando un'istruzione
+    in diversi passaggi più piccoli da eseguire ognuno in un ciclo di clock, e unendo la memoria dati e la memoria istruzioni.
+    In ogni passaggio piccolo (\textit{short step})
+    il processore può leggere o scrivere la memoria o il register file, o utilizzare la ALU. \@
+    L'istruzione corrente viene letta in un passaggio, e i dati possono essere letti o scritti in un passaggio successivo,
+    rendendo possibile l'utilizzo di una singola memoria. Per rendere un processore multiciclo, introduciamo dei registri aggiuntivi
+    nel \textit{datapath}, uno posto dopo le due uscite dei registri in lettura del file dei registri, per memorizzare
+    il contenuto di essi ed un registro posto dopo la memoria. In tale modo è possibile separare un'istruzione in più cicli di clock.
+    Vediamo un esempio per l'istruzione \texttt{ldr}:
+
+    \begin{enumerate}
+        \item \texttt{fetch} dell'istruzione dalla memoria.
+        \item Lettura del registro da cui caricare, \texttt{decode}.
+        \item Applicazione dell'offset tramite la \textit{ALU}.
+        \item \texttt{load} dalla memoria di un valore (memorizzato in un ulteriore registro aggiuntivo).
+        \item Memorizzazione del valore letto dalla memoria nel registro destinazione.
+    \end{enumerate}
+
+    Per utilizzare soltanto una memoria per istruzioni e dati, abbiamo bisogno di introdurre un multiplexer di fronte alla memoria,
+    che controllerà se l'indirizzo in lettura della memoria sarà dettato dal program counter o dal risultato dell'operazione precedente.
+    Ciò necessita dell'introduzione di memoria nella \textit{parte di controllo} del processore, ovvero va resa la parte di controllo un automa.
+
+    Nonostante in un processore multiciclo si impieghi leggermente di più per eseguire un'istruzione di memoria,
+    ne otterremo che per realizzare istruzioni operative occorrono meno cicli di clock delle istruzioni di memoria,
+    rendendo effettivamente più efficace e rapido il processore.
+\end{defn}
+
+\begin{figure}[H]
+	\centering
+	\caption{Esempio di della parte di controllo di un processore multiciclo. Vediamo soltanto le istruzioni \texttt{ldr} e \texttt{add} per semplicità}
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+	
+	\node[state,initial] 	(A)                    {\texttt{fetch}};
+	\node[state]         	(B) [below right of=A] 	   {\texttt{add} (\texttt{decode})};
+	\node[state]         	(D) [below of=B] 	   {\texttt{add} (\texttt{ALU})};
+	\node[state]            (E) [below of=D] 	   {\texttt{add} (\texttt{reg})};
+    \node[state]         	(C) [below left of=A] 	   {\texttt{ldr} (\texttt{decode})};
+    \node[state]         	(F) [below of=C] 	   {\texttt{ldr} (\texttt{offset})};
+    \node[state]         	(G) [below of=F] 	   {\texttt{ldr} (\texttt{load})};
+    \node[state]         	(H) [below of=G] 	   {\texttt{ldr} (\texttt{reg})};
+
+    \path
+    (A)		edge [] node {$OP = 00$ \text{\\} (operazioni aritmetico-logiche)} 		(B)
+		    edge [] node {$OP = 01$ \text{\\} (operazioni di memoria)} 	            (C)
+    (B)     edge [] node {} (D)
+    (D)     edge [] node {} (E)
+    (C)     edge [] node {} (F)
+    (F)     edge [] node {} (G)
+    (G)     edge [] node {} (H);
+	\end{tikzpicture}
 \end{figure}
