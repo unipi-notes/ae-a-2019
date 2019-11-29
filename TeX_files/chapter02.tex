@@ -28,14 +28,14 @@ La somma fra due cifre può essere costruita con reti logiche. Il risultato dell
 \end{figure}
 
 \begin{defn}
-	\textbf{Esadecimale:} 
+	\textbf{Esadecimale} \\
 	
 	I numeri esadecimali sono numeri in base 16. Siccome non bastano le cifre decimali per rappresentare i numeri maggiori di 9 si usano le prime lettere dell'alfabeto.
 	Una cifra esadecimale rappresenta un nibble (4 bit).
 \end{defn}
 
 \begin{defn}
-	\textbf{Numeri in virgola mobile}
+	\textbf{Numeri in virgola mobile} \\
 	
 	I numeri in virgola mobile si rappresentano con lo standard EEE 754 che definisce come si rappresentano i numeri in virgola mobile a singola precisione e doppia precisione (32 e 64 bit)
 	
@@ -58,21 +58,21 @@ La somma fra due cifre può essere costruita con reti logiche. Il risultato dell
 
 
 \begin{defn}
-	\textbf{Somma dei numeri a virgola mobile:}
-	
+	\textbf{Somma dei numeri a virgola mobile} \\
+
 	Per sommare i numeri a virgola mobile il primo passo è allineare le mantisse, significa osservare gli esponenti e spostarli fino a che le cifre non sono sommabili in colonna.
 	Il secondo passo consiste nel sommare e il terzo passo nel normalizzare la somma. Nei processori la somma floating point viene eseguita in dei moduli appositi che in input ricevono due o più numeri floating point ed eseguono in dei sotto-moduli i tre passaggi della somma in un tempo $ 1/3 t $ dove $ t $ è il tempo totale per eseguire una somma. I tre passaggi della somma possono essere sequenzializzati così che una volta che ogni sotto-modulo ha completato il passo, può ricevere subito l'input successivo (la somma di due numeri FP impiegherà $ t + 1/3 $ invece che $ 2t $)
 \end{defn}
 
 
 \begin{defn}
-	\textbf{Estensioni vettoriali:}
-	Alcuni processori permettono di eseguire operazioni contemporaneamente su un registro dividendolo in sottoregistri più piccoli. 
+	\textbf{Estensioni vettoriali} \\
+	Alcuni processori permettono di eseguire operazioni contemporaneamente su un registro dividendolo in sottoregistri più piccoli.
 \end{defn}
 
 
 \begin{defn}
-	\textbf{Codifica ASCII}
+	\textbf{Codifica ASCII} \\
 	La codifica ASCII è una tabella di codifica di caratteri testuali con interi da 0 a 255 (8 bit). La codifica ASCII estesa è a 16 bit e comprende diversi caratteri non latini.
 	
 	\begin{figure}
@@ -163,8 +163,7 @@ Le leggi della logica Booleana ci permettono di semplificare molto i componenti 
 
 
 \begin{defn}
-	\textbf{Mappe di Karnaugh:}
-	
+	\textbf{Mappe di Karnaugh} \	
 	Una mappa di Karnaugh o K-Map è un metodo di semplificare un espressione booleana. I valori sono trasferiti da una tabella di verità ad una mappa bidimensionale:
 	
 	Approfondisci su \href{https://en.wikipedia.org/wiki/Karnaugh_map}{Wikipedia}
@@ -200,12 +199,12 @@ Le leggi della logica Booleana ci permettono di semplificare molto i componenti 
 \end{defn}
 
 \begin{defn}
-	\textbf{Circuito con più output:}
+	\textbf{Circuito con più output} \\ 
 	Se abbiamo una tabella di verità di un circuito con $ n $ input e $ 2^n $ righe, con più output $ z_1, \dots, z_k $, gli output si suddividono in $ k $ tabelle con un solo output ($ z_k $) e $ 2^n $ righe di input.
 \end{defn}
 
 \begin{defn}
-	\textbf{Operatori a più ingressi:}
+	\textbf{Operatori a più ingressi} \\ 
 	Gli operatori a più ingressi AND, OR, etc..., se presentano più di due ingressi si rappresentano con una rete logica che sfrutta la proprietà associativa degli operatori logici. Ciò comporta un limite massimo di ingressi perché viene introdotto un ritardo di stabilizzazione determinato e piccolo.
 	Ad esempio, un AND a 4 ingressi sarà rappresentato come $ z = x_1 \cdot x_2 \cdot x_3 \cdot x_4 = (x_1 \cdot x_2 ) \cdot (x_3 \cdot x_4)  $
 	Perciò gli operatori associativi a più ingressi si rappresentano come un albero k-ario di porte logiche. Il numero di livelli di porte sarà $ log_k(n) $ dove $ k $ è l'arietà delle singole porte ed è $ n $ il numero di ingressi nel circuito.

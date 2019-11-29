@@ -1,54 +1,134 @@
 \chapter{Memorie e Parallelismo}
 
 \section{Memorie}
-Un componente fondamentale di un processore è la \textbf{memoria}. Si implementa utilizzando dei registri da $ n $ bit (dette parole). Vogliamo realizzare una memoria il cui accesso sia simile ad un array nel linguaggio C. Ovvero vogliamo avere un vettore di registri a cui possiamo accedere con un offset intero. Data una memoria $ A $ si accederà alla parola $ k-esima $ tramite $ A[k] $. Per implementare tale selezione si può utilizzare un multiplexer che riceve in input le uscite dei singoli registri. I singoli registri ricevono tutti un segnale di clock in input, e permettono la scrittura attraverso un demultiplexer (decoder) che dato un indirizzo invia un 1 all'enable del registro selezionato. Si può mettere in AND il segnale enable del decoder insieme ad un input enable generale.
+Un componente fondamentale di un processore è la \textbf{memoria}. Si implementa
+utilizzando dei registri da $ n $ bit (dette parole). Vogliamo realizzare una
+memoria il cui accesso sia simile ad un array nel linguaggio C. Ovvero vogliamo
+avere un vettore di registri a cui possiamo accedere con un offset intero. Data
+una memoria $ A $ si accederà alla parola $ k-esima $ tramite $ A[k] $. Per
+implementare tale selezione si può utilizzare un multiplexer che riceve in input
+le uscite dei singoli registri. I singoli registri ricevono tutti un segnale di
+clock in input, e permettono la scrittura attraverso un demultiplexer (decoder)
+che dato un indirizzo invia un 1 all'enable del registro selezionato. Si può
+mettere in AND il segnale enable del decoder insieme ad un input enable
+generale.
 
-L'implementazione reale delle memorie (in particolare memorie flash), avviene ponendo delle linee dette "di parola" (orizzontali) e linee dette "bit line" (verticali) in una matrice.
-All'incrocio delle linee vi è un condensatore. Il condensatore mantiene una carica per un breve periodo di tempo. Ho modo di controllare se nel condensatore alla posizione $ xy $ era "ricordato" un valore 1, mandando della corrente lungo la "linea di parola" $ x $. Se il condensatore era carico esso si scarica lungo la linea "bit line" $ y $. Inviando della corrente sulla linea di parola $ x $ leggeremo quindi dalle bit line (in alcuni casi indicate come source lines in output) la parola $ x $.
-Prima di un condensatore, si inserisce un transistor nella giunzione fra WL e BL. Utilizzando un condensatore, nelle RAM dinamiche (Dynamic Random Access Memory) possono insorgere problemi dovuti ai tempi di carica e scarica del condensatore. Una volta letto un valore su una Bit Line, il condensatore si scarica e "perde" il valore precedentemente "ricordato".
+L'implementazione reale delle memorie (in particolare memorie flash), avviene
+ponendo delle linee dette "di parola" (orizzontali) e linee dette "bit line"
+(verticali) in una matrice. All'incrocio delle linee vi è un condensatore. Il
+condensatore mantiene una carica per un breve periodo di tempo. Ho modo di
+controllare se nel condensatore alla posizione $ xy $ era "ricordato" un valore
+1, mandando della corrente lungo la "linea di parola" $ x $. Se il condensatore
+era carico esso si scarica lungo la linea "bit line" $ y $. Inviando della
+corrente sulla linea di parola $ x $ leggeremo quindi dalle bit line (in alcuni
+casi indicate come source lines in output) la parola $ x $. Prima di un
+condensatore, si inserisce un transistor nella giunzione fra WL e BL.
+Utilizzando un condensatore, nelle RAM dinamiche (Dynamic Random Access Memory)
+possono insorgere problemi dovuti ai tempi di carica e scarica del condensatore.
+Una volta letto un valore su una Bit Line, il condensatore si scarica e "perde"
+il valore precedentemente "ricordato".
 
 \centerfig{0.65}{flashmem}{Memoria Flash}
 
-Per selezionare la Word Line utilizziamo sempre un demultiplexer (decoder) che riceve un indirizzo. Nelle ram DDR comuni sono presenti spesso 8 o 9 chip. Ad esempio, su uno stick di ram DDR3 da 1GB (1 Giga Byte) sono presenti 8 memorie da 1Gb (1 Giga Bit), e generalmente anche una nona memoria che ricorda la "parità" per il controllo degli errori. Le RAM dinamiche perdono il loro contenuto se non sono alimentate. Visto il comportamento dei condensatori (la loro carica si perde lentamente) le DRAM hanno bisogno di un \textbf{refresh} periodico. Le DRAM sono molto economiche (1 transistor per 1 bit) ma possono risultare più lente rispetto alle alternative SRAM. Le memorie SRAM (Static RAM) sono meno economiche ma più rapide rispetto alle DRAM. Utilizzano flip-flop invece dei condensatori e per ogni bit utilizzano 6 transistor. Le memorie all'interno del processore (calcolatore) sono memorie statiche (realizzate con flip-flop) molto rapide. Un meccanismo sia a livello hardware che a livello di S.O. permette la suddivisione dei dati processati fra vari livelli di cache, dalla memoria statica del processore alla più capiente ma lenta DRAM.
+Per selezionare la Word Line utilizziamo sempre un demultiplexer (decoder) che
+riceve un indirizzo. Nelle ram DDR comuni sono presenti spesso 8 o 9 chip. Ad
+esempio, su uno stick di ram DDR3 da 1GB (1 Giga Byte) sono presenti 8 memorie
+da 1Gb (1 Giga Bit), e generalmente anche una nona memoria che ricorda la
+"parità" per il controllo degli errori. Le RAM dinamiche perdono il loro
+contenuto se non sono alimentate. Visto il comportamento dei condensatori (la
+loro carica si perde lentamente) le DRAM hanno bisogno di un \textbf{refresh}
+periodico. Le DRAM sono molto economiche (1 transistor per 1 bit) ma possono
+risultare più lente rispetto alle alternative SRAM. Le memorie SRAM (Static RAM)
+sono meno economiche ma più rapide rispetto alle DRAM. Utilizzano flip-flop
+invece dei condensatori e per ogni bit utilizzano 6 transistor. Le memorie
+all'interno del processore (calcolatore) sono memorie statiche (realizzate con
+flip-flop) molto rapide. Un meccanismo sia a livello hardware che a livello di
+S.O. permette la suddivisione dei dati processati fra vari livelli di cache,
+dalla memoria statica del processore alla più capiente ma lenta DRAM.
 
 \centerfig{0.35}{dramcell}{Schema di una cella di una memoria DRAM}
 
 \begin{defn}
 	\textbf{RAM, ROM, PROM e EEPROM:}
-	L'acronimo RAM (Random Access Memory) indica in generale delle memorie sulle quali possiamo leggere e scrivere. Le memorie ROM sono memorie a sola lettura (Read Only Memory). Le memorie ROM non hanno condensatori nelle giunzioni della matrice, ma a momento di produzione vengono "incisi" dei collegamenti o isolamenti nelle giunzioni fra Word Line e Bit Line.
-	Le memorie \textbf{PROM} utilizzano dei fusibili nelle giunzioni fra WL e BL per permettere agli acquirenti di scrivere nella memoria una volta sola. Di fabbrica tutti i bit di una PROM sono impostati a 1. Bruciando i fusibili nelle giunzioni si interrompono i collegamenti realizzando una vera e propria scrittura permanente.
+	L'acronimo RAM (Random Access Memory) indica in generale delle memorie sulle
+	quali possiamo leggere e scrivere. Le memorie ROM sono memorie a sola
+	lettura (Read Only Memory). Le memorie ROM non hanno condensatori nelle
+	giunzioni della matrice, ma a momento di produzione vengono "incisi" dei
+	collegamenti o isolamenti nelle giunzioni fra Word Line e Bit Line. Le
+	memorie \textbf{PROM} utilizzano dei fusibili nelle giunzioni fra WL e BL
+	per permettere agli acquirenti di scrivere nella memoria una volta sola. Di
+	fabbrica tutti i bit di una PROM sono impostati a 1. Bruciando i fusibili
+	nelle giunzioni si interrompono i collegamenti realizzando una vera e
+	propria scrittura permanente.
 
 	\centerfig{0.65}{prom}{Esempio di memoria PROM}
 
-	Un altro tipo di memorie sono le \textbf{EEPROM} (Electrically Erasable ROM). Utilizzano dei transistor particolari che possono essere "reimpostati" permettendo di cancellare e riscrivere la memoria con una corrente maggiore.
+	Un altro tipo di memorie sono le \textbf{EEPROM} (Electrically Erasable
+	ROM). Utilizzano dei transistor particolari che possono essere "reimpostati"
+	permettendo di cancellare e riscrivere la memoria con una corrente maggiore.
 	
-	Nella seconda parte del corso vedremo dettagliatamente Assembly ARM. Le istruzioni Assembly eseguono delle operazioni sui registri interni alla CPU.
-	Un esempio di istruzione banale è la somma di numeri fra registri. \texttt{ADD R1 R2 R3}. Nell'Assembly ARM la lettura avviene da destra a sinistra, ed il risultato viene memorizzato nel registro più a sinistra, in questo caso \texttt{R1}.
+	Nella seconda parte del corso vedremo dettagliatamente Assembly ARM. Le
+	istruzioni Assembly eseguono delle operazioni sui registri interni alla CPU.
+	Un esempio di istruzione banale è la somma di numeri fra registri.
+	\texttt{ADD R1 R2 R3}. Nell'Assembly ARM la lettura avviene da destra a
+	sinistra, ed il risultato viene memorizzato nel registro più a sinistra, in
+	questo caso \texttt{R1}.
 \end{defn}
 
 
 
 \paragraph{Memorie Multi Porta e Tempi di Accesso}
-Le memorie multiporta permettono la lettura parallela di due o più registri. Invece di un singolo multiplexer per leggere un registro, alle uscite dei registri è collegato un altro multiplexer che ricevendo un indirizzo diverso dal primo multiplexer, permette di leggere un altro valore dalla memoria, abilitando alla lettura parallela di due registri contemporaneamente. È fondamentale avere una memoria con almeno due porte per eseguire istruzioni su due registri alla volta. Indichiamo i tempi di accesso alla memoria con $ T_a $. Ad oggi siamo in un range di tempi inferiori ad un nanosecondo per i tempi di accesso ai flip-flop (poche decine di picosecondi), sull'ordine dei nanosecondi per le SRAM (cache) e sull'ordine dei microsecondi per le DRAM.
+Le memorie multiporta permettono la lettura parallela di due o più registri.
+Invece di un singolo multiplexer per leggere un registro, alle uscite dei
+registri è collegato un altro multiplexer che ricevendo un indirizzo diverso dal
+primo multiplexer, permette di leggere un altro valore dalla memoria, abilitando
+alla lettura parallela di due registri contemporaneamente. È fondamentale avere
+una memoria con almeno due porte per eseguire istruzioni su due registri alla
+volta. Indichiamo i tempi di accesso alla memoria con $ T_a $. Ad oggi siamo in
+un range di tempi inferiori ad un nanosecondo per i tempi di accesso ai
+flip-flop (poche decine di picosecondi), sull'ordine dei nanosecondi per le SRAM
+(cache) e sull'ordine dei microsecondi per le DRAM.
 
 
 \centerfig{0.75}{DRAM512}{Modulo RAM Corsair DDR2-533}
 
 \paragraph{Blocco memoria}
 Introduciamo un blocco per la memoria da utilizzare nei diagrammi dei circuiti.
-La memoria riceve in input un dato $ x $ da scrivere nell'indirizzo indicato dall'input di controllo \textbf{Address}. Se il segnale \textbf{enable} è HIGH allora avviene la scrittura di $ x $ all'interno dell'indirizzo puntato. Altrimenti, se \textbf{enable} è LOW avviene la lettura. Assumiamo che l'uscita sia stabile per il ciclo di clock
+La memoria riceve in input un dato $ x $ da scrivere nell'indirizzo indicato
+dall'input di controllo \textbf{Address}. Se il segnale \textbf{enable} è HIGH
+allora avviene la scrittura di $ x $ all'interno dell'indirizzo puntato.
+Altrimenti, se \textbf{enable} è LOW avviene la lettura. Assumiamo che l'uscita
+sia stabile per il ciclo di clock
 \diagram{memoryblock.tex}{Blocco Memoria}
 
 \paragraph{LUT (Lookup Table)}
-Una rete combinatoria che riceve $ n $ bit in input può essere implementata con una memoria ROM. Data una tabella di verità di una rete combinatoria, si può portare la tabella di verità in forma vettoriale per creare una LUT.
-Una LUT o \textbf{Lookup Table} è in generale un array che rimpiazza una computazione, possibilmente complessa, con un operazione di accesso, nel caso delle reti combinatorie con una memoria ROM.
-I bit in input della tabella di verità vengono portati a bit rappresentanti l'indirizzo di accesso della memoria, e i risultati della tabella di verità saranno memorizzati in un vettore di $ 2^n $ elementi (se la tabella di verità ha un solo output). 
-Per quanto alcune reti combinatorie possono risultare più complesse a livello di circuito se implementate con una LUT, un vantaggio non banale delle Lookup Tables è che possono essere riprogrammate se viene utilizzata una memoria EEPROM. Ciò svolge un ruolo fondamentale negli FPGA. Le LUT possono essere utilizzate in parallelo.
+Una rete combinatoria che riceve $ n $ bit in input può essere implementata con
+una memoria ROM. Data una tabella di verità di una rete combinatoria, si può
+portare la tabella di verità in forma vettoriale per creare una LUT. Una LUT o
+\textbf{Lookup Table} è in generale un array che rimpiazza una computazione,
+possibilmente complessa, con un operazione di accesso, nel caso delle reti
+combinatorie con una memoria ROM. I bit in input della tabella di verità vengono
+portati a bit rappresentanti l'indirizzo di accesso della memoria, e i risultati
+della tabella di verità saranno memorizzati in un vettore di $ 2^n $ elementi
+(se la tabella di verità ha un solo output). Per quanto alcune reti combinatorie
+possono risultare più complesse a livello di circuito se implementate con una
+LUT, un vantaggio non banale delle Lookup Tables è che possono essere
+riprogrammate se viene utilizzata una memoria EEPROM. Ciò svolge un ruolo
+fondamentale negli FPGA. Le LUT possono essere utilizzate in parallelo.
 
 \begin{exmp}
 	\textbf{Rete Sequenziale di un contatore}
-	Se volessimo realizzare un contatore, con le sole operazioni di incremento e decremento con un ASF, dovremmo avere un numero di stati pari alla capacità massima del contatore.
-	Per realizzare un contatore sono necessari un registro da $ n $ bit, (prendiamo ad esempio 8 bit) ed una ALU che fa due sole operazioni (+1 e -1), quindi con un solo bit di controllo. Scegliamo se aumentare o decrementare il contatore impostando il bit di controllo della ALU, e scegliamo se scrivere nel prossimo ciclo di clock impostando ad HIGH il bit Enable (Event) del registro. Essendo una rete sequenziale, la funzione $ \sigma $ è implementata dalla ALU, e la funzione $ \omega $ è semplicemente l'identità. È una rete di Moore poiché la funzione identità non dipende dagli ingressi (Inc/Dec ed Event).
+	Se volessimo realizzare un contatore, con le sole operazioni di incremento e
+	decremento con un ASF, dovremmo avere un numero di stati pari alla capacità
+	massima del contatore. Per realizzare un contatore sono necessari un
+	registro da $ n $ bit, (prendiamo ad esempio 8 bit) ed una ALU che fa due
+	sole operazioni (+1 e -1), quindi con un solo bit di controllo. Scegliamo se
+	aumentare o decrementare il contatore impostando il bit di controllo della
+	ALU, e scegliamo se scrivere nel prossimo ciclo di clock impostando ad HIGH
+	il bit Enable (Event) del registro. Essendo una rete sequenziale, la
+	funzione $ \sigma $ è implementata dalla ALU, e la funzione $ \omega $ è
+	semplicemente l'identità. È una rete di Moore poiché la funzione identità
+	non dipende dagli ingressi (Inc/Dec ed Event).
 	
 	\diagram{counter.tex}{Rete sequenziale di un contatore}
 \end{exmp}
@@ -56,7 +136,18 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 
 \begin{exmp}
 	\textbf{Semplice Calcolatrice}
-	Vogliamo realizzare una calcolatrice molto semplice da 32 bit per eseguire addizione, sottrazione, moltiplicazione e divisione. La calcolatrice riceverà in input due numeri $ A,B $ e restituirà in output il risultato, che potrà essere re-inserito nei due registri contenenti $ A $ e $ B $. Essa è una rete sequenziale che possiamo inserire in un componente che avrà in input i due numeri $ A,B $, la selezione dei due multiplexer per gli input, segnali di enable per la scrittura nel registro $ A $ e nel registro $ B $ e due bit di controllo per selezionare l'operazione. In output avrà il numero in uscita e 4 bit di flag (Overflow, Carry, Negative e Zero). Definiamo questa parte del calcolatore "parte operativa". Abbiamo bisogno anche di una "parte di controllo" che dati due input si occuperà di controllare le entrate di controllo della parte operativa della calcolatrice.
+	Vogliamo realizzare una calcolatrice molto semplice da 32 bit per eseguire
+	addizione, sottrazione, moltiplicazione e divisione. La calcolatrice
+	riceverà in input due numeri $ A,B $ e restituirà in output il risultato,
+	che potrà essere re-inserito nei due registri contenenti $ A $ e $ B $. Essa
+	è una rete sequenziale che possiamo inserire in un componente che avrà in
+	input i due numeri $ A,B $, la selezione dei due multiplexer per gli input,
+	segnali di enable per la scrittura nel registro $ A $ e nel registro $ B $ e
+	due bit di controllo per selezionare l'operazione. In output avrà il numero
+	in uscita e 4 bit di flag (Overflow, Carry, Negative e Zero). Definiamo
+	questa parte del calcolatore "parte operativa". Abbiamo bisogno anche di una
+	"parte di controllo" che dati due input si occuperà di controllare le
+	entrate di controllo della parte operativa della calcolatrice.
 	
 	\diagram{calculator.tex}{Semplice Calcolatore (Omesso clock per semplicità del disegno, è presente)}
 \end{exmp}
@@ -64,13 +155,14 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 
 \begin{defn}
 	\textbf{if-then-else:}
-	Supponiamo di voler realizzare un importante costrutto per la programmazione (\textit{if-then-else}) utilizzando solo componenti standard. Abbiamo due reti combinatorie $ f,g $, una parola memorizzata in un registro $ A $ e un registro $ B $ in cui sarà memorizzato il risultato. Vogliamo costruire una rete per evaluare l'espressione:
+	Supponiamo di voler realizzare un importante costrutto per la programmazione
+	(\textit{if-then-else}) utilizzando solo componenti standard. Abbiamo due
+	reti combinatorie $ f,g $, una parola memorizzata in un registro $ A $ e un
+	registro $ B $ in cui sarà memorizzato il risultato. Vogliamo costruire una
+	rete per evaluare l'espressione:
 
 	\begin{Verbatim}
-	if(expr) then
-		g(A) -> B
-	else
-		f(A) -> B
+	if(expr) then g(A) -> B else f(A) -> B
 	\end{Verbatim}
 	
 	\diagram{ifthenelse.tex}{Rete che implementa if-then-else}
@@ -80,21 +172,23 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 	\textbf{while:}
 	Se volessimo invece implementare un ciclo while della forma:
 	\begin{Verbatim}
-	while(expr) do
-	f(A) -> A
+	while(expr) do f(A) -> A
 	\end{Verbatim}
 	Possiamo realizzarlo con la seguente rete:
 	
 	\diagram{while.tex}{Rete che implementa while}
 
 	In maniera simile è possibile realizzare anche un costrutto switch-case.
-	Icarus Verilog, per trasformare programmi Verilog di moduli behavioural in netlist di componenti di reti logiche utilizza meccanismi simili.
+	Icarus Verilog, per trasformare programmi Verilog di moduli behavioural in
+	netlist di componenti di reti logiche utilizza meccanismi simili.
 \end{defn}
 
 \begin{exrc}
 	\textbf{Confronto maggiore}
 
-	Vediamo ora diversi metodi per realizzare una rete combinatoria che controlla se un numero è maggiore di un altro, utile per realizzare operazioni condizionali.
+	Vediamo ora diversi metodi per realizzare una rete combinatoria che
+	controlla se un numero è maggiore di un altro, utile per realizzare
+	operazioni condizionali.
 	
 	\includecode[verilog]{./verilog/confrontomaggiore/maggioreb.v}{Esercizio di confronto maggiore in Verilog (approccio algoritmico)}
 	
@@ -103,10 +197,19 @@ Per quanto alcune reti combinatorie possono risultare più complesse a livello d
 
 
 \subsection{Calcolatrice con registri di memoria}
-Realizziamo adesso una calcolatrice con sottrazione e addizione che permette di leggere due numeri in input e fare operazioni utilizzando anche numeri precedentemente memorizzati in degli altri registri. Abbiamo bisogno di risorse di calcolo (una ALU) e registri o memorie. Abbiamo bisogno di una memoria multiporta particolare per realizzare correttamente il circuito. Questa memoria accetta 3 indirizzi, i primi due sono per la lettura (ha due parole in output) e il terzo indirizzo è per la scrittura. È una rete sequenziale, per questo motivo abbiamo bisogno di un meccanismo per evitare i problemi di temporizzazione. Essendo una rete sequenziale il tempo di esecuzione sarà $ \tau = \delta + \max\{t_\sigma, t_\omega\} $. Dovremmo prendere un tempo del ciclo di clock $ \tau = \delta + \max \left\{\begin{matrix}
-t_\text{MUX} + t_\text{ALU}, \\
-t_\text{ALU} + t_\text{MUX}
-\end{matrix}\right\} $ dove $ t_\sigma = t_\text{MUX} + t_\text{ALU} $ e $ t_\omega = t_\text{ALU} + t_\text{MUX} $
+Realizziamo adesso una calcolatrice con sottrazione e addizione che permette di
+leggere due numeri in input e fare operazioni utilizzando anche numeri
+precedentemente memorizzati in degli altri registri. Abbiamo bisogno di risorse
+di calcolo (una ALU) e registri o memorie. Abbiamo bisogno di una memoria
+multiporta particolare per realizzare correttamente il circuito. Questa memoria
+accetta 3 indirizzi, i primi due sono per la lettura (ha due parole in output) e
+il terzo indirizzo è per la scrittura. È una rete sequenziale, per questo motivo
+abbiamo bisogno di un meccanismo per evitare i problemi di temporizzazione.
+Essendo una rete sequenziale il tempo di esecuzione sarà $ \tau = \delta +
+\max\{t_\sigma, t_\omega\} $. Dovremmo prendere un tempo del ciclo di clock $
+\tau = \delta + \max \left\{\begin{matrix} t_\text{MUX} + t_\text{ALU}, \\
+t_\text{ALU} + t_\text{MUX} \end{matrix}\right\} $ dove $ t_\sigma =
+t_\text{MUX} + t_\text{ALU} $ e $ t_\omega = t_\text{ALU} + t_\text{MUX} $
 
 \diagram{calculatormemory.tex}{Calcolatrice con memoria.}
 
@@ -116,9 +219,22 @@ t_\text{ALU} + t_\text{MUX}
 
 \begin{defn}
 
-	Supponiamo di avere una serie di libri $ L_1, L_2, L_3, L_4 $ da tradurre. Vogliamo ridurre il tempo totale di traduzione di tutti i libri. Se a tradurre un libro impiego un tempo da $ t_0 $ a $ t_1 $, suddividendo la traduzione a metà fra due persone, impiegheremo $ t_{1/2} $ a tradurre il libro. L'obiettivo del parallelismo è ridurre la \textbf{latenza}. Se ho un insieme di libri, la latenza $ L $ di un libro è il tempo necessario per tradurlo (il tempo a cui ho terminato la traduzione, meno il tempo in cui ho iniziato la traduzione). Se ho $ m $ task da completare, il \textbf{tempo di completamento}  $ T_c = m \cdot L$ è il tempo totale necessario a completare tutti i task m. Con il parallelismo vogliamo diminuire il tempo di completamento. Con \textbf{tempo di servizio} intendiamo l'intervallo medio di tempo fra la "consegna" di due risultati successivi. Definiamo anche \textbf{throughput} come il numero di calcoli eseguiti per unità di tempo.
+	Supponiamo di avere una serie di libri $ L_1, L_2, L_3, L_4 $ da tradurre.
+	Vogliamo ridurre il tempo totale di traduzione di tutti i libri. Se a
+	tradurre un libro impiego un tempo da $ t_0 $ a $ t_1 $, suddividendo la
+	traduzione a metà fra due persone, impiegheremo $ t_{1/2} $ a tradurre il
+	libro. L'obiettivo del parallelismo è ridurre la \textbf{latenza}. Se ho un
+	insieme di libri, la latenza $ L $ di un libro è il tempo necessario per
+	tradurlo (il tempo a cui ho terminato la traduzione, meno il tempo in cui ho
+	iniziato la traduzione). Se ho $ m $ task da completare, il \textbf{tempo di
+	completamento}  $ T_c = m \cdot L$ è il tempo totale necessario a completare
+	tutti i task m. Con il parallelismo vogliamo diminuire il tempo di
+	completamento. Con \textbf{tempo di servizio} intendiamo l'intervallo medio
+	di tempo fra la "consegna" di due risultati successivi. Definiamo anche
+	\textbf{throughput} come il numero di calcoli eseguiti per unità di tempo.
 	
-	Data una lista di istruzioni $ i_0, i_1, i_2, i_3, \dots $ il nostro processore esegue (in pseudocodice):
+	Data una lista di istruzioni $ i_0, i_1, i_2, i_3, \dots $ il nostro
+	processore esegue (in pseudocodice):
 
 	\begin{lstlisting}
 	while(true) {
@@ -132,13 +248,17 @@ t_\text{ALU} + t_\text{MUX}
 
 \begin{defn}
 	\textbf{Tempo ideale:}
-	Dato $ n = $ numero di worker (o grado di parallelismo) e $ T_{\text{seq}} = $ il tempo sequenziale, il \textbf{tempo ideale} $ T_{\text{id}}(n) = \dfrac{T_{\text{seq}}}{n}$.
+	Dato $ n = $ numero di worker (o grado di parallelismo) e $ T_{\text{seq}} =
+	$ il tempo sequenziale, il \textbf{tempo ideale} $ T_{\text{id}}(n) =
+	\dfrac{T_{\text{seq}}}{n}$.
 \end{defn}
 
 
 \begin{defn}
 	\textbf{Speedup:}
-	Definiamo anche lo \textbf{speedup} come $ \dfrac{T_{\text{seq}}}{T(n)} $, ovvero il miglior tempo sequenziale fratto il tempo parallelo con grado di parallelismo $ n $.
+	Definiamo anche lo \textbf{speedup} come $ \dfrac{T_{\text{seq}}}{T(n)} $,
+	ovvero il miglior tempo sequenziale fratto il tempo parallelo con grado di
+	parallelismo $ n $.
 \end{defn}
 
 \begin{defn}
@@ -147,18 +267,25 @@ t_\text{ALU} + t_\text{MUX}
 
 \begin{defn}
 	\textbf{Efficienza:}
-	$ \text{Efficienza}(n) = \dfrac{T_{\text{id}}}{T(n))} = \dfrac{T_{\text{seq}}/n}{T(n)} = \dfrac{T_{\text{seq}}}{n \cdot T(n)} \leq 1 $
+	$ \text{Efficienza}(n) = \dfrac{T_{\text{id}}}{T(n))} =
+	\dfrac{T_{\text{seq}}/n}{T(n)} = \dfrac{T_{\text{seq}}}{n \cdot T(n)} \leq 1
+	$
 \end{defn}
 
 
 \begin{defn}
-	\textbf{Parallelismo temporale o Pipelining:} Il processore deve sempre eseguire dei task (istruzioni) sequenzialmente per eseguire un programma, e si può diminuire la latenza dei singoli task per ridurre il tempo di esecuzione del programma.
+	\textbf{Parallelismo temporale o Pipelining:} Il processore deve sempre
+	eseguire dei task (istruzioni) sequenzialmente per eseguire un programma, e
+	si può diminuire la latenza dei singoli task per ridurre il tempo di
+	esecuzione del programma.
 	
 	\centerfig{0.75}{pipelining}{Diagramma temporale del pipelining di una CPU.}
 
-	Avremo che $ T_c = $ tempo iniziale di "riempimento" della pipeline + tempo $ ( \propto ( m \cdot $ tempo delle singole istruzioni )) 
+	Avremo che $ T_c = $ tempo iniziale di "riempimento" della pipeline + tempo
+	$ ( \propto ( m \cdot $ tempo delle singole istruzioni )) 
 
-	In alternativa, il nostro processore può assegnare un "ciclo" ad ogni istruzione
+	In alternativa, il nostro processore può assegnare un "ciclo" ad ogni
+	istruzione
 	
 	\begin{lstlisting}[frame=single]
 	// Per istruzione 0
@@ -181,18 +308,24 @@ t_\text{ALU} + t_\text{MUX}
 	
 	\centerfig{0.75}{pipelining2}{Pipelining con più worker (parallelismo temporale).}
 	
-	Usando il \textbf{parallelismo temporale}, ad ogni periodo $ L $ otterremo 3 risultati. Ciò riduce il tempo di servizio a $ \frac{1}{3}L $. Le istruzioni dei task sono comunque eseguite sequenzialmente su worker separati.
+	Usando il \textbf{parallelismo temporale}, ad ogni periodo $ L $ otterremo 3
+	risultati. Ciò riduce il tempo di servizio a $ \frac{1}{3}L $. Le istruzioni
+	dei task sono comunque eseguite sequenzialmente su worker separati.
 \end{defn}
 
 
 
 \begin{defn}
 	\textbf{Parallelismo spaziale:}
-	Nel \textbf{parallelismo spaziale}, suddividiamo le istruzioni di ogni task su worker diversi. Significa che i worker possono eseguire in parallelo le istruzioni di un singolo task. Il parallelismo spaziale serve a diminuire la latenza, il parallelismo temporale serve invece ad aumentare il throughput.
+	Nel \textbf{parallelismo spaziale}, suddividiamo le istruzioni di ogni task
+	su worker diversi. Significa che i worker possono eseguire in parallelo le
+	istruzioni di un singolo task. Il parallelismo spaziale serve a diminuire la
+	latenza, il parallelismo temporale serve invece ad aumentare il throughput.
 	
 \end{defn}
 
-%//TODO diagramma memorie parallellismo dei moduli di memoria multiplexer 18 ottobre 11:55, togliere multiplexer per parallelizzare.
+%//TODO diagramma memorie parallellismo dei moduli di memoria multiplexer 18
+%ottobre 11:55, togliere multiplexer per parallelizzare.
 
 %//TODO diagramma differenza pipeline - farm - map
 
@@ -200,14 +333,19 @@ t_\text{ALU} + t_\text{MUX}
 
 %//TODO diagramma pipeline
 
-Avendo 3 worker ed eseguendo 3 istruzioni a cascata che impiegano rispettivamente $ 2t, 3t, 1t $, se eseguiamo dei task successivamente, le istruzioni dei task successivi avverrano con un delay dovuto alla differenza del tempo di esecuzione. Dopo un numero di istruzioni le istruzioni si sincronizzeranno. Se i worker impiegano rispettivamente dei tempi $ t_1,t_2,t_3 $, il tempo di completamento di $ m $ istruzioni sarà $ T_c = \sum t_i + m \cdot \max\{t_1,t_2,t_3\} $. Ciò crea una situazione non ottimale
+Avendo 3 worker ed eseguendo 3 istruzioni a cascata che impiegano
+rispettivamente $ 2t, 3t, 1t $, se eseguiamo dei task successivamente, le
+istruzioni dei task successivi avverrano con un delay dovuto alla differenza del
+tempo di esecuzione. Dopo un numero di istruzioni le istruzioni si
+sincronizzeranno. Se i worker impiegano rispettivamente dei tempi $ t_1,t_2,t_3
+$, il tempo di completamento di $ m $ istruzioni sarà $ T_c = \sum t_i + m \cdot
+\max\{t_1,t_2,t_3\} $. Ciò crea una situazione non ottimale
 
 \[ \begin{aligned}
 n = \text{numero di stadi della pipeline} \\
 T_s = \max\{T_{Si}\} \\
 \max(\text{speedup(n)}) = \text{\# di stadi della pipeline} \\
-T_c (n) = \sum_i L_i + n-1 T_s
-\end{aligned} \]
+T_c (n) = \sum_i L_i + n-1 T_s \end{aligned} \]
 
 \centerfig{0.75}{nopipeline}{Processore senza pipeline (sottoscalare)}
 \centerfig{0.75}{fivestagespipeline}{Processore con pipeline a cinque stadi (scalare)}
@@ -215,8 +353,18 @@ T_c (n) = \sum_i L_i + n-1 T_s
 
 \paragraph{Map e Farm}
 
-% //TODO diagramma map 
-Farm è di tipo \textit{stream parallel} mentre map è di tipo \textit{data parallel}. Nel caso del \textbf{Map} (e anche del Farm), se le  istruzioni impiegano un tempo $ t $ che viene precisamente suddiviso in $ t/2 $ allora il problema non sussiste. Se invece vengono suddivise in tempi diversi si creano spazi temporali in cui non è possibile sfruttare tutta la potenza di calcolo. Nella map posso suddividere un dato in arrivo e fare del calcolo in parallelo su di esso (\textit{data parallelism}). Nella farm e nella pipeline i dati in arrivo possono essere passati a diversi worker (verrano schedulati) che eseguono computazioni in parallelo (\textit{stream parallelism}). I dati non possono essere suddivisi nello \textit{stream parallelism} come nel \textit{data parallelism}.
+% //TODO diagramma map
+Farm è di tipo \textit{stream parallel} mentre map è di tipo \textit{data
+parallel}. Nel caso del \textbf{Map} (e anche del Farm), se le  istruzioni
+impiegano un tempo $ t $ che viene precisamente suddiviso in $ t/2 $ allora il
+problema non sussiste. Se invece vengono suddivise in tempi diversi si creano
+spazi temporali in cui non è possibile sfruttare tutta la potenza di calcolo.
+Nella map posso suddividere un dato in arrivo e fare del calcolo in parallelo su
+di esso (\textit{data parallelism}). Nella farm e nella pipeline i dati in
+arrivo possono essere passati a diversi worker (verrano schedulati) che eseguono
+computazioni in parallelo (\textit{stream parallelism}). I dati non possono
+essere suddivisi nello \textit{stream parallelism} come nel \textit{data
+parallelism}.
 
 \paragraph{Tempi della Farm}
 \[ \begin{aligned}
@@ -244,24 +392,26 @@ exec(I)
 }
 \end{lstlisting}
 
-% //TODO diagramma program counter modulo di memoria sopra, pipeline sotto e superscalare
+% //TODO diagramma program counter modulo di memoria sopra, pipeline sotto e
+% superscalare
 
 % //TODO diagramma esempio libro
 
 \paragraph{Composizione nel parallelismo}
 
-Possiamo comporre i diversi metodi di parallelismo. Ad esempio si può realizzare una pipeline che contiene una farm. Prendiamo ad esempio
+Possiamo comporre i diversi metodi di parallelismo. Ad esempio si può realizzare
+una pipeline che contiene una farm. Prendiamo ad esempio
 
 \[ \begin{aligned}
 \text{pipe}(S_1, \text{farm}(S_2), S_3) \\
 \text{Un possibile schema dei worker della pipeline è} \\
 \to f \to \begin{cases}
 \text{(farm)} \\
-g \\ g
-\end{cases} \to h \\
+g \\ g \end{cases} \to h \\
 \text{Calcoliamo i tempi} \\
 T_s = \max\left\{T_{S_1}, T_{S_2}, T_{S_3}\right\} \\
-T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\right\}, T_h \right\} \\
+T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw},
+T_\text{coll}\right\}, T_h \right\} \\
 = \max\left\{T_f, T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}, T_h \right\}
 \end{aligned} \]
 
@@ -270,7 +420,15 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \begin{defn}
 	\textbf{Bottleneck o Colli di Bottiglia}
 	
-	Supponiamo di avere due computazioni composte $ f \circ g $. Se $ f $ impiega $ 5t $ e $ g $ impiega $ 2t $, eseguire in successione $ \to f \to g \to $ può causare dei bottleneck (rallentamenti). Se $ f $ è data parallel si può suddividere la sua computazione in parti uguali (ad esempio due) e poi passare il risultato a $ g $. In alternativa si può dividere $ f $ in 5 parti uguali e ad ogni parte calcolare la composizione sequenziale (in una farm) in modo che $ T_s = \max\left\{T_\text{sched}, \dfrac{T_w}{nw}, T_\text{coll}\right\} \approx \dfrac{Tw}{nw} \approx \dfrac{7t}{5} \approx 1$
+	Supponiamo di avere due computazioni composte $ f \circ g $. Se $ f $
+	impiega $ 5t $ e $ g $ impiega $ 2t $, eseguire in successione $ \to f \to g
+	\to $ può causare dei bottleneck (rallentamenti). Se $ f $ è data parallel
+	si può suddividere la sua computazione in parti uguali (ad esempio due) e
+	poi passare il risultato a $ g $. In alternativa si può dividere $ f $ in 5
+	parti uguali e ad ogni parte calcolare la composizione sequenziale (in una
+	farm) in modo che $ T_s = \max\left\{T_\text{sched}, \dfrac{T_w}{nw},
+	T_\text{coll}\right\} \approx \dfrac{Tw}{nw} \approx \dfrac{7t}{5} \approx
+	1$
 
 	% //TODO diagramma bottleneck
 \end{defn}
@@ -278,7 +436,8 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \begin{exmp}
 	\textbf{Pipeline in Verilog}
 	
-	Vediamo adesso una pipeline per parallelizzare l'operazione di moltiplicazione per 2 composta due volte.
+	Vediamo adesso una pipeline per parallelizzare l'operazione di
+	moltiplicazione per 2 composta due volte.
 	
 	
 	\includecode[verilog]{./verilog/2xpipeline/singlestage/per2.v}{Modulo moltiplicazione per 2}
@@ -295,26 +454,39 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \section{Homework}
 
 \begin{exrc}
-	Si forniscano le espressioni booleane che calcolano:
-	Se una configurazione di 8 bit è una potenza di due: È necessario soltanto uno XOR dei singoli bit $ b_0 \oplus b_1 \oplus b_2 \oplus b_3 \oplus b_4 \oplus b_5 \oplus b_6 \oplus b_7 \oplus $.
+	Si forniscano le espressioni booleane che calcolano: Se una configurazione
+	di 8 bit è una potenza di due: È necessario soltanto uno XOR dei singoli bit
+	$ b_0 \oplus b_1 \oplus b_2 \oplus b_3 \oplus b_4 \oplus b_5 \oplus b_6
+	\oplus b_7 \oplus $.
 	
-	Fornire le espressioni booleane che calcolano l'indice del bit più significativo a 1 in una configurazione di 8 bit: 
+	Fornire le espressioni booleane che calcolano l'indice del bit più
+	significativo a 1 in una configurazione di 8 bit: 
 	\begin{table}[H]
 		\centering
 		\caption{Tabella di verità di una rete combinatoria che restituisce l'indice del bit più significativo a 1 di una configurazione di 8 bit. L'indice inizia da 1, il valore in output 0 viene usato se il numero in input sono tutti 0}
 		\label{tab:homework1}
 		\begin{tabular}{|llllllll|llll|}
 			\hline
-			$x_7$ & $x_6$ & $x_5$ & $x_4$ & $x_3$ & $x_2$ & $x_1$ & $x_0$ & $z_3$ & $z_2$ & $z_1$ & $z_0$ \\ \hline
-			1     & -     & -     & -     & -     & -     & -     & -     & 0     & 1     & 1     & 1     \\ \hline
-			0     & 1     & -     & -     & -     & -     & -     & -     & 0     & 1     & 1     & 0     \\ \hline
-			0     & 0     & 1     & -     & -     & -     & -     & -     & 0     & 1     & 0     & 1     \\ \hline
-			0     & 0     & 0     & 1     & -     & -     & -     & -     & 0     & 1     & 0     & 0     \\ \hline
-			0     & 0     & 0     & 0     & 1     & -     & -     & -     & 0     & 0     & 1     & 1     \\ \hline
-			0     & 0     & 0     & 0     & 0     & 1     & -     & -     & 0     & 0     & 1     & 0     \\ \hline
-			0     & 0     & 0     & 0     & 0     & 0     & 1     & -     & 0     & 0     & 0     & 1     \\ \hline
-			0     & 0     & 0     & 0     & 0     & 0     & 0     & 1     & 0     & 0     & 0     & 0     \\ \hline
-			0     & 0     & 0     & 0     & 0     & 0     & 0     & 0     & 1     & 1     & 1     & 1     \\ \hline
+			$x_7$ & $x_6$ & $x_5$ & $x_4$ & $x_3$ & $x_2$ & $x_1$ & $x_0$ &
+			$z_3$ & $z_2$ & $z_1$ & $z_0$ \\ \hline
+			1     & -     & -     & -     & -     & -     & -     & -     & 0
+			& 1     & 1     & 1     \\ \hline
+			0     & 1     & -     & -     & -     & -     & -     & -     & 0
+			& 1     & 1     & 0     \\ \hline
+			0     & 0     & 1     & -     & -     & -     & -     & -     & 0
+			& 1     & 0     & 1     \\ \hline
+			0     & 0     & 0     & 1     & -     & -     & -     & -     & 0
+			& 1     & 0     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 1     & -     & -     & -     & 0
+			& 0     & 1     & 1     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 1     & -     & -     & 0
+			& 0     & 1     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 1     & -     & 0
+			& 0     & 0     & 1     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 0     & 1     & 0
+			& 0     & 0     & 0     \\ \hline
+			0     & 0     & 0     & 0     & 0     & 0     & 0     & 0     & 1
+			& 1     & 1     & 1     \\ \hline
 		\end{tabular}
 	\end{table}
 
@@ -329,9 +501,15 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \end{exrc}
 
 \begin{exrc}
-	Delle reti combinatorie definite dalle espressioni booleane dell’esercizio precedente si fornisca l’implementazione come module Verilog insieme ad un programma testbench che ne dimostri il corretto funzionamento.
+	Delle reti combinatorie definite dalle espressioni booleane dell’esercizio
+	precedente si fornisca l’implementazione come module Verilog insieme ad un
+	programma testbench che ne dimostri il corretto funzionamento.
 	
-	Per calcolare se un numero è potenza di due non utilizziamo il bitwise xor, ma mettiamo in bitwise AND il numero in input e il numero in input a cui sottraiamo 1. Se il numero in input è una potenza di due, quando gli viene sottratto 1 rimarrano soltanto 1 a destra della posizione dell'1 nel numero in input. Se l'AND è 0 allora il numero è potenza di due.
+	Per calcolare se un numero è potenza di due non utilizziamo il bitwise xor,
+	ma mettiamo in bitwise AND il numero in input e il numero in input a cui
+	sottraiamo 1. Se il numero in input è una potenza di due, quando gli viene
+	sottratto 1 rimarrano soltanto 1 a destra della posizione dell'1 nel numero
+	in input. Se l'AND è 0 allora il numero è potenza di due.
 
 	\includecode[verilog]{./verilog/homework/potenzadidue/potenzadidue.v}{Modulo che calcola se una configurazione di bit è potenza di 2}
 	
@@ -339,8 +517,12 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 	
 	\centerfig{0.8}{potenzadiduegtkwave.png}{Visualizzazione dell'esecuzione del modulo che calcola se un numero da 8 bit è potenza di 2}
 	
-	Per implementare una rete combinatoria che restituisce l'indice del bit più significativo si può utilizzare un semplice ciclo for per realizzare un modulo behavioral. La funzione built-in \texttt{\$clog2()}
-	calcola il logaritmo in base 2 di un numero. La utilizziamo per definire la dimensione dell'output del modulo, dato che il numero di bit $ n $ del valore in input è rappresentabile con un numero di $ \log_2(n) $ bit.
+	Per implementare una rete combinatoria che restituisce l'indice del bit più
+	significativo si può utilizzare un semplice ciclo for per realizzare un
+	modulo behavioral. La funzione built-in \texttt{\$clog2()} calcola il
+	logaritmo in base 2 di un numero. La utilizziamo per definire la dimensione
+	dell'output del modulo, dato che il numero di bit $ n $ del valore in input
+	è rappresentabile con un numero di $ \log_2(n) $ bit.
 	
 	\includecode[verilog]{./verilog/homework/indice/index.v}{Modulo della rete combinatoria che calcola l'indice del bit ad 1 più significativo in un numero da N bit}
 	
@@ -351,30 +533,37 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \end{exrc}
 
 \begin{exrc}
-	Definire un automa che processa una coppia di variabili da k bit e che conta, modulo 2, il numero delle volte che le due variabili in ingresso sono uguali.
+	Definire un automa che processa una coppia di variabili da k bit e che
+	conta, modulo 2, il numero delle volte che le due variabili in ingresso sono
+	uguali.
 	
 	\begin{figure}[H]
 		\centering
 		\caption{Automa di Moore che conta quante volte gli input sono uguali. Gli stati possono essere teoricamente infiniti, l'output è uguale al numero di stato, realisticamente gli stati possibili saranno $ 2^n $ dove $ n $ è il numero di bit nel registro}
-		\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+		\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+		distance=3.5cm]
 		
-		\node[state,initial] 	(1)                   		{1};
-		\node[state]         	(2) [right of=1] 	   		{2};
-		\node[state]         	(3) [right of=2] 	   		{3};
-		\node[state]         	(4) [right of=3] 	   		{$\hdots$};
+		\node[state,initial] 	(1)                   		{1}; \node[state]
+		(2) [right of=1] 	   		{2}; \node[state]         	(3) [right of=2]
+		{3}; \node[state]         	(4) [right of=3] 	   		{$\hdots$};
 		
 		\path 	
-		(1)		edge [bend left]  	node {$x = y$} 		(2)
-				edge [loop below] 	node {$x \neq y$} 	(1)
-		(2) 	edge [loop below] 	node {$x \neq y$} 	(2)
-				edge [bend left] 	node {$x = y$} 		(3)
-		(3)		edge [loop below]  	node {$x \neq y$} 	(3)
-				edge [bend left]  	node {$x = y$} 		(4);
+		(1)		edge [bend left]  	node {$x = y$} 		(2) edge [loop below] 	node {$x
+				\neq y$} 	(1) (2) 	edge [loop below] 	node {$x \neq y$} 	(2)
+				edge [bend left] 	node {$x = y$} 		(3) (3)		edge [loop below]
+				node {$x \neq y$} 	(3) edge [bend left]  	node {$x = y$} 		(4);
 		\end{tikzpicture}
 	\end{figure}
 	
-	Per semplicità di implementazione in Verilog decidiamo di utilizzare un contatore come registro. (L'alternativa potrebbe essere includere una ALU nel modulo di $ \sigma $ che legge il valore del registro di stato e lo incrementa di uno nel caso lo stato debba essere incrementato).
-	La funzione $ \sigma $ calcolerà $ x \mod 2 $ e $ y \mod 2 $, eseguirà un confronto e nel caso siano uguali invierà il risultato del confronto alla linea \texttt{INCREMENT} del contatore, così che al prossimo ciclo di clock il contatore delle volte che $ x $ e $ y $ sono uguali aumenti. La funzione $ \omega $ è la funzione identità.
+	Per semplicità di implementazione in Verilog decidiamo di utilizzare un
+	contatore come registro. (L'alternativa potrebbe essere includere una ALU
+	nel modulo di $ \sigma $ che legge il valore del registro di stato e lo
+	incrementa di uno nel caso lo stato debba essere incrementato). La funzione
+	$ \sigma $ calcolerà $ x \mod 2 $ e $ y \mod 2 $, eseguirà un confronto e
+	nel caso siano uguali invierà il risultato del confronto alla linea
+	\texttt{INCREMENT} del contatore, così che al prossimo ciclo di clock il
+	contatore delle volte che $ x $ e $ y $ sono uguali aumenti. La funzione $
+	\omega $ è la funzione identità.
 \end{exrc}
 
 \begin{exrc}
@@ -390,7 +579,9 @@ T_s = \max\left\{T_f, \max\left\{T_\text{sched}, \dfrac{T_g}{nw}, T_\text{coll}\
 \end{exrc}
 
 \begin{exrc}
-	Progettare, utilizzando componenti standard una rete sequenziale che possa essere utilizzata per implementare operazioni di push e pop su uno stack di massimo 8 posizioni.
+	Progettare, utilizzando componenti standard una rete sequenziale che possa
+	essere utilizzata per implementare operazioni di push e pop su uno stack di
+	massimo 8 posizioni.
 	
 	\begin{figure}[H]
 		\centering

@@ -13,14 +13,19 @@ while(true) {
 }
 \end{lstlisting}
 
-Vedremo come implementare un piccolo processore che esegue un sottoinsieme delle istruzioni ARM,
-suddiviso in due oggetti, la parte di controllo e il \textbf{datapath} (parte operativa).
+Vedremo come implementare un piccolo processore che esegue un sottoinsieme delle
+istruzioni ARM, suddiviso in due oggetti, la parte di controllo e il
+\textbf{datapath} (parte operativa).
 
 I processori possono essere di diversi tipi:
 \begin{itemize}
-    \item \textbf{Single cycle}: esegue un singolo ciclo fetch-decode-execute per ogni ciclo di clock (tutto viene eseguito nell'intervallo di tempo in cui il segnale di clock è basso).
+    \item \textbf{Single cycle}: esegue un singolo ciclo fetch-decode-execute
+    per ogni ciclo di clock (tutto viene eseguito nell'intervallo di tempo in
+    cui il segnale di clock è basso).
     % //TODO schema
-    \item \textbf{Multi cycle}: può eseguire un istruzione in più cicli di clock, in genere, un ciclo per il fetch-decode, un ciclo per l'exec e un ciclo per il writeback (risposta)
+    \item \textbf{Multi cycle}: può eseguire un istruzione in più cicli di
+    clock, in genere, un ciclo per il fetch-decode, un ciclo per l'exec e un
+    ciclo per il writeback (risposta)
     % //TODO schema
     \item \textbf{Pipeline}
 \end{itemize}
@@ -28,57 +33,73 @@ I processori possono essere di diversi tipi:
 \begin{note}
     \textbf{Prestazioni}
 
-    La misura \textit{CPI} (Clock per Instruction) misura quanti cicli di clock $\tau$ sono necessari per eseguire un istruzione.
-    Da tale misura possiamo dedurre, per ogni processore, il tempo necessario per eseguire un programma di $N$ istruzioni.
-    Esso impiegherà $N \cdot CPI \cdot \tau $
+    La misura \textit{CPI} (Clock per Instruction) misura quanti cicli di clock
+    $\tau$ sono necessari per eseguire un istruzione. Da tale misura possiamo
+    dedurre, per ogni processore, il tempo necessario per eseguire un programma
+    di $N$ istruzioni. Esso impiegherà $N \cdot CPI \cdot \tau $
 \end{note}
 
 
 \section{Processori Single Cycle}
 
-Per realizzare un processore Single Cycle dobbiamo capire quali componenti (reti logiche e sequenziali) sono
-necessari per realizzare il datapath. Possiamo inferire da i componenti necessari per mantenere lo stato del processore (Registri e memoria)
-e l'insieme \textit{ISTR} di istruzioni che vogliamo implementare.
+Per realizzare un processore Single Cycle dobbiamo capire quali componenti (reti
+logiche e sequenziali) sono necessari per realizzare il datapath. Possiamo
+inferire da i componenti necessari per mantenere lo stato del processore
+(Registri e memoria) e l'insieme \textit{ISTR} di istruzioni che vogliamo
+implementare.
 
-Vediamo i \textbf{componenti di stato}, il primo componente da utilizzare è una memoria per le istruzioni che riceverà in input
-un indirizzo e restituirà in output l'\textbf{istruzione corrente}.
+Vediamo i \textbf{componenti di stato}, il primo componente da utilizzare è una
+memoria per le istruzioni che riceverà in input un indirizzo e restituirà in
+output l'\textbf{istruzione corrente}. Il secondo componente necessario è una
+memoria dati (una RAM statica) che contiene la memoria sulla quale possiamo fare
+operazioni di \textit{load} e \textit{store}. Ha bisogno di un solo indirizzo di
+memoria per la lettura e la scrittura, un input di clock, un input di
+\textit{write enable}, un indirizzo in input, un valore in input e un valore in
+output.
 
-Il secondo componente necessario è una memoria dati (una RAM statica) che contiene la memoria sulla quale possiamo fare operazioni di \textit{load} e \textit{store}.
-Ha bisogno di un solo indirizzo di memoria per la lettura e la scrittura, un input di clock, un input di \textit{write enable}, un indirizzo in input, un valore in input e un valore in output.
+Il terzo componente necessario è una memoria multiporta statica che continene lo
+stato dei registri. Riceverà in input 3 indirizzi (2 in lettura ed 1 in
+scrittura), un segnale di clock, uno di write enable, un valore in input e due
+in output. Se il segnale \textit{write enable} è LOW, l'indirizzo in scrittura
+viene utilizzato per la lettura. Sarà necessario un registro separato per
+mantenere il program counter, che riceverà sempre clock, write enable, input e
+restituirà il suo contenuto in output.
 
-Il terzo componente necessario è una memoria multiporta statica che continene lo stato dei registri.
-Riceverà in input 3 indirizzi (2 in lettura ed 1 in scrittura), un segnale di clock, uno di write enable, un valore in input e due in output.
-Se il segnale \textit{write enable} è LOW, l'indirizzo in scrittura viene utilizzato per la lettura.
-Sarà necessario un registro separato per mantenere il program counter, che riceverà sempre clock, write enable, input e restituirà il suo contenuto in output.
-
-% //TODO schema dettagliato
-% //TODO schema semplificato
+% //TODO schema dettagliato //TODO schema semplificato
 
 \begin{defn}
 \textbf{Implementare un'istruzione LDR (Load register)} \\
-Vediamo come implementare un'istruzione \texttt{LDR} con offset immediato (pre-indice), prendiamo ad esempio
+Vediamo come implementare un'istruzione \texttt{LDR} con offset immediato
+(pre-indice), prendiamo ad esempio
 \begin{lstlisting}[style=arm]
 ldr r0, [r1, #4]
 \end{lstlisting}
-Avremo il registro \texttt{pc} che punterà all'istruzione \texttt{ldr}. La memoria istruzioni conterrà l'istruzione all'indirizzo puntato da \texttt{pc}.
-Caricheremo \texttt{r1} dal primo indirizzo di lettura della \textit{memoria registri} (nel suo output 1), a cui sommeremo  nella \textit{ALU} l'offset costante \texttt{\#4}.
-Caricheremo dall'indirizzo sommato un valore dalla \textit{memoria dati}, che andrà in input alla memoria registri e verrà scritto all'indirizzo di scrittura,
-in questo caso \texttt{r0}.
+Avremo il registro \texttt{pc} che punterà all'istruzione \texttt{ldr}. La
+memoria istruzioni conterrà l'istruzione all'indirizzo puntato da \texttt{pc}.
+Caricheremo \texttt{r1} dal primo indirizzo di lettura della \textit{memoria
+registri} (nel suo output 1), a cui sommeremo  nella \textit{ALU} l'offset
+costante \texttt{\#4}. Caricheremo dall'indirizzo sommato un valore dalla
+\textit{memoria dati}, che andrà in input alla memoria registri e verrà scritto
+all'indirizzo di scrittura, in questo caso \texttt{r0}.
 % //TODO SCHEMA
 Se volessimo realizzare un offset variabile (un registro), come ad esempio
 \begin{lstlisting}[style=arm]
 ldr r0, [r1, r2]
 \end{lstlisting}
-Dovremmo utilizzare anche il secondo input/output di lettura della memoria registri, (il registro \texttt{r2}) come operando di somma della ALU.
-Ciò ci fa notare che è necessario un multiplexer fra \textit{out2} della memoria registri e l'operando immediato per realizzare correttamente l'offset.
+Dovremmo utilizzare anche il secondo input/output di lettura della memoria
+registri, (il registro \texttt{r2}) come operando di somma della ALU. Ciò ci fa
+notare che è necessario un multiplexer fra \textit{out2} della memoria registri
+e l'operando immediato per realizzare correttamente l'offset.
 \end{defn}
 
 
 \begin{defn}
 \textbf{Implementare un'istruzione STR (Store register)} \\
-Implementare un'istruzione di \textit{store} è simile all'implementazione di un istruzione di \textit{load}.
-Il segnale \textit{write enable} della memoria registri sarà low. Leggerò dal primo output della memoria registri l'indirizzo in cui memorizzerò il valore,
-dal secondo output della memoria registri il valore da memorizzare e opzionalmente, un registro di offset dal terzo output.
+Implementare un'istruzione di \textit{store} è simile all'implementazione di un
+istruzione di \textit{load}. Il segnale \textit{write enable} della memoria
+registri sarà low. Leggerò dal primo output della memoria registri l'indirizzo
+in cui memorizzerò il valore, dal secondo output della memoria registri il
+valore da memorizzare e opzionalmente, un registro di offset dal terzo output.
 Il segnale \textit{write enable} della memoria dati sarà HIGH.
 % //TODO ordine registri nella thumb
 \end{defn}
@@ -86,12 +107,15 @@ Il segnale \textit{write enable} della memoria dati sarà HIGH.
 \begin{defn}
 \textbf{Implementare istruzioni di salto} \\
 Per implementare le istruzioni di salto dobbiamo sommare un immediato
-all'indirizzo corrente contenuto nel program counter, ed inserirlo di nuovo all'interno del program counter.
-Abbiamo bisogno di un multiplexer posto fra l'uscita della memoria dati e l'uscita della ALU posta dopo gli output della memoria registri.
-Collegheremo l'uscita di tale multiplexer all'ingresso del program counter, dove scriveremo il valore dell'istruzione dopo il salto.
+all'indirizzo corrente contenuto nel program counter, ed inserirlo di nuovo
+all'interno del program counter. Abbiamo bisogno di un multiplexer posto fra
+l'uscita della memoria dati e l'uscita della ALU posta dopo gli output della
+memoria registri. Collegheremo l'uscita di tale multiplexer all'ingresso del
+program counter, dove scriveremo il valore dell'istruzione dopo il salto.
 
-Alla fine di un'istruzione \textit{non di salto} il program counter viene incrementato di 4 posizioni attraverso una ALU.
-Ciò ci dice che è necessario avere un altro multiplexer in ingresso al program counter.
+Alla fine di un'istruzione \textit{non di salto} il program counter viene
+incrementato di 4 posizioni attraverso una ALU. Ciò ci dice che è necessario
+avere un altro multiplexer in ingresso al program counter.
 % //TODO
 \end{defn}
 
@@ -129,64 +153,279 @@ Ciò ci dice che è necessario avere un altro multiplexer in ingresso al program
     \textbf{Svantaggi del processore a ciclo singolo} \\
     Un processore a ciclo singolo ha 3 svantaggi degni di nota:
     \begin{enumerate}
-        \item Richiede memorie separate per le istruzioni ed i dati, laddove i processori
-        moderni hanno una singola memoria esterna al processore dove sono contenuti entrambi.
-        \item Richiede un ciclo di clock lungo abbastanza per supportare l'operazione più lenta: \texttt{LDR}, anche se le
-        altre istruzioni potrebbero essere molto più veloci.
-        \item Richiede tre addizionatori, uno nella \texttt{ALU} principale e due per la logica del \textit{program counter}.
+        \item Richiede memorie separate per le istruzioni ed i dati, laddove i
+        processori moderni hanno una singola memoria esterna al processore dove
+        sono contenuti entrambi.
+        \item Richiede un ciclo di clock lungo abbastanza per supportare
+        l'operazione più lenta: \texttt{LDR}, anche se le altre istruzioni
+        potrebbero essere molto più veloci.
+        \item Richiede tre addizionatori, uno nella \texttt{ALU} principale e
+        due per la logica del \textit{program counter}.
     \end{enumerate}
 \end{note}
 
 \begin{defn}
     \textbf{Processore a multiciclo} \\
-    Un processore a ciclo multiplo risolve questi problemi separando un'istruzione
-    in diversi passaggi più piccoli da eseguire ognuno in un ciclo di clock, e unendo la memoria dati e la memoria istruzioni.
-    In ogni passaggio piccolo (\textit{short step})
-    il processore può leggere o scrivere la memoria o il register file, o utilizzare la ALU. \@
-    L'istruzione corrente viene letta in un passaggio, e i dati possono essere letti o scritti in un passaggio successivo,
-    rendendo possibile l'utilizzo di una singola memoria. Per rendere un processore multiciclo, introduciamo dei registri aggiuntivi
-    nel \textit{datapath}, uno posto dopo le due uscite dei registri in lettura del file dei registri, per memorizzare
-    il contenuto di essi ed un registro posto dopo la memoria. In tale modo è possibile separare un'istruzione in più cicli di clock.
-    Vediamo un esempio per l'istruzione \texttt{ldr}:
+    Un processore a ciclo multiplo risolve questi problemi separando
+    un'istruzione in diversi passaggi più piccoli da eseguire ognuno in un ciclo
+    di clock, e unendo la memoria dati e la memoria istruzioni. In ogni
+    passaggio piccolo (\textit{short step}) il processore può leggere o scrivere
+    la memoria o il register file, o utilizzare la ALU. \@ L'istruzione corrente
+    viene letta in un passaggio, e i dati possono essere letti o scritti in un
+    passaggio successivo, rendendo possibile l'utilizzo di una singola memoria.
+    Per rendere un processore multiciclo, introduciamo dei registri aggiuntivi
+    nel \textit{datapath}, uno posto dopo le due uscite dei registri in lettura
+    del file dei registri, per memorizzare il contenuto di essi ed un registro
+    posto dopo la memoria. In tale modo è possibile separare un'istruzione in
+    più cicli di clock. Vediamo un esempio per l'istruzione \texttt{ldr}:
 
     \begin{enumerate}
         \item \texttt{fetch} dell'istruzione dalla memoria.
         \item Lettura del registro da cui caricare, \texttt{decode}.
         \item Applicazione dell'offset tramite la \textit{ALU}.
-        \item \texttt{load} dalla memoria di un valore (memorizzato in un ulteriore registro aggiuntivo).
-        \item Memorizzazione del valore letto dalla memoria nel registro destinazione.
+        \item \texttt{load} dalla memoria di un valore (memorizzato in un
+        ulteriore registro aggiuntivo).
+        \item Memorizzazione del valore letto dalla memoria nel registro
+        destinazione.
     \end{enumerate}
 
-    Per utilizzare soltanto una memoria per istruzioni e dati, abbiamo bisogno di introdurre un multiplexer di fronte alla memoria,
-    che controllerà se l'indirizzo in lettura della memoria sarà dettato dal program counter o dal risultato dell'operazione precedente.
-    Ciò necessita dell'introduzione di memoria nella \textit{parte di controllo} del processore, ovvero va resa la parte di controllo un automa.
+    Per utilizzare soltanto una memoria per istruzioni e dati, abbiamo bisogno
+    di introdurre un multiplexer di fronte alla memoria, che controllerà se
+    l'indirizzo in lettura della memoria sarà dettato dal program counter o dal
+    risultato dell'operazione precedente. Ciò necessita dell'introduzione di
+    memoria nella \textit{parte di controllo} del processore, ovvero va resa la
+    parte di controllo un automa.
 
-    Nonostante in un processore multiciclo si impieghi leggermente di più per eseguire un'istruzione di memoria,
-    ne otterremo che per realizzare istruzioni operative occorrono meno cicli di clock delle istruzioni di memoria,
-    rendendo effettivamente più efficace e rapido il processore.
+    Nonostante in un processore multiciclo si impieghi leggermente di più per
+    eseguire un'istruzione di memoria, ne otterremo che per realizzare
+    istruzioni operative occorrono meno cicli di clock delle istruzioni di
+    memoria, rendendo effettivamente più efficace e rapido il processore.
 \end{defn}
 
 \begin{figure}[H]
-	\centering
+    \centering
+
 	\caption{Esempio di della parte di controllo di un processore multiciclo. Vediamo soltanto le istruzioni \texttt{ldr} e \texttt{add} per semplicità}
 	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
 	
-	\node[state,initial] 	(A)                    {\texttt{fetch}};
-	\node[state]         	(B) [below right of=A] 	   {\texttt{add} (\texttt{decode})};
-	\node[state]         	(D) [below of=B] 	   {\texttt{add} (\texttt{ALU})};
-	\node[state]            (E) [below of=D] 	   {\texttt{add} (\texttt{reg})};
-    \node[state]         	(C) [below left of=A] 	   {\texttt{ldr} (\texttt{decode})};
-    \node[state]         	(F) [below of=C] 	   {\texttt{ldr} (\texttt{offset})};
-    \node[state]         	(G) [below of=F] 	   {\texttt{ldr} (\texttt{load})};
-    \node[state]         	(H) [below of=G] 	   {\texttt{ldr} (\texttt{reg})};
+	\node[state,initial] 	(A)                    {\texttt{fetch}}; \node[state]
+	(B) [below right of=A] 	   {\texttt{add} (\texttt{decode})}; \node[state]
+	(D) [below of=B] 	   {\texttt{add} (\texttt{ALU})}; \node[state] (E) [below
+	of=D] 	   {\texttt{add} (\texttt{reg})}; \node[state] (C) [below left of=A]
+	{\texttt{ldr} (\texttt{decode})}; \node[state] (F) [below of=C]
+	{\texttt{ldr} (\texttt{offset})}; \node[state] (G) [below of=F]
+	{\texttt{ldr} (\texttt{load})}; \node[state] (H) [below of=G] {\texttt{ldr}
+	(\texttt{reg})};
 
     \path
-    (A)		edge [] node {$OP = 00$ \text{\\} (operazioni aritmetico-logiche)} 		(B)
-		    edge [] node {$OP = 01$ \text{\\} (operazioni di memoria)} 	            (C)
-    (B)     edge [] node {} (D)
-    (D)     edge [] node {} (E)
-    (C)     edge [] node {} (F)
-    (F)     edge [] node {} (G)
-    (G)     edge [] node {} (H);
-	\end{tikzpicture}
+    (A)		edge [] node [above right] {\makecell[l]{$OP = 00$}} 		(B) edge [] node
+		    [above left] {\makecell[l]{$OP = 01$}} 	    (C) (B)     edge [] node
+		    {} (D) (D)     edge [] node {} (E) (C)     edge [] node {} (F) (F)
+		    edge [] node {} (G) (G)     edge [] node {} (H) ;
+    \end{tikzpicture}
+    % TODO fixa label
 \end{figure}
+
+\section{Sottosistema di Memoria}
+Prima di realizzare un \textit{processore pipelined} dobbiamo fornire più
+dettagli sul sottosistema di memoria.
+
+\begin{defn}
+    \textbf{Cache} \\
+    Abbiamo diversi tipi di memorie, oltre a quella generale (dati/istruzioni),
+    è presenta una memoria "\textit{più vicina al processore}", detta
+    \textbf{cache}. Le cache sono estremamente rapide, il tempo di accesso è
+    all'incirca uno o due cicli di clock nei processori moderni, ma presentano
+    lo svantaggio di essere molto costose.
+\end{defn}
+
+\begin{defn}
+    \textbf{Gerarchia di memoria} \\
+    Le memorie possono essere di diversi livelli. Il livello più basso è il "più
+    vicino al processore", ovvero il più rapido. In generale i primi livelli
+    sono occupati dalle memorie \textit{cache}. Il livello più alto delle
+    memorie volatili è invece occupato dalla RAM, ovvero la memoria centrale
+    (che non è una cache). Il livello assolutamente più in alto è occupato dalle
+    memorie permanenti o memorie di massa, ovvero dischi rigidi o a stato solido
+    (rispettivamente \textit{hard disk} e \textit{SSD}). HDD e SSD sono molto
+    capienti, ma non li utilizziamo come memoria volatile per istruzioni e dati
+    di programmi in esecuzione perché i loro tempi di accesso sono molto alti
+    rispetto alle memorie cache e le memorie RAM. Li utilizziamo invece per
+    memorizzare permanentemente (anche dopo lo spegnimento della macchina) file
+    e dati. RAM e cache vengono invece completamente cancellate al momento dello
+    spegnimento della macchina e sono rispettivamente molto meno capienti dei
+    moderni metodi di archiviazione di massa.
+\end{defn}
+
+\begin{exmp}
+    \textbf{Caricamento di un programma dal disco rigido} \\
+    Supponiamo di scrivere un programma asm ARMv7. Utilizzeremo un editor di
+    testo e \textit{salveremo il file} su memoria di massa. Il file avrà un
+    percorso denotato dalla radice del \textit{filesystem}, seguita dalla
+    sequenza di directory in cui è contenuto il file, ad esempio
+    \texttt{/home/studente/assembler/programma.s} (le memorie di massa hanno
+    metodi di indirizzamento dell'accesso dei contenuti). Compileremo poi il
+    programma con \texttt{gcc}, che caricherà la rappresentazione testuale del
+    programma in memoria volatile (il file \texttt{.s}), genererà un file
+    binario eseguibile sempre in memoria RAM e lo scriverà di nuovo in formato
+    eseguibile sul disco rigido. A momento di esecuzione il programma appena
+    compilato viene caricato in memoria RAM nella sezione delle istruzioni, che
+    continueranno a "scendere" nella gerarchia delle memorie fino ad essere
+    eseguite direttamente nei registri del processore.
+\end{exmp}
+
+\begin{defn}
+    \textbf{Cache di primo e secondo livello} \\
+    La cache di primo livello è la più vicina al processore e generalmente ha
+    dimensioni nell'ordine di decine di \texttt{KB}. La cache di secondo livello
+    è leggermente più lenta e ha dimensioni nell'ordine di \texttt{MB}. La RAM,
+    ha nelle macchine moderne dimensioni dell'ordine di \texttt{GB}. Le cache
+    sono memorie SRAM e sono molto più costose rispetto alle DRAM.
+\end{defn}
+
+\begin{defn}
+    \textbf{Hit e miss} \\
+    Definiamo due concetti necessari per il funzionamento delle cache,
+    \textbf{hit e miss}. Il primo indica cercare una locazione di memoria nella
+    cache e trovarla, mentre il secondo indica non trovarla. Definiamo due
+    probabilità complementari fra di loro: $p_h$ e $p_m$, che indicano la
+    percentuale di accessi in memoria con esito \textit{hit} $p_h$, ovvero
+    \textbf{hit rate} e \textit{miss} $p_m$, \textbf{miss rate}. Supponiamo di
+    avere una gerarchia di memoria con due tre livelli (processore, cache e
+    RAM), le probabilità definite per la cache e dei tempi di accesso per la
+    cache e la memoria $ta_c$ e $ta_m$. Per accedere ad una locazione di
+    memoria, se abbiamo un cache hit il tempo di accesso sarà $ta_h$, se avremo
+    un cache miss significa che abbiamo cercato prima nella cache e
+    successivamente è stato necessario l'accesso alla memoria generale. Avremo
+    che il tempo medio di accesso ad una locazione di memoria è
+    \begin{equation*}
+        \begin{aligned}
+            ta = p_h ta_c + (1-p_h)ta_m
+        \end{aligned}
+    \end{equation*}
+\end{defn}
+
+\begin{defn}
+    \textbf{Località spaziale} \\
+    La località spaziale indica che è probabile accedere a locazioni di memoria
+    fisicamente vicine ad una di quelle in cui viene effettuato l'accesso. Se al
+    tempo $t$ il processore accede all'indirizzo $x$ è probabile che vada ad
+    accedere al tempo $t+a$ all'indirizzo $x+1$, con $a$ relativamente piccolo.
+\end{defn}
+
+\begin{defn}
+    \textbf{Località temporale} \\
+    Se il processore ha acceduto ad una locazione di memoria ad un tempo $t$, è
+    probabile che ci acceda un'altra volta ad un tempo $t+a$ con $a$
+    relativamente piccolo.
+\end{defn}
+
+\begin{defn}
+    \textbf{Working Set} \\
+    Insieme dei dati e del codice necessari al funzionamento di un programma in
+    un certo lasso di tempo.
+\end{defn}
+
+\begin{note}
+    La presenza di una cache deve essere trasparente al processore.
+\end{note}
+
+\begin{defn}
+    \textbf{Funzionamento di una cache} \\
+    Le cache implementano un dizionario \textit{chiave-valore}. Dove la chiave è
+    l'indirizzo di memoria e il valore è il contenuto della locazione di memoria
+    a quell'indirizzo. Per venire incontro al principio di località, ogni volta
+    che accedo ad un indice di memoria $x$ posso caricare nella cache un
+    "intorno" di memoria di $x$ (zz)
+\end{defn}
+
+\begin{defn}
+    \textbf{Set di parole} \\
+    Un \textbf{Set} di parole (\textit{linea di cache} o \textit{blocco di
+    cache}) è una sezione della cache utilizzata per sfruttare il principio di
+    località. Il numero di parole in un set è detto $b$. Una cache di capacità
+    $C$ continene $B=C/b$ blocchi.
+\end{defn}
+
+\begin{exmp}
+    Supponiamo di avere una memoria con indirizzi da 8 bit (256 byte, 64 parole
+    da 32 bit), e una cache con $2^4 = 16$ insiemi. Se il processore esegue
+    un'istruzione per caricare dalla memoria un valore all'indirizzo $x$, la
+    cache caricherà dalla memoria i valori all'indirizzo $x$ e tutte le altre
+    combinazioni degli ultimi $\log_2(b)$ bit dell'indirizzo di $x$. Ad esempio,
+    se il processore intende caricare un valore all'indirizzo $10001100$ (8
+    bit), nella cache esisterà un \textbf{set} con numero di insieme $1000$ (4
+    bit, esclusi gli ultimi quattro, due per l'offset dei byte e due per le
+    parole) che conterrà 4 parole di memoria, ovvero le parole contenute nella
+    memoria generale agli indirizzi $100000$, $100001$, $100010$ $100011$ (tutte
+    le parole nell'intorno dell'indirizzo $x$).
+\end{exmp}
+
+\begin{defn}
+    \textbf{Cache ad indirizzamento diretto} \\
+    Considerando l'esempio di prima, nell'architettura ARMv7 avremmo sempre
+    indirizzi di memoria da 32 bit e non da 8 bit. Ci accorgiamo facilmente che
+    in un esempio reale una cache difficilmente avrà un numero di blocchi $B$
+    esattamente uguale alle possibili combinazioni di bit di un indirizzo di
+    memoria rimuovendo 2 bit per il \textit{byte offset} e $\log_2(b)$ bit per
+    le parole contenute nel set. In una cache ad indirizzamento diretto, abbiamo
+    generalmente meno insiemi (set) delle locazioni di memoria totali diviso la
+    dimensione in byte di una parola per le parole in un \textit{set}. Le cache
+    sono più piccole della memoria perché sono molto più costose da realizzare:
+    \begin{equation*}
+        \begin{aligned}
+            B = C/b \leq \frac{\text{dim. in byte della memoria}}{4 \cdot b}
+        \end{aligned}
+    \end{equation*}
+
+    Per questo motivo introduciamo il concetto di \textit{tag}. Il \textit{tag}
+    è l'insieme di bit rimanenti da un indirizzo di memoria una volta che
+    abbiamo rimosso gli ultimi bit che rappresentano (rispettivamente dal meno
+    significativo) il \textit{byte offset}, il numero di parola \textit{word
+    number} e il numero di insieme \textit{set number}. Le cache ad accesso
+    diretto contengono anche generalmente un bit aggiuntivo nel set, detto $V$,
+    che indica se quell'insieme è valido. In una cache ad accesso diretto, per
+    accedere ad una locazione di memoria e controllare il caso in cui ci sia un
+    \textit{cache hit}, la cache controllerà se al \textit{set number}
+    dell'indirizzo richiesto è valido e il tag dell'indirizzo richiesto
+    corrisponde al tag memorizzato nella cache. In tale caso, avremo un
+    \textit{cache hit}, altrimenti, un \textit{cache miss}.
+\end{defn}
+
+\begin{defn}
+    \textbf{Cache ad indirizzamento set-associative (N-way)} \\
+    Si utilizza una modalità diretta per indirizzare il numero di set.
+    Consideriamo la cache
+    % //TODO recupera
+\end{defn}
+
+\begin{defn}
+    \textbf{Hit rate in relazione alla capacità di una cache} \\
+    L'hit rate aumenta se aumenta la capacità in parole della cache (numero
+    linee $\times$ numero di parole per ogni linea), mentre
+\end{defn}
+
+\begin{defn}
+    \textbf{Cache set-associative a due vie} \\
+    Supponiamo di avere una cache set associative a due vie, 4 parole per ogni
+    linea e con un canale fra memoria e cache di 4 parole.
+\end{defn}
+
+% //TODO lezione 26 novembre CACHE //TODO Automa parte di controllo, S1: calcolo
+% bit S2: scrivere parole S3: leggo parole comune di P
+
+% //TODO req e ack della parte di controllo
+
+\begin{defn}
+    \textbf{Spazio di memoria virtuale e fisica} \\
+    % //TODO
+\end{defn}
+
+\section{Paging}
+
+\begin{defn}
+    \textbf{Pagina} \\
+    Una pagina sono $2^k$ posizioni consecutive della memoria virtuale o della
+    memoria fisica che iniziano dall'indirizzo dove gli ultimi k bit sono
+    settati a 0.
+\end{defn}
