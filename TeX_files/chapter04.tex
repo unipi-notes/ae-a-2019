@@ -240,32 +240,40 @@ Se volessi sommare numeri da 8 bit, la situazione varia leggermente. Servono 2 l
 
 % //TODO high e low sommatore da 8 bit con due FA da 4 bit per rispettare il limite delle porte
 
-\paragraph{ALU con sottrattore}
+\begin{defn}
+	\textbf{ALU con sottrattore} \\
 
-Possiamo realizzare la sottrazione in questo modo (funziona anche per i numeri negativi se utilizziamo il complemento a due):
-\begin{enumerate}
-	\item Vogliamo sottrarre un numero $ B = 4 \equiv 00000100$ ad un altro numero $ A = 12 \equiv 00001100 $: $ A - B = 8 \equiv 00001000 $
-	\item Invertiamo B e aggiungiamo 1: $ (\overbar{B} + 1) \equiv 11111100 $
-	\item Otteniamo che $ A - B \equiv A + (\overbar{B} + 1) \equiv 000001000 $ (non va considerato l'overflow)	
-\end{enumerate}
+	Possiamo realizzare la sottrazione in questo modo (funziona anche per i numeri negativi se utilizziamo il complemento a due):
+	\begin{enumerate}
+		\item Vogliamo sottrarre un numero $ B = 4 \equiv 00000100$ ad un altro numero $ A = 12 \equiv 00001100 $: $ A - B = 8 \equiv 00001000 $
+		\item Invertiamo B e aggiungiamo 1: $ (\overbar{B} + 1) \equiv 11111100 $
+		\item Otteniamo che $ A - B \equiv A + (\overbar{B} + 1) \equiv 000001000 $ (non va considerato l'overflow)
+	\end{enumerate}
+	
+	Un possibile (ma errato) circuito che realizza sottrazione e addizione può essere il seguente:
+	
+	\diagram{addsubtract1}{ALU per addizione e sottrazione}
+	
+	Si può semplificare molto il circuito utilizzando un ALU per la somma che accetta un riporto iniziale come i full adder a cascata.
+	
+	\diagram{addsubtract2}{ALU per addizione e sottrazione semplificata}
+\end{defn}
 
-Un possibile (ma errato) circuito che realizza sottrazione e addizione può essere il seguente:
 
-\diagram{addsubtract1}{ALU per addizione e sottrazione}
 
-Si può semplificare molto il circuito utilizzando un ALU per la somma che accetta un riporto iniziale come i full adder a cascata.
+\begin{defn}
+	\textbf{Uscite aggiuntive delle ALU o flag} \\
 
-\diagram{addsubtract2}{ALU per addizione e sottrazione semplificata}
+	Le ALU, oltre all'uscita del risultato possono avere delle uscite aggiuntive, dette \textbf{flag}. I flag più comuni sono il flag \textbf{Z}ero, il flag \textbf{N}egative ed il flag \textbf{C}arry.
 
-\paragraph{Uscite aggiuntive delle ALU o flag}
+	Il flag \textbf{Z} (Zero) è 1 se tutti i bit del risultato sono 0. Ovvero $ Z = \forall i \>.\> (\text{out}_i == 0) $. Si può realizzare inserendo nella alu un gate NOR che riceve in entrata tutti i bit dell'output.
+	
+	Il flag \textbf{N} (Negative) è semplicemente il bit più significativo (a sinistra) se utilizziamo la notazione a complemento a due.
+	
+	Il flag \textbf{C} (Carry) è usato per indicare se un riporto è stato generato nell'output dal bit più significativo. Permette di realizzare ALU composte da altre ALU, con dimensioni di parole in bit maggiori di quella della singola unità aritmetica. Il bit di carry della ALU che calcola la sezione LOW della parola viene inserito come riporto iniziale della ALU che calcola la parte HIGH della parola.
+\end{defn}
 
-Le ALU, oltre all'uscita del risultato possono avere delle uscite aggiuntive, dette \textbf{flag}. I flag più comuni sono il flag \textbf{Z}ero, il flag \textbf{N}egative ed il flag \textbf{C}arry.
 
-Il flag \textbf{Z} (Zero) è 1 se tutti i bit del risultato sono 0. Ovvero $ Z = \forall i \>.\> (\text{out}_i == 0) $. Si può realizzare inserendo nella alu un gate NOR che riceve in entrata tutti i bit dell'output.
-
-Il flag \textbf{N} (Negative) è semplicemente il bit più significativo (a sinistra) se utilizziamo la notazione a complemento a due.
-
-Il flag \textbf{C} (Carry) è usato per indicare se un riporto è stato generato nell'output dal bit più significativo. Permette di realizzare ALU composte da altre ALU, con dimensioni di parole in bit maggiori di quella della singola unità aritmetica. Il bit di carry della ALU che calcola la sezione LOW della parola viene inserito come riporto iniziale della ALU che calcola la parte HIGH della parola.
 
 
 \paragraph{Moltiplicatore}
@@ -273,7 +281,7 @@ Il flag \textbf{C} (Carry) è usato per indicare se un riporto è stato generato
 \begin{table}[H]
 	\begin{tabular}{llllllll}
 		&          &          &          & 1 & 0 & 1 & 1 \\
-		&          &          & $\times$ & 1 & 1 & 0 & 1 \\ \cline{5-8} 
+		&          &          & $\times$ & 1 & 1 & 0 & 1 \\ \cline{5-8}
 		&          &          & $^{(1)}$ & 1 & 0 & 1 & 1 \\
 		&          & $^{(1)}$ & 0        & 0 & 0 & 0 &   \\
 		& $^{(1)}$ & 1        & 0        & 1 & 1 &   &   \\

@@ -205,7 +205,8 @@ avere un altro multiplexer in ingresso al program counter.
 \begin{figure}[H]
     \centering
 
-	\caption{Esempio di della parte di controllo di un processore multiciclo. Vediamo soltanto le istruzioni \texttt{ldr} e \texttt{add} per semplicità}
+    \caption{Esempio di della parte di controllo di un processore multiciclo. Vediamo soltanto le istruzioni \texttt{ldr} e \texttt{add} per semplicità}
+    \label{fig:pcmulticycle}
 	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm]
 	
 	\node[state,initial] 	(A)                    {\texttt{fetch}}; \node[state]
@@ -327,7 +328,9 @@ dettagli sul sottosistema di memoria.
 \end{defn}
 
 \begin{note}
-    La presenza di una cache deve essere trasparente al processore.
+    La presenza di una cache deve essere trasparente al processore. Il datapath
+    del processore deve poter accedere ai contenuti memorizzati nella cache in
+    maniera identica a quella con cui accede alla memoria generale.
 \end{note}
 
 \begin{defn}
@@ -340,8 +343,8 @@ dettagli sul sottosistema di memoria.
 \end{defn}
 
 \begin{defn}
-    \textbf{Set di parole} \\
-    Un \textbf{Set} di parole (\textit{linea di cache} o \textit{blocco di
+    \textbf{Linea di cache} \\
+    Un \textbf{blocco} di parole (\textit{linea di cache} o \textit{blocco di
     cache}) è una sezione della cache utilizzata per sfruttare il principio di
     località. Il numero di parole in un set è detto $b$. Una cache di capacità
     $C$ continene $B=C/b$ blocchi.
@@ -354,8 +357,8 @@ dettagli sul sottosistema di memoria.
     cache caricherà dalla memoria i valori all'indirizzo $x$ e tutte le altre
     combinazioni degli ultimi $\log_2(b)$ bit dell'indirizzo di $x$. Ad esempio,
     se il processore intende caricare un valore all'indirizzo $10001100$ (8
-    bit), nella cache esisterà un \textbf{set} con numero di insieme $1000$ (4
-    bit, esclusi gli ultimi quattro, due per l'offset dei byte e due per le
+    bit), nella cache esisterà un \textbf{blocco} con numero di insieme $1000$
+    (4 bit, esclusi gli ultimi quattro, due per l'offset dei byte e due per le
     parole) che conterrà 4 parole di memoria, ovvero le parole contenute nella
     memoria generale agli indirizzi $100000$, $100001$, $100010$ $100011$ (tutte
     le parole nell'intorno dell'indirizzo $x$).
@@ -363,7 +366,7 @@ dettagli sul sottosistema di memoria.
 
 \begin{defn}
     \textbf{Cache ad indirizzamento diretto} \\
-    Considerando l'esempio di prima, nell'architettura ARMv7 avremmo sempre
+    Considerando l'esempio soprastante, nell'architettura ARMv7 avremmo sempre
     indirizzi di memoria da 32 bit e non da 8 bit. Ci accorgiamo facilmente che
     in un esempio reale una cache difficilmente avrà un numero di blocchi $B$
     esattamente uguale alle possibili combinazioni di bit di un indirizzo di
@@ -390,42 +393,312 @@ dettagli sul sottosistema di memoria.
     dell'indirizzo richiesto è valido e il tag dell'indirizzo richiesto
     corrisponde al tag memorizzato nella cache. In tale caso, avremo un
     \textit{cache hit}, altrimenti, un \textit{cache miss}.
+
+    \begin{table}[]
+        \centering
+        \caption{Struttura di un indirizzo di memoria da 32 bit in una cache ad indirizzamento diretto}
+        \label{tab:addr-direct}
+        \begin{tabular}{|l|l|l|}
+        \hline
+        Tag & Set & Byte offset \\ \hline
+        \end{tabular}
+        \end{table}
 \end{defn}
 
 \begin{defn}
     \textbf{Cache ad indirizzamento set-associative (N-way)} \\
-    Si utilizza una modalità diretta per indirizzare il numero di set.
-    Consideriamo la cache
-    % //TODO recupera
+    Si utilizza una modalità diretta per indirizzare il numero di set, e si
+    raggruppano diverse \textit{linee di cache} all'interno del set,
+    differenziate per il \textit{tag}. L'indirizzamento per insieme è analogo ad
+    una cache ad indirizzamento diretto, solo che un insieme, invece di
+    contenere un singolo blocco di cache, ne contiene $N$. Detto in altre parole
+    \textit{una cache ad indirizzamento diretto è una cache set-associataive ad
+    1 via},  Rispetto ad una cache ad indirizzamento diretto sarà necessario
+    introdurre dei confrontatori (per i tag), un decoder per selezionare il
+    valore letto dalla memoria e dei decoder. La maggioranza delle cache dei
+    processori moderni sono set-associative ad 8 o 16 vie. La struttura di un
+    indirizzo per una cache set-associative sarà quindi:
+    \begin{table}[htbp]
+        \centering
+        \caption{Struttura di un indirizzo di memoria da 32 bit in una cache set-associative}
+        \label{tab:addr-setassoc}
+        \begin{tabular}{|l|l|l|l|}
+        \hline
+        Tag & Set & Block Offset & Byte offset \\ \hline
+        \end{tabular}
+    \end{table}
 \end{defn}
+
+\begin{defn}
+    \textbf{Conflitto} \\
+    Quando due indirizzi con accesso effettuato recentemente vengono mappati
+    nello stesso blocco di cache, avviene una situazione definita
+    "\textbf{conflitto}", dove il blocco più recente "sfratta" il blocco
+    precedentemente memorizzato nella cache. Le cache ad indirizzamento diretto
+    hanno un solo blocco per ogni set, quindi due indirizzi che mappano allo
+    stesso set causano sempre un conflitto.
+\end{defn}
+
+
+\begin{defn}
+    \textbf{Cache fully associative} \\
+    Una cache fully associative è una cache set-associative a $B$ vie che
+    contiene un solo set con $B$ blocchi. Le cache fully associative sono le
+    cache con meno miss dovuti a conflitti, fissata una certa capacità. Il loro
+    svantaggio è che richiedono molto più hardware per effettuare la
+    comparazione dei tag.
+\end{defn}
+
+
+\begin{exmp}
+    \textbf{Differenza fra una cache full associative e una cache ad
+    indirizzamento diretto} \\
+
+    In una \textbf{cache full associative}, ogni blocco della memoria principale
+    può essere posizionato ovunque nella cache. Supponiamo che la dimensione di
+    un blocco della cache sia $2n$, per qualche valore $n$ (tipicamente fra 4 e
+    6). L'indirizzo di un riferimento alla memoria ha gli $n$ bit meno
+    significativi rimossi e il resto dell'indirizzo rappresenta il campo tag.
+    Per vedere se il corrispondente blocco fisico di memoria è nella cache,
+    vengono confrontati parallelamente i campi tag dei blocchi nella cache.
+
+    Per una \textbf{cache ad indirizzamento diretto}, ogni blocco nella memoria
+    può essere associato ad un singolo insieme nella cache. Ugualmente, gli $n$
+    bit meno significativi vengono rimossi e il resto dell'indirizzo rappresenta
+    il campo tag. La parte rimanente dell'indirizzo viene comparata
+    all'indirizzo del blocco della cache per determinare se il blocco è
+    memorizzato nella cache.
+
+    In una cache fully associative si riduce il rischio di collisione fra i
+    blocchi con i quali si intende occupare la cache. Ovvero, due blocchi di
+    memoria che dovrebbero occupare la stessa posizione in una cache ad
+    indirizzamento diretto (collisione) potrebbero occupare diversi blocchi in
+    una cache full (o set) associative. Ciò richiedede più hardware per
+    determinare quale insieme della cache occupare e per cercare in parallelo
+    fra tutti i blocchi della cache per determinare se un accesso alla memoria
+    produce un \textit{hit}.
+
+    \begin{table}[htbp]
+        \centering
+        \caption{Tipologie di organizzazione delle cache}
+        \label{tab:caches}
+        \begin{tabular}{|l|l|l|}
+        \hline
+        Organizzazione         & Numero di Vie ($N$) & Numero di insiemi ($S$)
+        \\ \hline
+        Indirizzamento diretto & $1$                 & $B$ \\ \hline
+        Set associative        & $1 < N < B$         & $B/N$ \\ \hline
+        Fully associative      & $B$                 & 1 \\ \hline
+        \end{tabular}
+    \end{table}
+\end{exmp}
+
 
 \begin{defn}
     \textbf{Hit rate in relazione alla capacità di una cache} \\
     L'hit rate aumenta se aumenta la capacità in parole della cache (numero
-    linee $\times$ numero di parole per ogni linea), mentre
+    linee $\times$ numero di parole per ogni linea), mentre il miss rate
+    decresce all'aumentare della capacità.
 \end{defn}
 
 \begin{defn}
-    \textbf{Cache set-associative a due vie} \\
-    Supponiamo di avere una cache set associative a due vie, 4 parole per ogni
-    linea e con un canale fra memoria e cache di 4 parole.
+    \textbf{Multipli livelli di cache} \\
+    Nei sistemi moderni si utilizzano multipli livelli di cache per ridurre il
+    tempo di accesso alla memoria. Cache di dimensioni maggiori sono di utili
+    perché mantengono più dati e hanno un miss rate basso. La cache di primo
+    livello (L1) è piccola e molto rapida, con un tempo di accesso di circa uno
+    o due cicli di clock, la cache di secondo livello (L2) è anch'essa una
+    memoria SRAM, ma di dimensioni maggiori e di conseguenza più lenta della
+    cache di primo livello.
+
+%    \begin{figure}[htp] \centering \begin{tikzpicture} \coordinate (A) at
+%        (-5,0) {}; \coordinate (B) at ( 5,0) {}; \coordinate (C) at (0,5) {};
+%        \draw[name path=AC] (A) -- (C); \draw[name path=BC] (B) -- (C);
+%        \foreach \y/\A in {0/Cache L1,1/Cache L2,2/Memoria Principale,3 Memoria
+%        virtuale} {\path[name path=horiz] (A|-0,\y) -- (B|-0,\y); \draw[name
+%        intersections={of=AC and horiz,by=P}, name intersections={of=BC and
+%        horiz,by=Q}] (P) -- (Q) node[midway,above] {\A};
+%        }
+%        \draw[->] (0:0) -- (45:4) node[above] {Capacità}
+%        \end{tikzpicture}
+%        \end{figure}
 \end{defn}
 
-% //TODO lezione 26 novembre CACHE //TODO Automa parte di controllo, S1: calcolo
-% bit S2: scrivere parole S3: leggo parole comune di P
 
-% //TODO req e ack della parte di controllo
+
+% //TODO Automa parte di controllo, S1: calcolo bit S2: scrivere parole S3:
+% leggo parole comune di P //TODO req e ack della parte di controllo
+
+\section{Paging e gestione della memoria}
 
 \begin{defn}
-    \textbf{Spazio di memoria virtuale e fisica} \\
-    % //TODO
+    \textbf{Memoria fisica e problematiche} \\
+    La \textbf{memoria fisica} il modulo RAM può avere dimensioni minori
+    rispetto al possibile spazio di indirizzamento a 32 bit. Ad esempio, un
+    Raspberry Pi con una memoria fisica da 1GB non può utilizzare tutto lo
+    spazio di indirizzamento disponibile (4GB). Deve esistere un metodo per
+    mappare gli indirizzi disponibile allo spazio realmente disponibile. Un
+    altro problema può insorgere quando un programma viene caricato in memoria
+    ad un certo indirizzo. Il program counter dovrà riferirsi all'indirizzo
+    relativo al programma sommato all'offset di dove viene caricato. Sommare un
+    offset a tutti gli indirizzi al caricamento del programma non è efficiente
+    ed è una procedura complessa.
 \end{defn}
 
-\section{Paging}
+\begin{defn}
+    \textbf{Frammentazione di memoria } \\
+    La \textbf{frammentazione} è un fenomeno che avviene quando uno spazio di
+    memoria viene utilizzato in maniera inefficiente. Avviene quando in memoria
+    sono allocati un gran numero di blocchi in maniera non contigua, lasciando
+    la maggior parte della memoria non allocata inutilizzabile per la mancanza
+    di spazio fra le diverse sezioni allocate.
+\end{defn}
+
+\begin{defn}
+    \textbf{Spazio di memoria virtuale e memoria fisica} \\
+    Un programma in esecuzione può accedere solo ad uno spazio di
+    \textbf{memoria virtuale}, un'astrazione per ovviare alle problematiche di
+    frammentazione, offset e spazio disponibile. Lo spazio di \textbf{memoria
+    fisica} è lo spazio "reale" presente nel modulo RAM.
+\end{defn}
 
 \begin{defn}
     \textbf{Pagina} \\
-    Una pagina sono $2^k$ posizioni consecutive della memoria virtuale o della
-    memoria fisica che iniziano dall'indirizzo dove gli ultimi k bit sono
-    settati a 0.
+    Una pagina sono $2^k$ posizioni consecutive contigue della memoria fisica,
+    utilizzate per rappresentare la memoria virtuale in "pagine" consecutive.
+    Iniziano dall'indirizzo dove gli ultimi k bit sono settati a 0. Separiamo
+    sia la memoria fisica che la memoria virtuale in pagine.
 \end{defn}
+
+\begin{defn}
+    \textbf{Working Set} \\
+    Il working set è la collezione di pagine di memoria virtuale di "proprietà"
+    di un processo in esecuzione.
+\end{defn}
+
+\begin{exmp}
+    \textbf{Risolvere i problemi di frammentazione, offset e spazio disponibile}
+    \\
+    Per risolvere il \textbf{problema dello spazio disponibile} si caricano in
+    memoria soltanto le pagine che appartengono al working set. Per risolvere il
+    \textbf{problema di offset} (dello spazio di memoria virtuale quando una
+    pagina viene caricata in uno spazio di memoria fisico) divido l'indirizzo di
+    memoria in due sezioni (questa suddivisione è completamente indipendente a
+    quella effettuata per la gestione delle cache):
+
+    \begin{table}[htbp]
+        \centering
+        \caption{Struttura di un indirizzo di memoria per la suddivisione in pagine logiche}
+        \label{tab:addr-logicpage}
+        \begin{tabular}{|l|l|}
+        \hline
+        Logic Page Number & Offset ($k$ bit) \\ \hline
+        \end{tabular}
+    \end{table}
+
+    Per mantenere l'associazione fra pagina di memoria virtuale e pagina di
+    memoria fisica il sistema operativo mantiene una tabella (detta di
+    rilocazione del processo), dove per ogni processo è associato un numero di
+    pagina fisica (NB: se l'associazione è presente!) al numero di pagina
+    virtuale. Un indirizzo relativo allo spazio di memoria virtuale viene detto
+    \textbf{indirizzo logico}, per accedere alla memoria fisica, ogni volta che
+    devo accedere ad un indirizzo logico, viene recuperato dalla tabella il
+    numero di pagina fisica e viene sostituito al numero di pagina logica per
+    produrre un indirizzo fisico.
+
+    Il \textbf{il problema di frammentazione} è automaticamente risolto
+    introducendo le pagine, perché esse hanno tutte dimensione uguale. La
+    contiguità delle posizioni di memoria, anche se nello spazio fisico le
+    pagine non sono realmente contigue, è garantito dalla conversione fra
+    indirizzo logico ed indirizzo fisico.
+\end{exmp}
+
+\begin{defn}
+    \textbf{MMU} \\
+    La Memory Management Unit è un componente fisico, spesso incluso insieme al
+    processore, che ha il compito di mantenere un sottoinsieme la tabella di
+    paginazione ed effettuare la conversione da indirizzo logico ad indirizzo
+    fisico. È posta fra il processore (che invia un operazione di read, write o
+    store con un indirizzo logico e un valore opzionale) e la memoria (che
+    restituisce direttamente al processore il dato richiesto). In caso di fault,
+    la MMU si occuperà di notificare il processore. La conversione fra indirizzi
+    logici e fisici avviene in maniera totalmente trasparente al processore. La
+    MMU contiene un sottoinsieme (in maniera sostanzialmente analoga ad una
+    cache completamente associativa) della tabella di associazioni per ogni
+    processo fra indirizzo di pagina logica $\rightarrow$ indirizzo di pagina
+    fisica. La MMU può essere interna al circuito integrato del processore,
+    oppure un componente esterno.
+\end{defn}
+
+\begin{defn}
+    \textbf{Paginazione dinamica} \\
+    La paginazione dinamica è una policy di paginazione dove vediamo la memoria
+    fisica come se fosse una "\textit{cache dello spazio di memoria virtuale}"
+    (presente sulla memoria di massa e di conseguenza molto più ampio). Al
+    momento dell'esecuzione di un programma viene caricata in memoria fisica
+    soltanto la pagina contenente la sezione di codice \texttt{.text} contenente
+    (nella maggior parte dei casi) una procedura \texttt{.main}. Al momento
+    dell'accesso alla memoria da parte del programma caricato la MMU effettuerà
+    la conversione dell'indirizzo al cui si intende accedere, convertendo il
+    numero di pagina logica ad un numero di pagina fisica, memorizzando
+    l'associazione nella \textbf{tabella di rilocazione del processo}, che oltre
+    a contenenere il numero di pagina fisica corrispondente alla pagina logica,
+    conterrà anche un \textit{bit di presenza}, che indica se la pagina logica è
+    attualmente caricata in quella fisica associata. Se cerchiamo di accedere ad
+    una pagina logica a cui è associata una pagina fisica \textbf{ma il bit di
+    presenza} è impostato a 0, la MMU restituirà un'eccezione che verrà gestita
+    dal sistema operativo in modo tale che esso restituisca una pagina della
+    memoria fisica \textbf{libera}. Una volta trovata una pagina fisica libera
+    essa viene associata alla pagina logica nella tabella di rilocazione, la
+    pagina logica viene caricata ed il bit di presenza viene impostato ad 1. Se
+    non vi è abbastanza spazio nella memoria fisica si utilizza generalmente una
+    politica LRU (Least Recently Used). Tali eccezioni vengonono chiamate
+    \textbf{fault di pagina}.
+\end{defn}
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Automa (semplificato) dell parte di controllo di una MMU}
+    \label{fig:pcmmu}
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=6cm]
+
+    \node[state,initial] (A) {\makecell[l]{logical\\address}};
+    \node[state] (B) [below left of=A] {\makecell[l]{physical\\address}};
+    \node[state] (C) [right of=A] {\makecell[l]{memory access\\(find victim\\and replace)}};
+    \node[state] (G) [below of=C] {\makecell[l]{page fault}};
+
+    \path
+    (A) edge [bend left] node [] {\makecell[l]{cache hit}} (B)
+        edge [bend left] node [] {\makecell[l]{cache miss}}  (C)
+    (B) edge [bend left] node [] {} (A)
+    (C) edge [] node [below] {\makecell[l]{$P = 1$\\page is present}} (A)
+        edge [] node [] {$P = 0$} (G)
+    (G) edge [bend left] node [] {} (A);
+    \end{tikzpicture}
+    % TODO fixa label
+\end{figure}
+
+\begin{defn}
+    \textbf{TLB} \\
+    Il Transition Lookaside Buffer (TLB) è una cache che l'MMU utilizza per
+    velocizzare la traduzione degli indirizzi virtuali ad indirizzi fisici. Il
+    TLB possiede un numero fisso di elementi della \textbf{tabella di
+    rilocazione del processo} (Page Table). È una memoria chiave-valore
+    indirizzata per contenuto che associa un indirizzo virtuale ad un indirizzo
+    fisico. Nel processore BCM2835 è presente una gerarchia di TLB: i micro TLB
+    ($\mu$TLB), due buffer da 10 posizioni uno per istruzioni e uno per dati
+    che impiegano un singolo ciclo di clock per l'accesso con una policy di
+    rimpiazzamento \textbf{Round Robin}, ed è presente anche un TLB generale
+    unificato per istruzioni e dati, ovvero una cache set associativa nella
+    quale la ricerca viene eseguita solo quando si ha un miss nei micro TLB.
+    Se anche il TLB generale restituisce un miss, significa che la Page Table
+    della MMU non contiene la traduzione da logico a fisico dell'indirizzo
+    richiesto e si propaga la richiesta alla memoria.
+\end{defn}
+
+
+%\begin{defn} \textbf{Tipi di Fault} \\
+%\end{defn}
+
+% TODO lezione 31 TODO lezione 32
