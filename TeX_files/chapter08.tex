@@ -1,0 +1,36 @@
+\chapter{Input/Output}
+
+\begin{defn}
+    \textbf{I/O} \\
+    Un dispositivo I/O è un qualsiasi oggetto collegato al calcolatore che
+    interagisce con esso e con il "\textit{mondo esterno}". Esistono diversi
+    tipi di gestione dell'I/O (come viene gestito dal processore: \textbf{Memory
+    Mapped I/O, DMA, Interrupt}.
+\end{defn}
+
+\begin{defn}
+    \textbf{Memory Mapped I/O} \\
+    Il Memory Mapped I/O è un metodo di scambio di dati fra una CPU e le
+    periferiche collegate ad essa.
+    L'I/O Memory-mapped usa lo stesso bus di indirizzi per indirizzare la
+    memoria e i devices I/O. E le istruzioni della CPU usate sono le stesse per
+    accedere ai dispositivi ed alla memoria.
+    Viene riservata una sezione degli indirizzi codificabili (ad esempio 1GB
+    su 4GB disponibili in un'architettura a 32 bit) per distinguere una sezione
+    dedicata alla memoria (generalmente la sezione più grande) ed una sezione
+    dedicata ai dispositivi I/O. Si aggiunge anche un codificatore al datapath
+    che seleziona, in base all'indirizzo, se un'operazione di load e store va
+    indirizzata alla MMU o ad un dispositivio I/O.
+    % //TODO schema
+\end{defn}
+
+% //TODO ciclo while di lettura e scrittura da disco
+
+\begin{defn}
+    \textbf{Direct Memory Access (DMA)} \\
+    Nel metodo DMA, la memoria ha le 4 linee (data in, data out, indirizzo e
+    operazione) sia collegate al processore, sia collegate ai dispositivi I/O.
+    Lo schema risulta simile al Memory Mapped I/O
+
+    % //TODO schema
+\end{defn}

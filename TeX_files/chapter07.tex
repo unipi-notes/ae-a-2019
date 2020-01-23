@@ -116,7 +116,6 @@ program counter, dove scriveremo il valore dell'istruzione dopo il salto.
 Alla fine di un'istruzione \textit{non di salto} il program counter viene
 incrementato di 4 posizioni attraverso una ALU. Ciò ci dice che è necessario
 avere un altro multiplexer in ingresso al program counter.
-% //TODO
 \end{defn}
 
 \section{Realizzazione di un Datapath in Verilog}
@@ -224,7 +223,6 @@ avere un altro multiplexer in ingresso al program counter.
 		    {} (D) (D)     edge [] node {} (E) (C)     edge [] node {} (F) (F)
 		    edge [] node {} (G) (G)     edge [] node {} (H) ;
     \end{tikzpicture}
-    % TODO fixa label
 \end{figure}
 
 \section{Sottosistema di Memoria}
@@ -443,7 +441,18 @@ dettagli sul sottosistema di memoria.
 \begin{defn}
     \textbf{Cache fully associative} \\
     Una cache fully associative è una cache set-associative a $B$ vie che
-    contiene un solo set con $B$ blocchi. Le cache fully associative sono le
+    contiene un solo set con $B$ blocchi. Non viene utilizzata una sezione
+    dell'indirizzo per indicare il set, ma soltanto il tag. A differenza delle
+    cache ad indirizzamento diretto, le cache fully associative contengono $B$
+    registri che contengono i tag dei corrispondenti blocchi (N.B. non si
+    utilizza un numero di set). Ci saranno poi $B$ confrontatori che
+    confronteranno i registri di tag con il tag ricevuto in input dalla cache.
+    In seguito ai confrontatori è posta una rete logica che ha il compito di
+    calcolare se è avvenuto un fault o indirizzare il multiplexer posto dopo i
+    blocchi contenenti le parole contenute nella cache.
+
+
+    Le cache fully associative sono le
     cache con meno miss dovuti a conflitti, fissata una certa capacità. Il loro
     svantaggio è che richiedono molto più hardware per effettuare la
     comparazione dei tag.
@@ -453,7 +462,6 @@ dettagli sul sottosistema di memoria.
 \begin{exmp}
     \textbf{Differenza fra una cache full associative e una cache ad
     indirizzamento diretto} \\
-
     In una \textbf{cache full associative}, ogni blocco della memoria principale
     può essere posizionato ovunque nella cache. Supponiamo che la dimensione di
     un blocco della cache sia $2n$, per qualche valore $n$ (tipicamente fra 4 e
@@ -676,7 +684,6 @@ dettagli sul sottosistema di memoria.
         edge [] node [] {$P = 0$} (G)
     (G) edge [bend left] node [] {} (A);
     \end{tikzpicture}
-    % TODO fixa label
 \end{figure}
 
 \begin{defn}
@@ -697,8 +704,5 @@ dettagli sul sottosistema di memoria.
     richiesto e si propaga la richiesta alla memoria.
 \end{defn}
 
-
-%\begin{defn} \textbf{Tipi di Fault} \\
-%\end{defn}
 
 % TODO lezione 31 TODO lezione 32
