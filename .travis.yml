@@ -1,0 +1,16 @@
+sudo: required
+language: generic
+services: docker
+
+script:
+  # We use the docker image from https://hub.docker.com/r/dxjoke/tectonic-docker/
+  - docker run --mount src=$TRAVIS_BUILD_DIR,target=/usr/src/tex,type=bind dxjoke/tectonic-docker /bin/sh -c 'for i in *.tex; do tectonic $i; done'
+
+after_success:
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - bash upload.sh *.pdf;
+
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)$/
